@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+	<channel>
+		<title>John Novak Blog</title>
+		<description>Personal blog of John Novak</description>
+		<link>http://johnnovak.net/</link>
+		<atom:link href="http://johnnovak.net//feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Huffman Encoding in Python &mdash; Optimisation Series Part IV</title>
+				<description>&lt;p&gt;In a previous post I wrote about moving from Wordpress to Jekyll where I was
+ultimately hosting this site in GitHub Pages. While that setup was great, and
+an easy way to get started, I wanted to have a little more freedom to play
+with plugins and additional/custom functionality. To that end I migrated the
+system into Octopress and reverted to hosting with the same server from which
+I was running the previous Wordpress install. I had waited to cancel the
+hosting service just in case I decided to do this.&lt;/p&gt;
+
+&lt;p&gt;Here I&amp;#8217;m going to show you how to make an interactive Archives page with
+categories in Jekyll without using plugins. Very simple and extensible through
+JavaScript.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-i-want-to-achieve&quot;&gt;What I want to achieve&amp;#8230;&lt;/h2&gt;
+
+&lt;p&gt;My blog needed an overview page which contains every Blog post, ideally sorted
+by date. That is fairly easy in pure Jekyll: Just loop over every post and add
+title and date.&lt;/p&gt;
+
+&lt;p&gt;Now here&amp;#8217;s the catch: I&amp;#8217;m using &lt;a href=&quot;#&quot;&gt;tags&lt;/a&gt; to sort my posts into different
+categories and it would be nice if a user could select a specific tag and get
+a listing of all blogs with this tag. Fairly basic stuff &amp;#8211; for a dynamic
+blogging engine. Now, [Jekyll]&lt;sup id=&quot;fnref:jekyll&quot;&gt;&lt;a href=&quot;#fn:jekyll&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; supports tags out of the box, but has,
+at this time, no function to generate a page for each tag. So, everytime we
+introduce a new tag, we&amp;#8217;d need to &lt;a href=&quot;#&quot;&gt;create a archives page&lt;/a&gt; for this tag to
+loop over the posts. Which, in my opinion, makes Jekyll&amp;#8217;s tags feature pretty
+useless.&lt;/p&gt;
+
+&lt;p&gt;Plugins would of course solve this problem. But remember my self-imposed
+constraint mentioned in Part 1? Pure vanilla &lt;a href=&quot;#&quot;&gt;Jekyll&lt;/a&gt; running on
+&lt;a href=&quot;http://www.github.com/&quot;&gt;GitHub Pages&lt;/a&gt;. So, let&amp;#8217;s try to find another way.&lt;/p&gt;
+
+&lt;h2 id=&quot;and-how-to-get-there&quot;&gt;&amp;#8230;and how to get there&lt;/h2&gt;
+
+&lt;p&gt;So, if Jekyll can&amp;#8217;t generate tag pages out of the box, we&amp;#8217;ll elevate the
+problem to the client browser. If our [Archives]&lt;sup id=&quot;fnref:archive&quot;&gt;&lt;a href=&quot;#fn:archive&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt; page already
+contains every post of the blog, we&amp;#8217;ll just have to hide the ones which do not
+match our tags. How?  With the HTML 5 multi-tool: &lt;em&gt;JavaScript!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;We are going to pass the selected category via Hashtag in the URL, for example
+&lt;code&gt;/archives/#!webdev&lt;/code&gt;. [JavaScript][js] then extracts the tag and toggles the
+posts based on whether they match it or not.&lt;/p&gt;
+
+&lt;p&gt;Before we dive in, I want to note that you can see the results on my
+&lt;a href=&quot;#&quot;&gt;Archives&lt;/a&gt; page.&lt;/p&gt;
+
+&lt;h3 id=&quot;step-1-the-html&quot;&gt;Step 1: The HTML&lt;/h3&gt;
+
+&lt;p&gt;To make things easier, every post will store its tags in a data- attribute:&lt;/p&gt;
+
+&lt;div&gt;
+    &lt;pre&gt;&lt;code class=&quot;c&quot;&gt;/* Finds and returns the small sub-tree in the forest */
+
+int findSmaller (Node *array[], int differentFrom){
+    int smaller;
+    int i = 0;
+
+    while (array[i]-&amp;gt;value == -1) i++;
+    smaller = i;
+
+    if (i == differentFrom) {
+        i++;
+        while (array[i] -&amp;gt; value == -1)
+            i++;
+        smaller = i;
+    }
+
+    for (i = 1; i &amp;lt; 27; i++) {
+        if (array[i]-&amp;gt;value == -1)
+            continue;
+        if (i == differentFrom)
+            continue;
+        if (array[i]-&amp;gt;value&amp;lt;array[smaller]-&amp;gt;value)
+            smaller = i;
+    }
+    return smaller;
+}&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;h3 id=&quot;step-2-javascript-voodoo&quot;&gt;Step 2: JavaScript Voodoo&lt;/h3&gt;
+
+&lt;p&gt;Jep, I&amp;#8217;m using jQuery here. But &amp;#8212; you should have no problem adapting it to
+standard JavaScript. The updateTags function extracts the tag from the hash,
+loops over &lt;code&gt;.post&lt;/code&gt; elements, compares their data-tags-attribute against the
+hash and fades them depending on the result. We also listen for &lt;code&gt;onhashchange&lt;/code&gt;
+to update the &amp;#171;selection&amp;#187; when a tag link on the same page is clicked.&lt;/p&gt;
+
+&lt;div&gt;
+    &lt;pre&gt;&lt;code class=&quot;javascript&quot;&gt;$(function() {
+function updateTags() {
+    var hash = window.location.hash.substr(2);
+
+    $('.post').each(function(i, post) {
+        if ($(post).data('tags').indexOf(hash) == -1) {
+            $(post).animate({
+                opacity: 0.5,
+                'font-size': '0.8em',
+            }, 'fast');
+        } else {
+            $(post).animate({
+                opacity: 1,
+                'font-size': '1em',
+            }, 'fast');
+        }
+    });
+}
+
+$(window).bind('hashchange', updateTags)
+  updateTags();
+})&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;p class=&quot;caption&quot;&gt;Listing 1 &amp;mdash; updateTags() function in JavaScript&lt;/p&gt;
+
+&lt;h3 id=&quot;bonus-----group-posts-by-year&quot;&gt;Bonus &amp;#8212; Group Posts by Year&lt;/h3&gt;
+
+&lt;p&gt;Imagine you want to divide your post listing into different years to achieve
+something like this. It&amp;#8217;s fairly easy with standard Liquid if you know how. We store the year of the
+previous post, extract the year of the current one, compare both and output a
+header if the two differ.&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:jekyll&quot;&gt;
+      &lt;p&gt;http://jekyllrb.org/    &amp;#8220;Jekyll static blog page generator&amp;#8221; &lt;a href=&quot;#fnref:jekyll&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:archive&quot;&gt;
+      &lt;p&gt;http://www.archive.org/ &amp;#8220;The Internet Archive&amp;#8221; &lt;a href=&quot;#fnref:archive&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+				<pubDate>Wed, 02 Oct 2013 00:00:00 +1000</pubDate>
+				<link>http://johnnovak.net///2013/10/02/jekyll-tutorial/</link>
+				<guid isPermaLink="true">http://johnnovak.net///2013/10/02/jekyll-tutorial/</guid>
+			</item>
+		
+			<item>
+				<title>Welcome to Jekyll!</title>
+				<description>&lt;p&gt;You&amp;#8217;ll find this post in your &lt;code&gt;_posts&lt;/code&gt; directory - edit this post and re-build
+(or run with the &lt;code&gt;-w&lt;/code&gt; switch) to see your changes!  To add new posts, simply
+add a file in the &lt;code&gt;_posts&lt;/code&gt; directory that follows the convention:
+YYYY-MM-DD-name-of-post.ext.&lt;/p&gt;
+
+&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+
+&lt;div&gt;
+    &lt;pre&gt;&lt;code class=&quot;ruby&quot;&gt;def print_hi(name)
+  puts &amp;quot;Hi, #{name}&amp;quot;
+end
+print_hi('Tom')
+#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+
+&lt;p&gt;Check out the &lt;a href=&quot;http://jekyllrb.com&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out
+of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/mojombo/jekyll&quot;&gt;Jekyll&amp;#8217;s GitHub
+repo&lt;/a&gt;.&lt;/p&gt;
+
+</description>
+				<pubDate>Sun, 29 Sep 2013 21:38:05 +1000</pubDate>
+				<link>http://johnnovak.net///2013/09/29/welcome-to-jekyll/</link>
+				<guid isPermaLink="true">http://johnnovak.net///2013/09/29/welcome-to-jekyll/</guid>
+			</item>
+		
+			<item>
+				<title>Alien Mindbenders Inc.</title>
+				<description>&lt;h1&gt;Panda&lt;/h1&gt;
+&lt;p&gt;Check &lt;a href=&quot;//files/panda.jpg&quot;&gt;this image&lt;/a&gt;&lt;/p&gt;</description>
+				<pubDate>Sun, 29 Sep 2013 00:00:00 +1000</pubDate>
+				<link>http://johnnovak.net///2013/09/29/alien-mindbenders-inc/</link>
+				<guid isPermaLink="true">http://johnnovak.net///2013/09/29/alien-mindbenders-inc/</guid>
+			</item>
+		
+	</channel>
+</rss>
