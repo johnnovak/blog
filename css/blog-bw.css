@@ -33,8 +33,8 @@ body {
   color: #333;
   background-color: #fff;
   font-family: 'Open Sans', Arial, sans-serif;
-  font-size: 14px;
-  line-height: 20px;
+  font-size: 16px;
+  line-height: 24px;
   -webkit-text-size-adjust: 100%;
   -ms-text-size-adjust: 100%; }
 
@@ -51,23 +51,7 @@ a {
   color: #3aa08f;
   text-decoration: none; }
   a:hover {
-    color: #75bcb0; }
-
-.header-link {
-  position: relative;
-  top: -1px;
-  margin-left: 8px;
-  font-size: 18px;
-  text-decoration: none;
-  color: #aaa;
-  visibility: hidden; }
-
-h2:hover .header-link,
-h3:hover .header-link,
-h4:hover .header-link,
-h5:hover .header-link,
-h6:hover .header-link {
-  visibility: visible; }
+    text-decoration: underline; }
 
 table {
   margin: 2em auto;
@@ -89,188 +73,191 @@ th {
 td {
   padding: 1px 8px; }
 
-#jn-logo {
-  position: absolute;
-  top: 10px;
-  right: 25px;
-  z-index: 0;
-  width: 272px; }
-
 #header {
-  height: 130px;
+  height: 150px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none; }
+  #header h1 {
+    position: absolute;
+    top: 70px;
+    right: 58px;
+    z-index: 0;
+    font-size: 30px;
+    font-weight: 400;
+    text-transform: uppercase; }
   #header ul {
-    padding: 82px 11px 0 0;
+    padding: 80px 0 0 0;
     list-style: none;
     text-align: right;
-    color: #3aa08f;
-    cursor: default; }
+    color: #3aa08f; }
     #header ul li {
       display: inline;
-      margin: 0 13px 0 0;
+      margin: 0 15px 0 0;
       padding: 0;
-      font-size: 15px;
-      font-weight: 600;
+      font-size: 19px;
+      font-weight: 400;
       text-transform: uppercase; }
+      #header ul li a {
+        padding-right: 10px; }
+        #header ul li a:hover {
+          text-decoration: none;
+          color: #75bcb0; }
+      #header ul li:after {
+        margin-right: -10px;
+        content: "/"; }
+      #header ul li:last-child:after {
+        content: none; }
 
-article header h1 {
-  margin: 0;
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1;
-  text-transform: uppercase;
-  color: #3aa08f; }
+#jn-logo {
+  position: absolute;
+  top: 10px;
+  right: 25px;
+  z-index: 0;
+  width: 300px; }
 
 .post-list {
-  margin: 0 0 60px 0; }
+  margin: 15px 0 60px 0; }
   .post-list .post-item {
     position: relative;
     margin-bottom: 12px; }
+  .post-list h1 {
+    margin: 0 0 1.1em 0;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1;
+    color: #3aa08f;
+    text-transform: uppercase; }
   .post-list h2 {
-    margin: 1.5em 0 0.8em 0;
-    font-size: 20px;
+    margin: 40px 0 20px 0;
+    font-size: 32px;
     font-weight: 300;
     line-height: 1;
     color: #777; }
   .post-list h3 {
-    margin: 0 0 3px 0;
+    margin: 0 0 4px 0;
     padding: 0;
     font-weight: 400;
-    font-size: 15px;
+    font-size: 18px;
     line-height: 1.3; }
     .post-list h3 a {
       color: #333; }
-      .post-list h3 a:hover {
-        color: #666; }
   .post-list h4 {
     margin: 0 0 1em 0;
     padding: 0;
     font-weight: 400;
-    font-size: 14px;
+    font-size: 18px;
     text-transform: uppercase;
     line-height: 1;
     color: #999; }
-  .post-list .tags {
-    margin-top: 32px; }
+  .post-list .tags li {
+    display: block;
+    margin: 0 0 6px 0; }
     .post-list .tags li .tag-name {
-      width: 150px; }
+      display: inline-block;
+      width: 180px; }
 
 .post {
   position: relative;
-  margin-bottom: 0px; }
-  .post header .date {
-    margin: 0;
-    font-size: 20px;
-    line-height: 1.8;
-    text-transform: uppercase;
-    color: #3aa08f; }
+  margin-bottom: 40px; }
+  .post h1 {
+    margin: 15px 0 1.1em 0;
+    font-size: 42px;
+    font-weight: 400;
+    line-height: 1; }
+    .post h1 a {
+      color: #333; }
   .post h2 {
-    display: table;
-    margin: 1.2em 0 .8em;
-    font-size: 20px;
+    margin: 1em 0 .8em;
+    font-size: 20px !important;
     font-weight: 700;
-    color: #3aa08f; }
+    float: left; }
+  .post header h1 {
+    margin: 0 0 5px 0;
+    font-size: 28px;
+    font-weight: 300;
+    line-height: 1;
+    text-transform: uppercase; }
+  .post header h2 {
+    display: block;
+    width: 100%;
+    margin: 0px 440px 8px 0;
+    font-size: 22px;
+    font-weight: 400;
+    line-height: 1.8;
+    text-transform: uppercase; }
   .post h3 {
-    margin: 2em 0 0 0;
+    margin: 2em 0 0 0 !important;
     font-size: 18px;
     font-weight: 600;
     color: #3aa08f; }
   .post p {
     clear: both; }
     .post p a {
-      font-weight: 700; }
-    .post p code {
-      font: 15px "Inconsolata", serif;
-      font-weight: 600;
-      color: #c55f70;
-      padding: 4px 5px 2px 5px; }
-  .post ul {
-    list-style: square; }
-  .post figure {
-    margin: 2em 0;
-    padding: 0; }
+      font-weight: 700;
+      color: #3aa08f; }
+      .post p a:hover {
+        text-decoration: underline; }
   .post .caption {
     display: block;
     margin: -1.5em 0 2em 0;
     text-align: center;
     font-size: 16px;
     color: #666; }
+  .post ul {
+    list-style: square; }
+  .post p code {
+    font: 19px "Inconsolata", serif;
+    font-weight: 600;
+    color: #c55f70;
+    padding: 4px 5px 2px 5px; }
   .post pre {
-    margin: 1.3em 0;
+    margin: 3em 0;
     padding: 0;
     font: 14px "Inconsolata", serif;
-    line-height: 18px;
     font-weight: 400;
+    line-height: 22px;
     overflow-x: auto; }
     .post pre code {
       font: 14px "Inconsolata", serif;
       background: none;
       color: #333; }
-  .post .tags {
-    margin-top: 12px; }
-    .post .tags li {
-      display: inline-block; }
-  .post .references {
-    margin-top: 40px;
-    font-size: 14px; }
-    .post .references h2 {
-      font-size: 18px;
-      margin: 0;
-      color: #333; }
-    .post .references h3 {
-      margin: 1.5em 0 0 0;
-      font-size: 16px;
-      font-weight: 600;
-      color: #333; }
-    .post .references ul {
-      list-style: none;
-      padding: 0; }
 
 .tags {
   list-style: none;
-  margin: 0 0 30px 0;
+  margin: 8px 0 30px 0;
   padding: 0;
-  color: #3aa08f; }
+  color: #75bcb0; }
   .tags ul {
     margin: 0;
     padding: 0; }
   .tags li {
-    line-height: 28px;
-    margin: 0 2px 0 0; }
-    .tags li .tag-name {
-      display: inline-block; }
+    display: inline-block; }
     .tags li a {
-      padding: 1px 10px 2px 10px;
-      border-radius: 3px;
-      font-size: 13px;
-      font-weight: 600;
+      padding: 2px 10px 3px 10px;
+      font-size: 14px;
       text-transform: uppercase;
+      background: #3aa08f;
       color: #fff;
-      background: #3aa08f; }
+      border-radius: 3px;
+      font-weight: 600; }
       .tags li a:hover {
+        text-decoration: none;
         background: #75bcb0; }
 
-.about header {
-  margin-bottom: 35px; }
-.about h2 {
-  margin-top: 1.8em; }
-.about .info {
-  padding: 10px 20px;
-  background: #eee; }
-
 .footnotes {
-  margin-top: 40px;
-  border-top: 1px solid #aaa;
-  font-size: 14px; }
+  margin-top: 50px;
+  border-top: 1px solid #999;
+  font-size: 15px;
+  line-height: 21px;
+  color: #333; }
   .footnotes ol {
     padding: 0 0 0 30px; }
 
-.comments {
-  margin-top: 50px; }
+#disqus_thread {
+  margin-top: 160px; }
 
 #no-disqus {
   margin-top: 50px;
@@ -281,91 +268,64 @@ article header h1 {
 
 @media only screen and (min-width: 500px) {
   body {
-    margin: 0 25px;
-    font-size: 15px;
-    line-height: 22px; }
+    margin: 0 25px; }
 
   #jn-logo {
     top: 20px;
-    width: 355px; }
+    width: 400px;
+    height: 124px; }
 
   #header {
-    height: 180px; }
+    height: 220px; }
+    #header h1 {
+      top: 100px;
+      right: 68px;
+      font-size: 40px; }
     #header ul {
-      padding-top: 112px;
-      padding-right: 39px; }
+      padding-top: 123px;
+      padding-right: 57px;
+      text-align: right;
+      list-style: none;
+      color: #3aa08f; }
       #header ul li {
         margin-right: 12px;
-        padding-left: 3px;
-        font-size: 18px;
-        font-weight: 400; }
+        font-size: 20px; }
         #header ul li a {
-          padding-right: 10px; }
-        #header ul li:after {
-          margin-right: -10px;
-          content: "/"; }
-        #header ul li:last-child:after {
-          content: none; }
+          padding-right: 11px; }
 
-  article header h1 {
-    font-size: 34px; }
-
-  .post-list h1 {
-    margin-bottom: 1em; }
   .post-list h2 {
     margin: 0;
     float: left;
     clear: left;
-    font-size: 36px; }
+    font-size: 38px; }
   .post-list h3 {
     margin: 0 0 0 205px;
-    font-size: 16px;
-    line-height: 1.5; }
+    line-height: 1.4; }
   .post-list h4 {
     position: absolute;
     top: 0;
     margin: 0 0 0 115px;
-    font-size: 16px;
     line-height: 1.5; }
-  .post-list .tags li .tag-name {
-    width: 165px; }
 
-  .post header .date {
-    font-size: 22px;
-    margin-bottom: 0; }
   .post h2 {
-    font-size: 22px; }
+    font-size: 34px; }
+  .post header h1 {
+    font-size: 34px; }
+  .post header h2 {
+    margin-bottom: 0; }
   .post pre {
-    margin: 1.6em 0;
-    font-size: 15px;
-    line-height: 20px; }
+    font-size: 16px; }
     .post pre code {
-      font-size: 15px; }
-  .post .references {
-    margin-top: 50px;
-    font-size: 15px;
-    line-height: 20px; }
-  .post .tags li {
-    margin-bottom: 1px; }
-
-  .tags li {
-    margin: 0 3px 2px 0; }
-    .tags li a {
-      padding: 1px 10px 2px 10px;
-      font-size: 14px; }
-
-  .footnotes {
-    margin-top: 50px;
-    font-size: 15px;
-    line-height: 20px; }
-
-  .comments {
-    margin-top: 60px; } }
+      font-size: 16px; }
+  .post .tags {
+    font-size: 15px; }
+    .post .tags li {
+      margin: 15px 4px 15px 0; }
+      .post .tags li a {
+        font-size: 15px; } }
 @media only screen and (min-width: 900px) {
   body {
-    margin: 0;
-    font-size: 16px;
-    line-height: 24px; }
+    margin: 0; }
 
   #wrapper {
     position: relative;
@@ -374,18 +334,14 @@ article header h1 {
     width: 680px;
     margin: 0 auto 40px auto; }
 
-  #jn-logo {
-    right: 0;
-    z-index: 100;
-    width: 400px; }
-
   #header {
     height: 330px; }
     #header ul {
-      padding-top: 140px;
-      padding-right: 54px; }
-      #header ul li {
-        font-size: 20px; }
+      padding-top: 140px; }
+
+  #jn-logo {
+    right: 0;
+    z-index: 100; }
 
   #header-bg {
     position: absolute;
@@ -403,67 +359,42 @@ article header h1 {
       background-image: url("/img/bg-header@2x.png"); } }
 
 @media only screen and (min-width: 900px) {
-  .post-list h1 {
-    margin-bottom: 1.5em; }
-  .post-list h2 {
-    margin: 0;
-    float: left;
-    clear: left;
-    font-size: 36px; }
-  .post-list h3 {
-    font-size: 18px;
-    line-height: 1.5; }
-  .post-list h4 {
-    font-size: 18px;
-    line-height: 1.5; }
-  .post-list .tags li {
-    margin-bottom: 5px; }
-    .post-list .tags li .tag-name {
-      width: 180px; }
-
   .post {
     margin-bottom: 60px; }
     .post header h1 {
       width: 550px; }
-    .post header .date {
-      margin-bottom: 60px; }
-    .post h2 {
-      font-size: 24px;
-      margin-top: 1.5em; }
+    .post header h2 {
+      margin-bottom: 30px; }
     .post h3 {
       margin-top: 1.2em; }
-    .post pre {
-      margin: 1.8em 0;
-      padding-left: 20px;
-      border-left: 4px solid #eee;
-      font-size: 16px; }
-      .post pre code {
-        font-size: 16px;
-        line-height: 22px; }
-    .post .references {
-      font-size: 15px; }
-      .post .references h2 {
-        font-size: 20px; }
     .post .tags {
       position: absolute;
       top: 0;
       right: 0;
-      width: 125px;
-      margin: 0; }
+      width: 125px; }
       .post .tags li {
-        margin-bottom: 2px; }
+        margin: 0 0 5px 0; }
+    .post pre {
+      padding-left: 20px; } }
+.header-link {
+  margin-left: 10px;
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  color: #aaa;
+  visibility: hidden; }
 
-  .tags li a {
-    padding: 2px 10px 3px 10px;
-    font-size: 15px; }
+.header-link:hover {
+  text-decoration: underline; }
 
-  .about header h1 {
-    margin-bottom: 1.5em; }
-  .about h2 {
-    margin-top: 2.2em; }
+h2:hover .header-link,
+h3:hover .header-link,
+h4:hover .header-link,
+h5:hover .header-link,
+h6:hover .header-link {
+  visibility: visible; }
 
-  .comments {
-    margin-top: 80px; } }
+/* Code highlighting */
 .hll {
   background-color: #ffffcc; }
 
