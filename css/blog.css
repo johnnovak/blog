@@ -97,7 +97,7 @@ td {
   width: 272px; }
 
 #header {
-  height: 130px;
+  height: 123px;
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -119,7 +119,7 @@ td {
 
 article header h1 {
   margin: 0;
-  font-size: 26px;
+  font-size: 23px;
   font-weight: 700;
   line-height: 1;
   text-transform: uppercase;
@@ -131,7 +131,7 @@ article header h1 {
     position: relative;
     margin-bottom: 12px; }
   .post-list h2 {
-    margin: 1.5em 0 0.8em 0;
+    margin: 1em 0 0.8em 0;
     font-size: 20px;
     font-weight: 300;
     line-height: 1;
@@ -145,7 +145,7 @@ article header h1 {
     .post-list h3 a {
       color: #333; }
       .post-list h3 a:hover {
-        color: #666; }
+        color: #888; }
   .post-list h4 {
     margin: 0 0 1em 0;
     padding: 0;
@@ -155,7 +155,7 @@ article header h1 {
     line-height: 1;
     color: #999; }
   .post-list .tags {
-    margin-top: 32px; }
+    margin-top: 15px; }
     .post-list .tags li .tag-name {
       width: 150px; }
 
@@ -171,12 +171,12 @@ article header h1 {
   .post h2 {
     display: table;
     margin: 1.2em 0 .8em;
-    font-size: 20px;
+    font-size: 19px;
     font-weight: 700;
     color: #3aa08f; }
   .post h3 {
     margin: 2em 0 0 0;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
     color: #3aa08f; }
   .post p {
@@ -232,20 +232,19 @@ article header h1 {
 
 .tags {
   list-style: none;
-  margin: 0 0 30px 0;
+  margin: 0 0 20px 0;
   padding: 0;
   color: #3aa08f; }
   .tags ul {
     margin: 0;
     padding: 0; }
   .tags li {
-    line-height: 28px;
+    line-height: 26px;
     margin: 0 2px 0 0; }
     .tags li .tag-name {
       display: inline-block; }
     .tags li a {
       padding: 1px 10px 2px 10px;
-      border-radius: 3px;
       font-size: 13px;
       font-weight: 600;
       text-transform: uppercase;
@@ -255,12 +254,14 @@ article header h1 {
         background: #75bcb0; }
 
 .about header {
-  margin-bottom: 35px; }
+  margin-bottom: 15px; }
 .about h2 {
   margin-top: 1.8em; }
 .about .info {
   padding: 10px 20px;
   background: #eee; }
+.about .astronaut {
+  display: none; }
 
 .footnotes {
   margin-top: 40px;
@@ -270,7 +271,7 @@ article header h1 {
     padding: 0 0 0 30px; }
 
 .comments {
-  margin-top: 50px; }
+  margin-top: 40px; }
 
 #no-disqus {
   margin-top: 50px;
@@ -290,7 +291,7 @@ article header h1 {
     width: 355px; }
 
   #header {
-    height: 180px; }
+    height: 170px; }
     #header ul {
       padding-top: 112px;
       padding-right: 39px; }
@@ -308,7 +309,7 @@ article header h1 {
           content: none; }
 
   article header h1 {
-    font-size: 34px; }
+    font-size: 30px; }
 
   .post-list h1 {
     margin-bottom: 1em; }
@@ -316,15 +317,15 @@ article header h1 {
     margin: 0;
     float: left;
     clear: left;
-    font-size: 36px; }
+    font-size: 33px; }
   .post-list h3 {
-    margin: 0 0 0 205px;
+    margin: 0 0 0 175px;
     font-size: 16px;
     line-height: 1.5; }
   .post-list h4 {
     position: absolute;
     top: 0;
-    margin: 0 0 0 115px;
+    margin: 0 0 0 100px;
     font-size: 16px;
     line-height: 1.5; }
   .post-list .tags li .tag-name {
@@ -354,13 +355,16 @@ article header h1 {
       padding: 1px 10px 2px 10px;
       font-size: 14px; }
 
+  .about h1 {
+    margin-bottom: 30px; }
+
   .footnotes {
     margin-top: 50px;
     font-size: 15px;
     line-height: 20px; }
 
   .comments {
-    margin-top: 60px; } }
+    margin-top: 50px; } }
 @media only screen and (min-width: 900px) {
   body {
     margin: 0;
@@ -403,19 +407,19 @@ article header h1 {
       background-image: url("/img/bg-header@2x.png"); } }
 
 @media only screen and (min-width: 900px) {
+  article header h1 {
+    font-size: 34px; }
+
   .post-list h1 {
     margin-bottom: 1.5em; }
   .post-list h2 {
-    margin: 0;
-    float: left;
-    clear: left;
     font-size: 36px; }
   .post-list h3 {
-    font-size: 18px;
-    line-height: 1.5; }
+    margin-left: 195px;
+    font-size: 18px; }
   .post-list h4 {
-    font-size: 18px;
-    line-height: 1.5; }
+    margin-left: 110px;
+    font-size: 18px; }
   .post-list .tags li {
     margin-bottom: 5px; }
     .post-list .tags li .tag-name {
@@ -426,7 +430,7 @@ article header h1 {
     .post header h1 {
       width: 550px; }
     .post header .date {
-      margin-bottom: 60px; }
+      margin: 4px 0 60px 0; }
     .post h2 {
       font-size: 24px;
       margin-top: 1.5em; }
@@ -451,7 +455,7 @@ article header h1 {
       width: 125px;
       margin: 0; }
       .post .tags li {
-        margin-bottom: 2px; }
+        margin-bottom: 3px; }
 
   .tags li a {
     padding: 2px 10px 3px 10px;
@@ -461,6 +465,9 @@ article header h1 {
     margin-bottom: 1.5em; }
   .about h2 {
     margin-top: 2.2em; }
+  .about .astronaut {
+    margin-top: 10em;
+    display: block; }
 
   .comments {
     margin-top: 80px; } }
