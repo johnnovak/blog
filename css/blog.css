@@ -1,15 +1,15 @@
 ::selection {
-  background: #dcfc86;
+  background: #cef5d4;
   color: "black";
   text-shadow: none; }
 
 ::-moz-selection {
-  background: #dcfc86;
+  background: #cef5d4;
   color: "black";
   text-shadow: none; }
 
 ::-webkit-selection {
-  background: #dcfc86;
+  background: #cef5d4;
   color: "black";
   text-shadow: none; }
 
@@ -45,7 +45,8 @@ html {
   margin-bottom: 30px; }
 
 img {
-  border: none; }
+  border: none;
+  width: 100%; }
 
 a {
   color: #3aa08f;
@@ -88,6 +89,30 @@ th {
 
 td {
   padding: 1px 8px; }
+
+dt {
+  font-weight: 700;
+  margin-bottom: 0.5em; }
+
+dd {
+  margin-bottom: 1em; }
+
+blockquote {
+  margin: 1.5em 0;
+  padding-left: 20px;
+  font-style: italic;
+  color: #777; }
+  blockquote p {
+    margin: 0;
+    padding: 0; }
+  blockquote footer {
+    text-align: right;
+    margin-right: 3em; }
+
+hr {
+  margin-top: 40px;
+  border: 1px solid #aaa;
+  border-width: 1px 0 0 0; }
 
 #jn-logo {
   position: absolute;
@@ -162,6 +187,9 @@ article header h1 {
 .post {
   position: relative;
   margin-bottom: 0px; }
+  .post .intro {
+    color: #777;
+    font-style: italic; }
   .post header .date {
     margin: 0;
     font-size: 20px;
@@ -175,10 +203,12 @@ article header h1 {
     font-weight: 700;
     color: #3aa08f; }
   .post h3 {
-    margin: 2em 0 0 0;
+    margin: 1.5em 0 0 0;
     font-size: 16px;
-    font-weight: 600;
+    font-weight: 700;
     color: #3aa08f; }
+  .post h4 {
+    font-size: 16px; }
   .post p {
     clear: both; }
     .post p a {
@@ -189,16 +219,28 @@ article header h1 {
       color: #c55f70;
       padding: 4px 5px 2px 5px; }
   .post ul {
-    list-style: square; }
+    list-style: square;
+    margin: 0;
+    padding-left: 2em; }
+    .post ul li {
+      margin: 1em 0; }
+  .post .compact {
+    color: #888; }
+    .post .compact li {
+      margin: 0; }
+    .post .compact li p {
+      color: #333;
+      margin: 0; }
   .post figure {
-    margin: 2em 0;
+    margin: 1.2em 0;
     padding: 0; }
-  .post .caption {
+  .post figcaption {
     display: block;
-    margin: -1.5em 0 2em 0;
-    text-align: center;
-    font-size: 16px;
-    color: #666; }
+    font-size: 12px;
+    line-height: 16px;
+    color: #777; }
+    .post figcaption a {
+      font-weight: 600; }
   .post pre {
     margin: 1.3em 0;
     padding: 0;
@@ -214,21 +256,18 @@ article header h1 {
     margin-top: 12px; }
     .post .tags li {
       display: inline-block; }
-  .post .references {
-    margin-top: 40px;
+  .post .links {
+    margin-top: 20px;
     font-size: 14px; }
-    .post .references h2 {
+    .post .links h2 {
       font-size: 18px;
       margin: 0;
       color: #333; }
-    .post .references h3 {
-      margin: 1.5em 0 0 0;
+    .post .links h3 {
+      margin: 1.2em 0 0.6em 0;
       font-size: 16px;
       font-weight: 600;
       color: #333; }
-    .post .references ul {
-      list-style: none;
-      padding: 0; }
 
 .tags {
   list-style: none;
@@ -286,6 +325,10 @@ article header h1 {
     font-size: 15px;
     line-height: 22px; }
 
+  blockquote {
+    margin: 2em 0;
+    padding-left: 30px; }
+
   #jn-logo {
     top: 20px;
     width: 355px; }
@@ -336,6 +379,17 @@ article header h1 {
     margin-bottom: 0; }
   .post h2 {
     font-size: 22px; }
+  .post h3 {
+    font-size: 18px; }
+  .post h4 {
+    font-size: 16px; }
+  .post figure {
+    margin: 2em 0;
+    padding: 0; }
+  .post figcaption {
+    margin-top: 0.5em;
+    font-size: 14px;
+    line-height: 20px; }
   .post pre {
     margin: 1.6em 0;
     font-size: 15px;
@@ -348,6 +402,12 @@ article header h1 {
     line-height: 20px; }
   .post .tags li {
     margin-bottom: 1px; }
+  .post .links {
+    font-size: 15px; }
+    .post .links h2 {
+      font-size: 20px; }
+    .post .links h3 {
+      font-size: 17px; }
 
   .tags li {
     margin: 0 3px 2px 0; }
@@ -410,6 +470,9 @@ article header h1 {
   article header h1 {
     font-size: 34px; }
 
+  hr {
+    margin-top: 50px; }
+
   .post-list h1 {
     margin-bottom: 1.5em; }
   .post-list h2 {
@@ -435,7 +498,8 @@ article header h1 {
       font-size: 24px;
       margin-top: 1.5em; }
     .post h3 {
-      margin-top: 1.2em; }
+      font-size: 19px;
+      margin-top: 1.8em; }
     .post pre {
       margin: 1.8em 0;
       padding-left: 20px;
@@ -456,6 +520,13 @@ article header h1 {
       margin: 0; }
       .post .tags li {
         margin-bottom: 3px; }
+    .post .links {
+      margin-top: 25px;
+      font-size: 16px; }
+      .post .links h2 {
+        font-size: 22px; }
+      .post .links h3 {
+        font-size: 18px; }
 
   .tags li a {
     padding: 2px 10px 3px 10px;
