@@ -1,15 +1,15 @@
 ::selection {
-  background: #cef5d4;
+  background: #cff5d6;
   color: "black";
   text-shadow: none; }
 
 ::-moz-selection {
-  background: #cef5d4;
+  background: #cff5d6;
   color: "black";
   text-shadow: none; }
 
 ::-webkit-selection {
-  background: #cef5d4;
+  background: #cff5d6;
   color: "black";
   text-shadow: none; }
 
@@ -46,13 +46,13 @@ html {
 
 img {
   border: none;
-  width: 100%; }
+  margin: 0 auto; }
 
 a {
   color: #3aa08f;
   text-decoration: none; }
   a:hover {
-    color: #75bcb0; }
+    color: #75bdb1; }
 
 .header-link {
   position: relative;
@@ -99,9 +99,10 @@ dd {
 
 blockquote {
   margin: 1.5em 0;
+  margin-left: 10px;
   padding-left: 20px;
-  font-style: italic;
-  color: #777; }
+  color: #777;
+  border-left: 3px solid #ccc; }
   blockquote p {
     margin: 0;
     padding: 0; }
@@ -141,6 +142,8 @@ hr {
       font-size: 15px;
       font-weight: 600;
       text-transform: uppercase; }
+  #header .tagline {
+    display: none; }
 
 article header h1 {
   margin: 0;
@@ -190,6 +193,8 @@ article header h1 {
   .post .intro {
     color: #777;
     font-style: italic; }
+    .post .intro em {
+      font-weight: 700; }
   .post header .date {
     margin: 0;
     font-size: 20px;
@@ -233,12 +238,15 @@ article header h1 {
       margin: 0; }
   .post figure {
     margin: 1.2em 0;
-    padding: 0; }
+    padding: 0;
+    text-align: center; }
   .post figcaption {
     display: block;
     font-size: 12px;
     line-height: 16px;
-    color: #777; }
+    color: #777;
+    margin: 0 auto;
+    text-align: left; }
     .post figcaption a {
       font-weight: 600; }
   .post pre {
@@ -290,7 +298,7 @@ article header h1 {
       color: #fff;
       background: #3aa08f; }
       .tags li a:hover {
-        background: #75bcb0; }
+        background: #75bdb1; }
 
 .about header {
   margin-bottom: 15px; }
@@ -326,8 +334,8 @@ article header h1 {
     line-height: 22px; }
 
   blockquote {
-    margin: 2em 0;
-    padding-left: 30px; }
+    margin-top: 2em;
+    padding-left: 20px; }
 
   #jn-logo {
     top: 20px;
@@ -445,6 +453,16 @@ article header h1 {
 
   #header {
     height: 330px; }
+    #header .tagline {
+      display: block;
+      text-align: right;
+      text-transform: uppercase;
+      font-size: 14px;
+      color: #666;
+      position: absolute;
+      line-height: 17px;
+      top: 170px;
+      right: 107px; }
     #header ul {
       padding-top: 140px;
       padding-right: 54px; }
@@ -514,12 +532,13 @@ article header h1 {
         font-size: 20px; }
     .post .tags {
       position: absolute;
-      top: 0;
+      top: 2px;
       right: 0;
       width: 125px;
       margin: 0; }
       .post .tags li {
-        margin-bottom: 3px; }
+        line-height: 32px;
+        margin: 0; }
     .post .links {
       margin-top: 25px;
       font-size: 16px; }
@@ -722,3 +741,7 @@ article header h1 {
   color: #718c00; }
 
 /* Literal.Number.Integer.Long */
+mtable.ma-legend-align > mtr > mtd:first-child + mtd,
+fmath span.ma-legend-align > table > tbody > tr > td:first-child + td {
+  text-align: left;
+  padding-left: 25px !important; }
