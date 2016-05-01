@@ -76,7 +76,7 @@ norm in mathematics, which will also make life a bit easier.&lt;/p&gt;
 &lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
 
 &lt;p&gt;As I mentioned, the aim is to use a consistent mathematical notation throughout
-the whole series, so let’s define the that first!&lt;/p&gt;
+the whole series, so let’s define that first!&lt;/p&gt;
 
 &lt;p&gt;$$\cl&quot;ma-legend-align&quot;{\table
 f, \text&quot;scalar&quot;;
@@ -95,6 +95,10 @@ a↖{→}×b↖{→}, \text&quot;cross product&quot;;
 &lt;p&gt;Column notation is used for vectors:&lt;/p&gt;
 
 &lt;p&gt;$$ v↖{→}=[\table x; y; z; w; ] $$&lt;/p&gt;
+
+&lt;p class=&quot;note&quot;&gt;If the formulas look like crap in your browser, that means it
+sadly doesn’t support MathML. Solution? Use a better browser, like
+&lt;a href=&quot;https://www.mozilla.org/en-US/firefox/new/&quot;&gt;Firefox&lt;/a&gt;.&lt;/p&gt;
 
 &lt;h3 id=&quot;transform-matrices&quot;&gt;Transform matrices&lt;/h3&gt;
 
@@ -145,7 +149,7 @@ s_x,   0,   0, 0;
 
 &lt;p&gt;Let $(P_x, P_y)$ be the &lt;strong&gt;pixel coordinates&lt;/strong&gt; of a pixel of the final image,
 $w$ and $h$ the width and the height of the image in pixels and $r = w / h$
-the image aspect ratio $P&amp;amp;x$.&lt;/p&gt;
+the image aspect ratio.&lt;/p&gt;
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-04-30/mappings.svg&quot; style=&quot;width: 100%&quot; /&gt;

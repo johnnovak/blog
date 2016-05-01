@@ -110,6 +110,18 @@ blockquote {
     text-align: right;
     margin-right: 3em; }
 
+.note {
+  background: #d2e9e5;
+  padding: 0.6em 1em; }
+  .note:before {
+    content: 'Note ';
+    display: block;
+    margin-bottom: 0.5em;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #3aa08f; }
+
 hr {
   margin-top: 40px;
   border: 1px solid #aaa;
