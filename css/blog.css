@@ -214,10 +214,10 @@ article header h1 {
     color: #3aa08f; }
   .post h4 {
     font-size: 16px; }
+  .post a {
+    font-weight: 700; }
   .post p {
     clear: both; }
-    .post p a {
-      font-weight: 700; }
     .post p code {
       font: 15px "Inconsolata", serif;
       font-weight: 600;
@@ -269,7 +269,7 @@ article header h1 {
     font-size: 14px; }
     .post .links h2 {
       font-size: 18px;
-      margin: 0;
+      margin: 1.2em 0 0.6em 0;
       color: #333; }
     .post .links h3 {
       margin: 1.2em 0 0.6em 0;

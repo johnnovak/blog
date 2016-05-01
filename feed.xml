@@ -7,13 +7,345 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>The Nim Ray Tracer Project &ndash; Part 2</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;[I have to tell that even after 34 years, &lt;strong&gt;Brian Eno&lt;/strong&gt;’s ambient music is still so much better than 99.9999% of all recent electronic releases. Listening to &lt;strong&gt;Ambient 4: On Land&lt;/strong&gt; from 1982; track #2 &lt;strong&gt;The Lost Day&lt;/strong&gt; has a wonderfully creepy atmosphere…]&lt;/p&gt;
+
+&lt;h2 id=&quot;the-basics&quot;&gt;The Basics&lt;/h2&gt;
+
+&lt;p&gt;Hello again! In the &lt;a href=&quot;2016/04/28/the-nim-raytracer-project-part1/&quot;&gt;initial
+post&lt;/a&gt; of this series I talked
+about ray tracing in general and my reasons for writing my own ray tracing
+renderer in the most awesome &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt; language. Before
+writing any code though, in this part we’ll examine the basic maths required
+for such a renderer.&lt;/p&gt;
+
+&lt;p&gt;Most of this stuff is a distilled version of the information contained in the
+excellent &lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel 2.0 – Learn Computer Graphics Programming from
+Scratch&lt;/a&gt; learning resource, which I highly
+recommend to all graphics programming enthusiasts. There’s absolutely zero
+point in recreating the superb explanations from those lessons here, so just
+go and read the original materials if you’re interested.&lt;/p&gt;
+
+&lt;p&gt;My only problem with Scratchapixel was that while the content is generally of
+very high quality, the mathematical notation they use is sometimes a bit
+sloppy and a few formulas are actually incorrect (just a &lt;em&gt;very few&lt;/em&gt;, to be
+fair). I tried to supplement Scratchapixel with other random learning
+materials found on the Internet but that also proved to be problematic because
+of the slightly different notational conventions and assumptions of different
+authors (e.g. some people assume a right-handed while others a left-handed
+coordinate system, maths folks like their z-axis to point upwards, but in
+computer graphics that’s usually the y-axis and the z-axis points towards the
+viewer, then there’s the difference between row and column vector notation and
+so on).  While these differences might be laughably trivial to a mathematician
+or to someone who is already pretty familiar with the subject, they can surely
+confuse the hell out of a newcomer, like myself (or maybe I just get confused
+too easily, that might very well be the case…).&lt;/p&gt;
+
+&lt;p&gt;I’m not exactly the biggest fan of littering the source code with page-long
+explanatory comments  either, so all my development notes will end up in these
+blog posts. That way I will have at least a remote chance of understanding
+what the hell I was doing here a couple of years down the track, and maybe
+others will find my development diary also useful (or amusing, depending on
+their perspective…).&lt;/p&gt;
+
+&lt;p&gt;Alright, let’s get down to business!&lt;/p&gt;
+
+&lt;h3 id=&quot;coordinate-system&quot;&gt;Coordinate system&lt;/h3&gt;
+
+&lt;p&gt;We are going to use a &lt;a href=&quot;https://en.wikipedia.org/wiki/Cartesian_coordinate_system#In_three_dimensions&quot;&gt;right-handed Cartesian coordinate system
+&lt;/a&gt;
+to represents objects in our 3D world, where the &lt;em&gt;y-axis&lt;/em&gt; points up, the
+&lt;em&gt;x-axis&lt;/em&gt; to the right and the &lt;em&gt;z-axis&lt;/em&gt; “outward”. In right-handed coordinate
+systems, positive rotation is
+&lt;a href=&quot;https://www.evl.uic.edu/ralph/508S98/coordinates.html&quot;&gt;counter-clockwise&lt;/a&gt;
+about the axis of rotation.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/files/2016-04-30/coordinate-system.svg&quot; style=&quot;width: 100%&quot; /&gt;
+      
+      &lt;figcaption style=&quot; width: 70%; text-align: center;&quot;&gt;Figure 1 &amp;mdash; The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.&lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+&lt;p&gt;The choice of coordinate system handedness is nothing more than a convention:
+DirectX, Unity, Maya and Pixar’s RenderMan use left-handed coordinate systems,
+while OpenGL, &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt; and most other 3D modelling
+software are right-handed. For our purposes, compatibility with OpenGL and
+pbrt are the most important. Also, right-handed coordinate systems are the
+norm in mathematics, which will also make life a bit easier.&lt;/p&gt;
+
+&lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
+
+&lt;p&gt;As I mentioned, the aim is to use a consistent mathematical notation throughout
+the whole series, so let’s define the that first!&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-legend-align&quot;{\table
+f, \text&quot;scalar&quot;;
+P, \text&quot;point&quot;;
+(P_x, P_y, P_z), \text&quot;point (by coordinates)&quot;;
+\AB, \text&quot;segment&quot;;
+v↖{→}, \text&quot;vector&quot;;
+⟨\v_\x, \v_\y, \v_\z⟩, \text&quot;vector (by coordinates)&quot;;
+n↖{∧}, \text&quot;unit vector)&quot;;
+{‖v↖{→}‖}, \text&quot;magnitude (length) of vector&quot;;
+a↖{→}·b↖{→}, \text&quot;dot product&quot;;
+a↖{→}×b↖{→}, \text&quot;cross product&quot;;
+\bo M, \text&quot;matrix&quot;;
+}$$&lt;/p&gt;
+
+&lt;p&gt;Column notation is used for vectors:&lt;/p&gt;
+
+&lt;p&gt;$$ v↖{→}=[\table x; y; z; w; ] $$&lt;/p&gt;
+
+&lt;h3 id=&quot;transform-matrices&quot;&gt;Transform matrices&lt;/h3&gt;
+
+&lt;p&gt;All the matrix stuff will be eventually handled by a &lt;a href=&quot;https://github.com/stavenko/nim-glm&quot;&gt;matrix
+library&lt;/a&gt; written by someone else, but
+it’s still useful to know how these transforms look like in our right-handed
+coordinate system (for example, for performance purposes we might hand-code
+some optimised versions of these transforms later).&lt;/p&gt;
+
+&lt;h4 id=&quot;translation-and-scaling&quot;&gt;Translation and scaling&lt;/h4&gt;
+
+&lt;p&gt;$$\bo T=[\table
+1, 0, 0, t_x;
+0, 1, 0, t_y;
+0, 0, 1, t_z;
+0, 0, 0, 1;
+]
+\;\;\;\;\;\;\bo S=[\table
+s_x,   0,   0, 0;
+  0, s_y,   0, 0;
+  0,   0, s_z, 0;
+  0,   0,   0, 1;
+]$$&lt;/p&gt;
+
+&lt;h4 id=&quot;rotation-around-a-given-axis&quot;&gt;Rotation around a given axis&lt;/h4&gt;
+
+&lt;p&gt;$$\bo R_\x=[\table
+1,      0,       0, 0;
+0, \cos θ, -\sin θ, 0;
+0, \sin θ,  \cos θ, 0;
+0,      0,       0, 1;
+]
+\;\;\;\;\;\;\bo R_\y=[\table
+ \cos θ, 0, \sin θ, 0;
+      0, 1,      0, 0;
+-\sin θ, 0, \cos θ, 0;
+      0, 0,      0, 1;
+]$$&lt;/p&gt;
+
+&lt;p&gt;$$\bo R_\z=[\table
+\cos θ, -\sin θ, 0, 0;
+\sin θ,  \cos θ, 0, 0;
+     0,       0, 1, 0;
+     0,       0, 0, 1;
+]$$&lt;/p&gt;
+
+&lt;h3 id=&quot;calculating-primary-rays&quot;&gt;Calculating primary rays&lt;/h3&gt;
+
+&lt;p&gt;Let $(P_x, P_y)$ be the &lt;strong&gt;pixel coordinates&lt;/strong&gt; of a pixel of the final image,
+$w$ and $h$ the width and the height of the image in pixels and $r = w / h$
+the image aspect ratio $P&amp;amp;x$.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/files/2016-04-30/mappings.svg&quot; style=&quot;width: 100%&quot; /&gt;
+      
+      &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 2 &amp;mdash; The relationships between the raster, NDC and screen spaces.&lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+&lt;p&gt;We have to shoot the rays through the middle of the pixels, thus the $(R_x,
+R_y)$ &lt;strong&gt;raster coordinates&lt;/strong&gt; of a given pixel are as follows:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+R_x ,= P_x + 0.5;
+R_y ,= P_y + 0.5;
+}$$&lt;/p&gt;
+
+&lt;p&gt;From this follows the formula for calculating the $(N_x, N_y)$
+&lt;strong&gt;normalised device coordinates (NDC)&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+N_x ,= R_x / w r;
+N_y ,= R_y / h;
+}$$&lt;/p&gt;
+
+&lt;p&gt;And finally the $(S_x, S_y)$ &lt;strong&gt;screen coordinates&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+S_x ,= 2 N_x - r;
+S_y ,= -(2 N_y - 1)
+}$$&lt;/p&gt;
+
+&lt;p&gt;To simplify the calculations, let the image plane be -1 distance away from the
+origin on the z-axis and let $α$ be the &lt;strong&gt;vertical field of view
+(FOV)&lt;/strong&gt; of the camera. From Figure 3 it can be seen that by default the field
+of view is 90° (because $\tan 90° / 2 = \tan 45° = 1 = \BC $), and
+the length of $\BC$ is actually the $f$ &lt;strong&gt;field of view factor&lt;/strong&gt; of the
+camera.&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/files/2016-04-30/fov.svg&quot; style=&quot;width: 100%&quot; /&gt;
+      
+      &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 3 &amp;mdash; Calculating the vertical field of view (FOV) factor.&lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+&lt;p&gt;$$\tan α / 2 = \BC / \AB = \BC / 1$$
+$$\BC = \tan α / 2 = f$$&lt;/p&gt;
+
+&lt;p&gt;To obtain the desired field of view, the image surface has to be scaled by
+the field of view factor (this is akin to zooming with a traditional camera
+lens). Thus we yield the screen coordinates normalised by the field
+of view factor:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+S_x ,= (2 N_x - r) f;
+S_y ,= -(2 N_y - 1) f;
+}$$&lt;/p&gt;
+
+&lt;p&gt;After substitutions, the final transform from pixel coordinates to screen
+coordinates looks like this:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+S_x ,= ({2 (P_x + 0.5) r} / w - r) f;
+S_y ,= (1 - {2 (P_y + 0.5)} / h) f;
+}$$&lt;/p&gt;
+
+&lt;p&gt;So for each pixel $(P_x, P_y)$ in the image we can now calculate the
+corresponding screen coordinates $(S_x, S_y)$ we’ll need to shoot the
+primary rays through. Since the camera is at the origin, the direction vector
+$d↖{∧}$ of the ray corresponding to pixel $(P_x, P_y)$ is simply the vector
+$⟨S_x, S_y⟩$ normalised:&lt;/p&gt;
+
+&lt;p&gt;$$ d↖{∧} = ⟨S_x, S_y⟩ / {‖⟨S_x, S_y⟩‖}$$&lt;/p&gt;
+
+&lt;p&gt;As the last step, we’ll need to multiply the resulting direction vector
+$d↖{∧}$ and the camera position $O$ (which is at the origin by default) with
+the $\bo C$ camera-to-world transform matrix:&lt;/p&gt;
+
+&lt;p&gt;$$ d_{\w}↖{∧} = \bo C d↖{∧}$$
+$$ O_{\w} = \bo C O$$&lt;/p&gt;
+
+&lt;p&gt;Note that assuming 4-component vectors and a 4x4 transform matrix that is used
+for both translation and rotation, the above will only work correctly if the
+fourth $w$ component of the direction vector $d↖{∧}$ is set to 0, and the $w$
+component of the point $O$ is set to 1. Remember that the camera position is
+at the origin before the transform, so $O$ will be always equal to this:&lt;/p&gt;
+
+&lt;p&gt;$$ O=[\table 0; 0; 0; 1; ] $$&lt;/p&gt;
+
+&lt;h3 id=&quot;ray-sphere-intersection&quot;&gt;Ray-sphere intersection&lt;/h3&gt;
+
+&lt;p&gt;The implicit equation of a &lt;strong&gt;sphere&lt;/strong&gt; with centre point $C$ and radius $r$:&lt;/p&gt;
+
+&lt;p&gt;$$(x-C_x)^2 + (y-C_y)^2 + (z-C_z)^2 = r^2$$&lt;/p&gt;
+
+&lt;p&gt;The parametric equation of a &lt;strong&gt;half-open line segment&lt;/strong&gt; (the ray, in our
+case), where $\O$ is the starting point, $d↖{∧}$ the direction vector and $P$
+a point on the segment for any $t≧0$:&lt;/p&gt;
+
+&lt;p&gt;$$P = O + d↖{∧}t$$&lt;/p&gt;
+
+&lt;p&gt;Written component-wise:&lt;/p&gt;
+
+&lt;p&gt;$$P_x = O_x + d_xt $$
+$$P_y = O_y + d_yt $$
+$$P_z = O_z + d_zt $$&lt;/p&gt;
+
+&lt;p&gt;To get the ray-sphere intersection points, we’ll need to substitute $P_x$,
+$P_y$ and $P_z$ into the equation of the sphere:&lt;/p&gt;
+
+&lt;p&gt;$$(O_x + d_xt - C_x)^2 + (O_y + d_yt-C_y)^2 + (O_z + d_zt-C_z)^2 = r^2$$&lt;/p&gt;
+
+&lt;p&gt;The first parenthesised expression can be expanded like this:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+(O_x + d_xt - C_x)^2 ,= O_x^2 + O_x d_xt - O_xC_x + d_xtO_x + d_x^2t^2 - d_xtC_x - C_xO_x - C_xd_xt + C_x^2;
+ ,= O_x^2 + 2O_x d_xt - 2O_xC_x + d_x^2t^2 - 2C_x d_xt + C_x^2;
+ ,= d_x^2t^2 + (2O_x d_x - 2C_x d_x)t + (O_x^2 - 2O_xC_x + C_x^2);
+ ,= d_x^2t^2 + (2d_x(O_x- C_x))t + (O_x - C_x)^2;
+}$$&lt;/p&gt;
+
+&lt;p&gt;The remaining two expressions can be expanded in a similar way, so the final
+equation will have the form of a quadratic equation $ at^2 + bt + c = 0$,
+where:&lt;/p&gt;
+
+&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
+a ,= d_x^2 + d_y^2 + d_z^2;
+b ,= 2 (d_x(O_x - C_x) + d_y(O_y - C_y) + d_z(O_z - C_z));
+c ,= (O_x - C_x)^2 + (O_y - C_y)^2 + (O_z - C_z)^2;
+}$$&lt;/p&gt;
+
+&lt;p&gt;First the discriminant $\Δ$ needs to be calculated. If $\Δ &amp;lt; 0$, the
+ray does not intersect the sphere; if $\Δ = 0$, the ray touches the sphere
+(one intersection point); and if $\Δ &amp;gt; 0$, it intersects the sphere at
+two points. The equation can be solved for $t$ by applying the following
+formula that takes care of the &lt;a href=&quot;https://en.wikipedia.org/wiki/Loss_of_significance#A_better_algorithm&quot;&gt;loss of
+significance&lt;/a&gt;
+floating-point problem:&lt;/p&gt;
+
+&lt;p&gt;$$\Δ = b^2-4ac$$&lt;/p&gt;
+
+&lt;p&gt;$$t_1 = {-b-\sgn(b)√\Δ} / {4a}\;\;\;,\;\;\;t_2 = c/{a t_1}$$&lt;/p&gt;
+
+&lt;h3 id=&quot;ray-plane-intersection&quot;&gt;Ray-plane intersection&lt;/h3&gt;
+
+&lt;p&gt;A &lt;strong&gt;plane&lt;/strong&gt; can be defined by a normal vector $n↖{∧}$ and a point $P_o$,
+where $n↖{∧}$ represents the orientation of the plane and $P_o$ how far away
+the plane is from the origin. We know that the dot product of two vectors is
+zero only if they are perpendicular to each other, from which follows that for
+every point $\P$ that lies on the plane defined by $n↖{∧}$ and $P_o$ the
+following holds true:&lt;/p&gt;
+
+&lt;p&gt;$$(P-P_o)·n↖{∧}=0$$&lt;/p&gt;
+
+&lt;p&gt;To get the ray-plane intersection point, we only need to substitute the
+parametric equation of the ray $\P = \O + d↖{∧}t$ into the above equation and
+solve it for $t$ :&lt;/p&gt;
+
+&lt;p&gt;$$(O + d↖{∧}t-P_o)·n↖{∧}=0$$
+$$d↖{∧}t·n↖{∧} + (O -P_o)·n↖{∧}=0$$
+$$t = {(P_o - O)·n↖{∧}} / {n↖{∧}·d↖{∧}}$$&lt;/p&gt;
+
+&lt;p&gt;As usual, we are interested in positive $t$ values only. If $t$ is zero (or
+very close to zero), then there is no intersection because the ray is parallel
+with the plane, either away from it or exactly coinciding with it.&lt;/p&gt;
+
+&lt;h2 id=&quot;in-the-next-episode&quot;&gt;In the next episode…&lt;/h2&gt;
+
+&lt;p&gt;Believe it or not, that’s all we maths we need to implement a very simple
+ray tracer capable of rendering planes and spheres! In the next part, we’ll
+inspect some actual Nim code that generated this singular masterpiece of 80’s
+CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
+
+&lt;figure&gt;
+    &lt;img src=&quot;/files/2016-04-30/lame-first-render.jpg&quot; style=&quot;width: 80%&quot; /&gt;
+      
+      &lt;figcaption style=&quot; width: 80%; text-align: center;&quot;&gt;This might look like total crap, but it&#39;s 16x MSAA anti-aliased, yo, and it was generated by first ray tracing &quot;engine&quot;!&lt;/figcaption&gt;
+    &lt;/figure&gt;
+
+&lt;hr /&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;suggested-reading&quot;&gt;Suggested reading&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel 2.0 – Learn Computer Graphics Programming from
+Scratch&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/section&gt;
+</description>
+                <pubDate>Sat, 30 Apr 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part2/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part2/</guid>
+            </item>
+        
+            <item>
                 <title>The Nim Ray Tracer Project &ndash; Part 1</title>
-                <description>&lt;div class=&quot;intro&quot;&gt;
-&lt;p&gt;[Listening to the albums &lt;em&gt;Reverberant Skies&lt;/em&gt; and
-&lt;em&gt;White Maps&lt;/em&gt; from &lt;em&gt;Aglaia&lt;/em&gt; in an infinite loop... A beautifully
-hypnotic experience! The track &lt;em&gt;In the First Spinning Place&lt;/em&gt; from
-&lt;em&gt;White Maps&lt;/em&gt; is my absolute favourite.]&lt;/p&gt;
-&lt;/div&gt;
+                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to the albums &lt;strong&gt;Reverberant Skies&lt;/strong&gt; and &lt;strong&gt;White Maps&lt;/strong&gt; from
+&lt;strong&gt;Aglaia&lt;/strong&gt; in an infinite loop… A beautifully hypnotic experience! The track
+&lt;strong&gt;In the First Spinning Place&lt;/strong&gt; from &lt;strong&gt;White Maps&lt;/strong&gt; is my absolute favourite.]&lt;/p&gt;
 
 &lt;h2 id=&quot;why-a-ray-tracer&quot;&gt;Why a ray tracer?&lt;/h2&gt;
 
@@ -92,6 +424,7 @@ specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; style=&quot;width: 80%&quot; /&gt;
+      
       &lt;figcaption style=&quot; width: 80%;&quot;&gt;Surely, &lt;a href=&quot;https://en.wikipedia.org/wiki/Caravaggio&quot;&gt;Caravaggio&lt;/a&gt; did not know about the &lt;a href=&quot;https://en.wikipedia.org/wiki/Fresnel_equations&quot;&gt;Fresnel equations&lt;/a&gt; or the &lt;a href=&quot;https://en.wikipedia.org/wiki/Metropolis_light_transport&quot;&gt;Metropolis light transport&lt;/a&gt; when he painted &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Calling_of_St_Matthew_(Caravaggio)&quot;&gt;The Calling of Saint Matthew&lt;/a&gt; in 1600. Yet no one would say his paintings are not realistic enough just because he did not know about the physics of light! Interestingly enough, there have been some &lt;a href=&quot;http://www.webexhibits.org/hockneyoptics/post/grundy7.html&quot;&gt;speculations&lt;/a&gt; that he might have used the &lt;a href=&quot;https://en.wikipedia.org/wiki/Camera_obscura&quot;&gt;camera obscura&lt;/a&gt; to aid him in attaining his photorealistic results, the workings of which have strong connections to the basic idea of ray tracing. Here we go!&lt;/figcaption&gt;
     &lt;/figure&gt;
 
@@ -160,6 +493,7 @@ article&lt;/a&gt;.&lt;/p&gt;
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; style=&quot;width: 100%&quot; /&gt;
+      
       &lt;figcaption style=&quot; width: 100%;&quot;&gt;The opening scene of &lt;a href=&quot;http://kentuckyroutezero.com/&quot;&gt;Kentucky Road Zero&lt;/a&gt;, Act I by &lt;a href=&quot;http://cardboardcomputer.com/&quot;&gt;Cardboard Computer&lt;/a&gt;. If David Lynch ever ventured into making a computer game, then this would be it. The unique visual style of the game proves that an unconventional, abstract approach to rendering instead of taking the well-beaten &quot;standard&quot; photorealistic path can yield much more interesting results.&lt;/figcaption&gt;
     &lt;/figure&gt;
 
@@ -177,6 +511,7 @@ using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; style=&quot;width: 100%&quot; /&gt;
+      
       &lt;figcaption style=&quot; width: 100%;&quot;&gt;One of the most beautiful games of recent years, &lt;a href=&quot;http://ethancartergame.com/&quot;&gt;The Vanishing of Ethan Carter&lt;/a&gt; pulls the player in into its highly realistic yet painterly world right from the first second of gameplay. No trace (pun intended) of physical based rendering is to be found here, yet the results speak for themselves.&lt;/figcaption&gt;
     &lt;/figure&gt;
 
@@ -232,21 +567,19 @@ Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
         
             <item>
                 <title>The Quest for a Programming Language That Doesn't Suck &ndash; Part 1</title>
-                <description>&lt;div class=&quot;intro&quot;&gt;
-&lt;p&gt;[Listening to: &lt;em&gt;Aglaia – Three Organic Experiences&lt;/em&gt;. Track #3, &lt;em&gt;Seven
+                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to: &lt;em&gt;Aglaia – Three Organic Experiences&lt;/em&gt;. Track #3, &lt;em&gt;Seven
 Ancient Glaciers&lt;/em&gt; is a definite stand-out!]&lt;/p&gt;
 
-&lt;p&gt;Welcome, stranger! This series is a journal that attempts to document my
+&lt;p class=&quot;intro&quot;&gt;Welcome, stranger! This series is a journal that attempts to document my
 trials and tribulations as I embark on the impossible journey of finding the
 perfect programming language that I can use with great joy on my hobby
 projects. An epic quest of unfathomable difficulty, indeed!&lt;/p&gt;
 
-&lt;p&gt;In this episode: after a somewhat lacklustre introductory meandering on the
+&lt;p class=&quot;intro&quot;&gt;In this episode: after a somewhat lacklustre introductory meandering on the
 merits of the multi-language approach in software development, things get
 heated up quite a bit with some good old-fashioned C++ bashing, after which
 the hero calms down and finally sets some GOALs. A rare Greek mythological
 creature also makes an appearance midway.&lt;/p&gt;
-&lt;/div&gt;
 
 &lt;h2 id=&quot;performance-vs-productivity&quot;&gt;Performance vs productivity&lt;/h2&gt;
 
@@ -372,6 +705,7 @@ for choosing it over C in the first place.&lt;/p&gt;
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-03-03/hydra_by_ruth_tay.jpg&quot; style=&quot;width: 100%&quot; /&gt;
+      
       &lt;figcaption style=&quot; width: 100%;&quot;&gt;Contrary to popular belief, C++ was well-known and feared among the ancient Greeks. The hellish abomination was commonly depicted as a fiendish, many-headed water serpent rising from the dark depths of the sea, each head representing a different programming paradigm totally incompatible with the rest of the language. The actual number of fully functional heads varies greatly and depends on the target platform, the version of the C++ standard being depicted, the compiler vendor, the exact shade of the compiler vendor&#39;s CEO&#39;s wife&#39;s niece&#39;s toe polish, and the favourite food of the chief compiler implementor&#39;s pet baby wombat. (Illustration by &lt;a href=&quot;http://ruthtaylor.nl&quot;&gt;Ruth Taylor&lt;/a&gt;)&lt;/figcaption&gt;
     &lt;/figure&gt;
 
@@ -465,6 +799,7 @@ material, check out the reading suggestions at the end of this article).&lt;/p&g
 
 &lt;figure&gt;
     &lt;img src=&quot;/files/2016-03-03/goal.jpg&quot; style=&quot;width: 100%&quot; /&gt;
+      
       &lt;figcaption style=&quot; width: 100%;&quot;&gt;After the Sony acquisition, Naughty Dog was forced to abandon Lisp in favour of C++.&lt;br /&gt;Question: What will become of Lisp code after Sony has bought your company? Answer: A block comment. (From the video &lt;a href=&quot;https://www.youtube.com/watch?v=LHvUjmlWRAI&quot;&gt;The Making of Jak &amp;amp; Daxter&lt;/a&gt;)&lt;/figcaption&gt;
     &lt;/figure&gt;
 
@@ -488,52 +823,28 @@ silently waiting to be discovered? We’ll find that out in the next part!&lt;/p
   &lt;h3 id=&quot;the-good&quot;&gt;The Good&lt;/h3&gt;
 
   &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;Making Crash Bandicoot – GOOL – part 9&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;The Legacy of GOAL&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/goal-test/&quot;&gt;Goal Test&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/10/25/lispings-ala-john-mccarthy/&quot;&gt;Lispings ala John McCarthy&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://franz.com/success/customer_apps/animation_graphics/naughtydog.lhtml&quot;&gt;Raising the Paradigm of Video Gaming – Again…Thanks to Lisp and Allegro CL&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://www.gamasutra.com/view/feature/131394/postmortem_naughty_dogs_jak_and_.php&quot;&gt;Postmortem: Naughty Dog’s Jak and Daxter: the Precursor Legacy&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;Making Crash Bandicoot – GOOL – part 9&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;The Legacy of GOAL&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/goal-test/&quot;&gt;Goal Test&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/10/25/lispings-ala-john-mccarthy/&quot;&gt;Lispings ala John McCarthy&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://franz.com/success/customer_apps/animation_graphics/naughtydog.lhtml&quot;&gt;Raising the Paradigm of Video Gaming – Again…Thanks to Lisp and Allegro CL&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.gamasutra.com/view/feature/131394/postmortem_naughty_dogs_jak_and_.php&quot;&gt;Postmortem: Naughty Dog’s Jak and Daxter: the Precursor Legacy&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 
   &lt;h3 id=&quot;the-bad&quot;&gt;The Bad&lt;/h3&gt;
 
   &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;Surviving C++&lt;/a&gt; (the comments are just as educational as the article)&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2014/06/where-is-my-c-replacement.html&quot;&gt;Where is my C++ replacement?&lt;/a&gt; (ditto)&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://yosefk.com/c++fqa/&quot;&gt;C++ FQA Lite — Defective C++&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;Surviving C++&lt;/a&gt; (the comments are just as educational as the article)&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2014/06/where-is-my-c-replacement.html&quot;&gt;Where is my C++ replacement?&lt;/a&gt; (ditto)&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://yosefk.com/c++fqa/&quot;&gt;C++ FQA Lite — Defective C++&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 
   &lt;h3 id=&quot;the-ugly&quot;&gt;The Ugly&lt;/h3&gt;
 
   &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;https://gigamonkeys.wordpress.com/2009/10/16/coders-c-plus-plus/&quot;&gt;C++ in Coders at Work&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;Linus Torvalds on C++&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/&quot;&gt;C++ is Good for the Economy, It Creates Jobs!&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://gigamonkeys.wordpress.com/2009/10/16/coders-c-plus-plus/&quot;&gt;C++ in Coders at Work&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;Linus Torvalds on C++&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/&quot;&gt;C++ is Good for the Economy, It Creates Jobs!&lt;/a&gt;&lt;/li&gt;
   &lt;/ul&gt;
 
 &lt;/section&gt;
