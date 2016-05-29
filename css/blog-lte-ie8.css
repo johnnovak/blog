@@ -1,7 +1,7 @@
 #header ul li.last:after {
   content: none; }
 
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 740px) {
   .lt-ie9 #header-bg {
     width: 452px;
     height: 415px;

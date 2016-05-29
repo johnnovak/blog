@@ -18,13 +18,15 @@
 
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=UnifrakturMaguntia">
 
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic">
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400,700">
   <!--[if lte IE 8]>
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:300" />
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400" />
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:600" />
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:700" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:400italic" />
+    <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Open+Sans:700italic" />
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400" />
     <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:700" />
 
@@ -33,11 +35,15 @@
 
   <link rel="stylesheet" type="text/css" href="/css/blog.css">
   <link rel="stylesheet" type="text/css" href="/css/jqmath-0.4.3.css">
+  <link rel="stylesheet" type="text/css" href="/css/photoswipe.css">
+  <link rel="stylesheet" type="text/css" href="/css/photoswipe-default-skin/default-skin.css">
 
-  <script src="/js/lib/modernizr.min.js"></script>
-  <script src="/js/lib/jquery-1.12.0.min.js" charset="utf-8"></script>
+  <script src="/js/lib/modernizr.min.js" charset="utf-8"></script>
+  <script src="/js/lib/jquery-1.12.3.min.js" charset="utf-8"></script>
   <script src="/js/lib/jqmath-etc-0.4.3.min.js" charset="utf-8"></script>
-  <script src="/js/blog.js"></script>
+  <script src="/js/lib/photoswipe.min.js" charset="utf-8"></script>
+  <script src="/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
+  <script src="/js/blog.js" charset="utf-8"></script>
   <!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
 
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="/feed.xml">
@@ -87,7 +93,10 @@
     </nav>
   
 
-  <p class="intro">[I have to tell that even after 34 years, <strong>Brian Eno</strong>’s ambient music is still so much better than 99.9999% of all recent electronic releases. Listening to <strong>Ambient 4: On Land</strong> from 1982; track #2 <strong>The Lost Day</strong> has a wonderfully creepy atmosphere…]</p>
+  <p class="intro">[I have to tell that even after 34 years, <em>Brian Eno</em>’s ambient
+music is still so much better than 99.9999% of all recent electronic releases.
+Listening to <em>Ambient 4: On Land</em> from 1982; track #2 <em>The Lost Day</em> has
+a wonderfully creepy atmosphere…]</p>
 
 <h2 id="the-basics">The Basics</h2>
 
@@ -139,11 +148,16 @@ systems, positive rotation is
 <a href="https://www.evl.uic.edu/ralph/508S98/coordinates.html">counter-clockwise</a>
 about the axis of rotation.</p>
 
-<figure>
-    <img src="/files/2016-04-30/coordinate-system.svg" style="width: 100%" />
-      
-      <figcaption style=" width: 70%; text-align: center;">Figure 1 &mdash; The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.</figcaption>
-    </figure>
+<figure class="image">
+  
+      <img src="/files/2016-04-30/coordinate-system.svg" alt="Figure 1 &mdash; The right-handed coordinate system used in our renderer." style="width: 100%" />
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 1 &mdash; The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.</figcaption>
+  
+</figure>
 
 <p>The choice of coordinate system handedness is nothing more than a convention:
 DirectX, Unity, Maya and Pixar’s RenderMan use left-handed coordinate systems,
@@ -230,11 +244,16 @@ s_x,   0,   0, 0;
 $w$ and $h$ the width and the height of the image in pixels and $r = w / h$
 the image aspect ratio.</p>
 
-<figure>
-    <img src="/files/2016-04-30/mappings.svg" style="width: 100%" />
-      
-      <figcaption style=" width: 100%; text-align: center;">Figure 2 &mdash; The relationships between the raster, NDC and screen spaces.</figcaption>
-    </figure>
+<figure class="image">
+  
+      <img src="/files/2016-04-30/mappings.svg" alt="Figure 2 &mdash; The relationships between the raster, NDC and screen spaces." style="width: 100%" />
+  
+
+  
+    
+    <figcaption style=" width: 100%; text-align: center;">Figure 2 &mdash; The relationships between the raster, NDC and screen spaces.</figcaption>
+  
+</figure>
 
 <p>We have to shoot the rays through the middle of the pixels, thus the $(R_x,
 R_y)$ <strong>raster coordinates</strong> of a given pixel are as follows:</p>
@@ -266,11 +285,16 @@ of view is 90° (because $\tan 90° / 2 = \tan 45° = 1 = \BC $), and
 the length of $\BC$ is actually the $f$ <strong>field of view factor</strong> of the
 camera.</p>
 
-<figure>
-    <img src="/files/2016-04-30/fov.svg" style="width: 100%" />
-      
-      <figcaption style=" width: 100%; text-align: center;">Figure 3 &mdash; Calculating the vertical field of view (FOV) factor.</figcaption>
-    </figure>
+<figure class="image">
+  
+      <img src="/files/2016-04-30/fov.svg" alt="Figure 3 &mdash; Calculating the vertical field of view (FOV) factor." style="width: 100%" />
+  
+
+  
+    
+    <figcaption style=" width: 100%; text-align: center;">Figure 3 &mdash; Calculating the vertical field of view (FOV) factor.</figcaption>
+  
+</figure>
 
 <p>$$\tan α / 2 = \BC / \AB = \BC / 1$$
 $$\BC = \tan α / 2 = f$$</p>
@@ -400,11 +424,18 @@ ray tracer capable of rendering planes and spheres! In the next part, we’ll
 inspect some actual Nim code that generated this singular masterpiece of 80’s
 CGI art below. (Well, you gotta start somewhere, right?)</p>
 
-<figure>
-    <img src="/files/2016-04-30/lame-first-render.jpg" style="width: 80%" />
-      
-      <figcaption style=" width: 80%; text-align: center;">This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing "engine"!</figcaption>
-    </figure>
+<figure class="image">
+  
+    <a href="/files/2016-04-30/lame-first-render.jpg" data-width="1200" data-height="800">
+      <img src="/files/2016-04-30/lame-first-render.jpg" alt="My lame first render" style="width: 80%" />
+    </a>
+  
+
+  
+    
+    <figcaption style=" width: 80%;">This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing "engine"!</figcaption>
+  
+</figure>
 
 <hr />
 

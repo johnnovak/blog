@@ -323,7 +323,7 @@ td {
       margin: 15px 4px 15px 0; }
       .post .tags li a {
         font-size: 15px; } }
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 740px) {
   body {
     margin: 0; }
 
@@ -354,11 +354,11 @@ td {
     background-size: 450px 413px;
     z-index: 0;
     pointer-events: none; } }
-  @media only screen and (min-width: 900px) and (-webkit-min-device-pixel-ratio: 2), only screen and (min-width: 900px) and (min--moz-device-pixel-ratio: 2), only screen and (min-width: 900px) and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-width: 900px) and (min-device-pixel-ratio: 2), only screen and (min-width: 900px) and (min-resolution: 192dpi), only screen and (min-width: 900px) and (min-resolution: 2dppx) {
+  @media only screen and (min-width: 740px) and (-webkit-min-device-pixel-ratio: 2), only screen and (min-width: 740px) and (min--moz-device-pixel-ratio: 2), only screen and (min-width: 740px) and (-o-min-device-pixel-ratio: 2 / 1), only screen and (min-width: 740px) and (min-device-pixel-ratio: 2), only screen and (min-width: 740px) and (min-resolution: 192dpi), only screen and (min-width: 740px) and (min-resolution: 2dppx) {
     #header-bg {
       background-image: url("/img/bg-header@2x.png"); } }
 
-@media only screen and (min-width: 900px) {
+@media only screen and (min-width: 740px) {
   .post {
     margin-bottom: 60px; }
     .post header h1 {
