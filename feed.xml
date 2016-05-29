@@ -700,8 +700,8 @@ care about your users and cannot afford to be grossly inefficient, just stay
 away from web technologies on the desktop. You don’t want to build a castle on
 sand.&lt;/p&gt;
 
-&lt;p&gt;{: .warning} I think of it as my duty to point out that the Electron framework
-carries a terrible potential for misuse when fallen into the wrong hands. The
+&lt;p class=&quot;warning&quot;&gt;I think of it as my duty to point out that the Electron framework carries
+a terrible potential for misuse when fallen into the wrong hands. The
 &lt;a href=&quot;https://github.com/maxogden/monu&quot;&gt;Monu&lt;/a&gt; OS X only process monitoring menu bar
 application built using Electron weighs &lt;strong&gt;no less than 189 MiB on disk!&lt;/strong&gt; Yes,
 you read that right: a heavyweight cross-platform framework featuring
@@ -887,7 +887,7 @@ don’t think they would be good fits for serious desktop apps):&lt;/p&gt;
   &lt;tr class=&quot;sep&quot;&gt;
     &lt;td class=&quot;h&quot;&gt;Total&lt;/td&gt;
     &lt;td&gt;&lt;span style=&quot;color: red; font-size: 120%; font-weight: 900&quot;&gt;- - - - - - -&lt;/span&gt;&lt;/td&gt;
-    &lt;td&gt;&lt;span style=&quot;color: red; font-size: 120%; font-weight: 900&quot;&gt;-&lt;/span&gt;&lt;/td&gt;
+    &lt;td&gt;&lt;span style=&quot;color: #666; font-weight: 900&quot;&gt;0&lt;/span&gt;&lt;/td&gt;
     &lt;td&gt;&lt;span style=&quot;color: red; font-size: 120%; font-weight: 900&quot;&gt;- - -&lt;/span&gt;&lt;/td&gt;
   &lt;/tr&gt;
 &lt;/table&gt;
