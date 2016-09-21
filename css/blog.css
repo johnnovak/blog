@@ -150,6 +150,10 @@ blockquote {
     content: 'Warning ';
     color: #944; }
 
+.important {
+  padding: 0.6em 1em;
+  background: #d2e9e5; }
+
 hr {
   margin-top: 40px;
   border: 1px solid #aaa;
@@ -291,8 +295,9 @@ article header h1 {
     .post figcaption a {
       font-weight: 600; }
   .post pre {
-    margin: 1.3em 0;
-    padding: 0;
+    margin: 0;
+    padding: 0.5em 0;
+    background: #eee;
     font: 14px "Inconsolata", serif;
     line-height: 18px;
     font-weight: 400;
@@ -676,36 +681,15 @@ article header h1 {
   font-weight: 600; }
 
 /* Keyword.Type */
-.s {
-  color: #26a; }
-
-/* Literal.String */
 /* Name.Attribute */
-.nb {
-  color: #3e999f; }
-
-/* Name.Builtin */
 /* Name.Class */
 /* Name.Constant */
 /* Name.Decorator */
 /* Name.Entity */
-.ne {
-  color: #c82829; }
-
-/* Name.Exception */
-.nf {
-  color: #3aa08f;
-  font-weight: 600; }
-
-/* Name.Function */
 /* Name.Label */
 /* Name.Namespace */
 /* Name.Tag */
 /* Name.Variable */
-.ow {
-  color: #4271ae; }
-
-/* Operator.Word */
 /* Text.Whitespace */
 mtable.ma-legend-align > mtr > mtd:first-child + mtd,
 fmath span.ma-legend-align > table > tbody > tr > td:first-child + td {

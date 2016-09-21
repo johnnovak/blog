@@ -7,6 +7,748 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>What every coder should know about gamma</title>
+                <description>&lt;h2 id=&quot;a-short-quiz&quot;&gt;A short quiz&lt;/h2&gt;
+
+&lt;p&gt;If you have ever written, or are planning to write, &lt;em&gt;any kind of code&lt;/em&gt; that
+deals with image processing, you should complete the below quiz. If you have answered
+one or more questions with a yes, there’s a high chance that your code is
+doing the wrong thing and will produce incorrect results. This might not be
+immediately obvious to you because these issues can be subtle and they’re
+easier to spot in some problem domains than in others.&lt;/p&gt;
+
+&lt;p&gt;So here’s the quiz:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;I don’t know what gamma correction is (duh!)&lt;/li&gt;
+  &lt;li&gt;Gamma is a relic from the CRT display era; now that almost everyone uses
+LCDs, it’s safe to ignore it.&lt;/li&gt;
+  &lt;li&gt;Gamma is only relevant for graphics professionals working in the print
+industry where accurate colour reproduction is of great
+importance—for general image processing, it’s safe to ignore it.&lt;/li&gt;
+  &lt;li&gt;I’m a game developer, I don’t need to know about gamma.&lt;/li&gt;
+  &lt;li&gt;The graphics libraries of my operating system handle gamma correctly.&lt;sup id=&quot;fnref:osgamma&quot;&gt;&lt;a href=&quot;#fn:osgamma&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/li&gt;
+  &lt;li&gt;The popular graphics library &lt;em&gt;&amp;lt;insert name here&amp;gt;&lt;/em&gt; I’m using handles gamma correctly.&lt;/li&gt;
+  &lt;li&gt;Pixels with RGB values of (128, 128, 128) emit about half as much light as
+pixels with RGB values of (255, 255, 255).&lt;/li&gt;
+  &lt;li&gt;It is okay to just load pixel data from a popular image format (JPEG, PNG,
+GIF etc.) into a buffer using some random library and run image processing
+algorithms on the raw data directly.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Don’t feel bad if you have answered most with a yes! I would have given
+a yes to most of these questions a week ago myself too.  Somehow, the topic
+of gamma is just under most computer users’ radar (including programmers
+writing commercial graphics software!), to the extent that most graphics
+libraries, image viewers, photo editors and drawing software of today still
+don’t get gamma right and produce incorrect results.&lt;/p&gt;
+
+&lt;p&gt;So keep on reading, and by the end of this article you’ll be more
+knowledgeable about gamma than the vast majority of programmers!&lt;/p&gt;
+
+&lt;h2 id=&quot;the-arcane-art-of-gamma-correctness&quot;&gt;The arcane art of gamma-correctness&lt;/h2&gt;
+
+&lt;p&gt;Given that vision is arguably the most important sensory input channel for
+human-computer interaction, it is quite surprising that gamma correction is
+one of the least talked about subjects among programmers and it’s mentioned in
+technical literature rather infrequently, &lt;em&gt;including&lt;/em&gt; computer graphics texts.
+The fact that most computer graphics textbooks don’t explicitly mention the
+importance of correct gamma handling, or discuss it in practical terms, does
+not help matters at all (my &lt;a href=&quot;http://sirkan.iit.bme.hu/~szirmay/szamgraf.html&quot;&gt;CG textbook from
+uni&lt;/a&gt; falls squarely into this
+category, I’ve just checked). Some books mention gamma correction in passing
+in somewhat vague and abstract terms, but then provide neither concrete
+real-world examples on how to do it properly, nor explain what the
+implications of not doing it properly are, nor show image examples of
+incorrect gamma handling.&lt;/p&gt;
+
+&lt;p&gt;I came across the need for correct gamma handling during writing my &lt;a href=&quot;/tag/ray tracing/&quot;&gt;ray
+tracer&lt;/a&gt; and I had to admit that my understanding of the
+topic was rather superficial and incomplete. So I had spent a few days reading
+up on it online, but it turned out that many articles about gamma are not much
+help either, as many of them are too abstract and confusing, some contain too
+many interesting but otherwise irrelevant details, and then some others lack
+image examples or are just simply incorrect or hard to understand. Gamma is
+not a terribly difficult concept to begin with, but for some mysterious reason
+it’s not that trivial to find articles on it that are correct, complete and
+explain the topic in a clear language.&lt;/p&gt;
+
+&lt;h2 id=&quot;what-is-gamma-and-why-do-we-need-it&quot;&gt;What is gamma and why do we need it?&lt;/h2&gt;
+
+&lt;p&gt;Alright, so this is my attempt to offer a comprehensive explanation of gamma,
+focusing just on the most important aspects and assuming no prior knowledge of
+it.&lt;/p&gt;
+
+&lt;p&gt;The image examples in this article assume that you are viewing this web page in
+a modern browser on a computer monitor (CRT or LCD, doesn’t matter). Tablets
+and phones are generally quite inaccurate compared to monitors, so try to
+avoid those. You should be viewing the images in a dimly lit room, so no
+direct lights or flare on your screen please.&lt;/p&gt;
+
+&lt;h3 id=&quot;light-emission-vs-perceptual-brightness&quot;&gt;Light emission vs perceptual brightness&lt;/h3&gt;
+
+&lt;p&gt;Believe it or not, the difference of &lt;strong&gt;light energy emission&lt;/strong&gt; between any two
+neighbouring vertical bars in the below image is a &lt;em&gt;constant&lt;/em&gt;. In other words,
+the amount of light energy emitted by your screen increases by a &lt;em&gt;constant
+amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/linear-ramp32.png&quot; alt=&quot;Figure 1 &amp;mdash; Evenly-spaced greyscale bars in terms of emitted light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 1 &amp;mdash; Evenly-spaced greyscale bars in terms of emitted light intensity (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Now consider the following image:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 2 &amp;mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 2 &amp;mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;On which image does the gradiation appear more even? It’s the second one! But
+why is that so? We have just established that in the first image the bars are
+evenly (&lt;em&gt;linearly&lt;/em&gt;) spaced in terms of emitted light intensity between the
+darkest black and brightest white your monitor is capable of reproducing. But
+why don’t we see that as a nice even gradiation from black to white then? And
+what is being displayed on the second image that we &lt;em&gt;perceive&lt;/em&gt; as a linear
+gradiation?&lt;/p&gt;
+
+&lt;p&gt;The answer lies in the response of the human eye to light intensity, which is
+&lt;em&gt;non-linear&lt;/em&gt;. One the first image, the &lt;strong&gt;difference&lt;/strong&gt; between the nominal light
+intensity of any two neighbouring bars is constant:&lt;/p&gt;
+
+&lt;p&gt;$$\Δ_{\linear} = I_n-I_{n-1}$$&lt;/p&gt;
+
+&lt;p&gt;On the second image, however, the &lt;strong&gt;ratio&lt;/strong&gt; of the nominal light intensity of
+any two neighbouring bars is constant:&lt;/p&gt;
+
+&lt;p&gt;$$\Δ_{\ratio} = I_n / I_{n-1}$$&lt;/p&gt;
+
+&lt;p class=&quot;important&quot;&gt;Because of this, we say that there is a &lt;strong&gt;power law relationship&lt;/strong&gt; between
+&lt;strong&gt;nominal physical light intensity&lt;/strong&gt; and &lt;strong&gt;perceptual brightness&lt;/strong&gt;. We can
+also say that humans perceive brightness in a &lt;strong&gt;logarithmic&lt;/strong&gt; way.&lt;/p&gt;
+
+&lt;p&gt;All human sensory perception follows a similar &lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;power law
+relationship&lt;/a&gt; in terms of
+the magnitude of stimulus and its perceived intensity.&lt;/p&gt;
+
+&lt;h3 id=&quot;physical-vs-perceptual-linearity&quot;&gt;Physical vs perceptual linearity&lt;/h3&gt;
+
+&lt;p&gt;Let’s say we wanted to store a representation of the following real-world
+object as an image file on the computer (let’s pretend for a moment
+that perfect greyscale gradients exist in the real world, okay?) Here’s how
+the “real world object” looks like:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/linear-ramp.png&quot; alt=&quot;Figure 3 &amp;mdash; Ideal smooth greyscale ramp&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 3 &amp;mdash; Ideal smooth greyscale ramp (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Now, let’s pretend that we can only store 5-bit greyscale images on this
+particular computer system, which gives us 32 distinct shades of grey ranging
+from absolute black to absolute white. Also, on this computer, greyscale
+values are &lt;em&gt;proportional&lt;/em&gt; with their corresponding physical light intensities,
+which will result in a 32-element greyscale as shown on Figure 1. We can say
+that this greyscale is &lt;em&gt;linear&lt;/em&gt; in terms of &lt;em&gt;light emission&lt;/em&gt; between
+successive values.&lt;/p&gt;
+
+&lt;p&gt;If we encoded our smooth gradient using only these 32 grey values, we would get
+something like this (let’s just ignore dither for now to keep things simple):&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/linear-ramp32-perceptual.png&quot; alt=&quot;Figure 4 &amp;mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 4 &amp;mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Well, the transitions are rather abrupt, especially on the left side, because
+we only had 32 grey values to work with. If we squint a little, it’s easy to
+convince ourselves that this is a more or less “accurate” representation of
+the smooth gradient, as far as our limited bit-depth allows it. But note how
+the steps are much larger on the left side than on the right—this is because
+we are using a greyscale that is &lt;em&gt;linear&lt;/em&gt; in terms of &lt;em&gt;emitted light
+intensity&lt;/em&gt;, but as we have mentioned before, our eyes don’t perceive light
+intensity in a linear way!&lt;/p&gt;
+
+&lt;p&gt;This observation has some interesting implications. The error between the
+original and the 5-bit encoded version is uneven across the image; it’s much
+larger for dark values than for light ones. In other words, we are losing
+representational precision for dark values and are using relatively too much
+precision for lighter shades.  Clearly, we’d be better off choosing
+a different set of 32 greys for our limited palette of shades that would make
+this error evenly distributed across the whole range, so both dark and light
+shades would be represented with the same precision. If we encoded our
+original image with such a greyscale that is &lt;em&gt;perceptually linear&lt;/em&gt;, but
+consequently &lt;em&gt;non-linear&lt;/em&gt; in terms of emitted light intensity, and that
+non-linearity would match that of the human vision, we’d get the exact same
+greyscale image we have already seen in Figure 2:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 5 &amp;mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Figure 5 &amp;mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p class=&quot;important&quot;&gt;The non-linearity we’re talking about here is the &lt;strong&gt;power law&lt;/strong&gt; relationship
+we mentioned before, and the non-linear transformation we need to apply to our
+&lt;em&gt;physically linear&lt;/em&gt; greyscale values to transform them into &lt;em&gt;perceptually
+linear&lt;/em&gt; values is called &lt;strong&gt;gamma correction&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;efficient-image-encoding&quot;&gt;Efficient image encoding&lt;/h3&gt;
+
+&lt;p&gt;Why is the all the above important? Colour data in so-called “true colour” or
+“24-bit” bitmap images is stored as three 8-bit integers per pixel.  With
+8 bits, 256 distinct intensity levels can be represented, and if the spacing
+of these levels were physically linear, we would be losing a lot of precision
+on dark shades while being unnecessarily precise on light shades (relatively
+speaking), as shown above.&lt;/p&gt;
+
+&lt;p&gt;Clearly, this is not ideal. One solution would be to simply keep using the
+physically linear scale and increase the bit depth per channel to 16 (or
+more).  This would double the storage requirements (or worse), which was not
+an option when most common image formats were invented. Therefore, a different
+approach was taken. The idea was to let the 256 distinct levels represent
+intensity values on a perceptually linear scale instead, in which case the
+vast majority of images could be adequately represented on just 8 bits per
+colour channel.&lt;/p&gt;
+
+&lt;p class=&quot;important&quot;&gt;The transformation used to represent the &lt;em&gt;physically linear&lt;/em&gt; intensity data
+either generated synthetically via an algorithm or captured by a linear device
+(such as a CMOS of a digital camera or a scanner) with the discrete values of
+the &lt;em&gt;perceptually linear&lt;/em&gt; scale is called &lt;strong&gt;gamma encoding&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;The 24-bit &lt;a href=&quot;https://en.wikipedia.org/wiki/RGB_color_model#Video_framebuffer&quot;&gt;RGB colour
+model&lt;/a&gt;
+(RGB24) used on virtually all consumer level electronic devices uses 8-bit
+&lt;a href=&quot;https://en.wikipedia.org/wiki/RGB_color_model#Nonlinearity&quot;&gt;gamma encoded
+values&lt;/a&gt; per
+channel to represent light intensities. If you recall what we discussed
+earlier, this means that pixels with RGB(128, 128, 128) will &lt;em&gt;not&lt;/em&gt; emit
+approximately 50% the light energy of pixels with RGB(255, 255, 255), but only
+about 22%! That makes perfect sense! Because of the non-linear nature of human
+vision, a light source needs to be attenuated to about 22% of its original
+light intensity to appear half as bright to humans.  RGB(128, 128, 128)
+&lt;em&gt;appears&lt;/em&gt; to be half as bright as RGB(255, 255, 255) to us! If you find this
+confusing, reflect a bit on it because it’s crucial to have a solid
+understanding of what has been discussed so far (trust me, it will only get
+more confusing).&lt;/p&gt;
+
+&lt;p&gt;Of course, gamma encoding is always done with the assumption that the image is
+ultimately meant to be viewed by humans on computer screens. In some way, you
+can think of it as a lossy MP3 like compression but for images. For other
+purposes (e.g. scientific analysis or images meant for further
+post-processing), using floats and sticking with the linear scale is often
+a much better choice, as we’ll later see.&lt;/p&gt;
+
+&lt;h3 id=&quot;the-gamma-transfer-function&quot;&gt;The gamma transfer function&lt;/h3&gt;
+
+&lt;p&gt;The process of converting values from linear space to gamma space is called
+&lt;strong&gt;gamma encoding&lt;/strong&gt; (or &lt;em&gt;gamma compression&lt;/em&gt;), and the reverse &lt;strong&gt;gamma
+decoding&lt;/strong&gt; (or &lt;em&gt;gamma expansion&lt;/em&gt;).&lt;/p&gt;
+
+&lt;p&gt;The formulas for these two operations are very simple, we only need to use the
+aforementioned power law function:&lt;/p&gt;
+
+&lt;p&gt;$$\V_{\encoded} = \V_{\linear} ^ {1/\γ}$$&lt;/p&gt;
+
+&lt;p&gt;$$\V_{\linear} = \V_{\encoded} ^ {\γ}$$&lt;/p&gt;
+
+&lt;p&gt;The &lt;strong&gt;standard gamma (γ)&lt;/strong&gt; value to use in computer display systems is
+&lt;strong&gt;2.2&lt;/strong&gt;. The main greason for this is because a gamma of 2.2 approximately
+matches the power law sensitivity of human vision. The exact value that should
+be used varies from person to person and also depends on the lighting
+conditions and other factors, but a standard value had to be chosen and 2.2
+was good enough. Don’t be too hung up on this.&lt;/p&gt;
+
+&lt;p&gt;Now, a very important point that many texts fail to mention is that the input
+values have to be in the 0 to 1 range and the output will be consequently
+mapped to the same range too. From this follows the slightly counter-productive
+fact that gamma values between 0 and 1 are used for &lt;strong&gt;encoding&lt;/strong&gt;
+(compression) and greater than 1 for &lt;strong&gt;decoding&lt;/strong&gt; (expansion).
+The below charts demonstrate the gamma transfer functions for encoding and
+decoding, plus the trivial linear gamma (γ=1.0) case:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/gamma.svg&quot; alt=&quot;Figure 6 &amp;mdash; Gamma transfer functions&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 6 &amp;mdash; Gamma transfer functions (&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammatransfer.nim&quot;&gt;Nim source code&lt;/a&gt;)&lt;br /&gt;&lt;br /&gt; a) encoding gamma, or gamma compression (γ=1/2.2≈0.4545)&lt;br /&gt;b) linear gamma (γ=1.0)&lt;br /&gt;c) decoding gamma, or gamma expansion (γ=2.2)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;We have only seen greyscale examples so far, but there’s nothing special about
+RGB images—we just simply need to encode or decode each colour channel
+individually using the same method.&lt;/p&gt;
+
+&lt;h3 id=&quot;gamma-vs-srgb&quot;&gt;Gamma vs sRGB&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/SRGB&quot;&gt;sRGB&lt;/a&gt; is a colour space that is the
+de-facto standard for consumer electronic devices nowadays, including
+monitors, digital cameras, scanners, printers and handheld devices. It is
+also the standard colour space for images on the Internet.&lt;/p&gt;
+
+&lt;p&gt;The sRGB specification defines what gamma to use for encoding and decoding
+sRGB images (among other things such as colour gamut, but these are not
+relevant to our current discussion). sRGB gamma is very close to a standard
+gamma of 2.2, but it has a short linear segment in the very dark range to
+avoid a slope of infinity at zero (this is more convenient in numeric
+calculations). The formulas to convert from linear to sRGB and back can be
+found
+&lt;a href=&quot;https://en.wikipedia.org/wiki/SRGB#Specification_of_the_transformationhere&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;You don’t actually need to understand all these finer details; the important
+thing to know is that in 99% of the cases you’ll want to use sRGB instead of
+plain gamma. The reason for this is that all graphics cards have hardware sRGB
+support since 2005 or so, so decoding and encoding is virtually for free most
+of the time. The native colour space of your monitor is most likely sRGB
+(unless it’s a professional monitor for graphics, photo or video work) so if
+you just chuck an sRGB encoded pixel data into the framebuffer, the resulting
+image will look correct on the screen (given the monitor is properly
+calibrated). Popular image formats such as JPEG and PNG can store colour space
+information, but very often images don’t contain such data, in which case
+virtually all image viewers and browsers will interpret them as sRGB by
+convention.&lt;/p&gt;
+
+&lt;h3 id=&quot;gamma-calibration&quot;&gt;Gamma calibration&lt;/h3&gt;
+
+&lt;p&gt;We have talked about gamma encoding and decoding so far, but what is &lt;strong&gt;gamma
+calibration&lt;/strong&gt; then? I found this bit slightly confusing too, so let me clear
+it up.&lt;/p&gt;
+
+&lt;p&gt;As mentioned, 99% of all monitors today use the sRGB colour space natively,
+but due to manufacturing inaccuracies most monitors would benefit from some
+additional gamma calibration to achieve the best results. Now, if you never
+calibrated your monitor, that doesn’t mean that it will not use gamma! That is
+simply impossible, most CRT and LCD displays in the past and present have been
+designed and manufactured to operate in sRGB.&lt;/p&gt;
+
+&lt;p&gt;Think of gamma calibration as fine tuning. Your monitor will always operate in
+sRGB, but by calibrating it (either in the video card driver or on the OS
+level) the monitor’s gamma transfer curve will more closely match the ideal
+gamma transfer function we discussed earlier. Also, years ago it was possible
+to shoot yourself in the foot in various creative ways by applying multiple
+gamma correction stages in the graphics pipeline (e.g. video card, OS and
+application level), but fortunately this is handled more intelligently
+nowadays. For example, on my Windows 7 box, if I turn on gamma calibration in
+the NVIDIA Control Panel then the OS level calibration will be disabled and
+vice versa.&lt;/p&gt;
+
+&lt;h3 id=&quot;processing-gamma-encoded-images&quot;&gt;Processing gamma-encoded images&lt;/h3&gt;
+
+&lt;p&gt;So, if virtually the whole world defaults to sRGB, what is exactly the
+problem?  If our camera writes sRGB JPEG files, we can just decode the JPEG
+data, copy it into the framebuffer of the graphics card and the image would be
+displayed correctly on our sRGB LCD monitor (where “correctly” means it would
+more or less accurately represent the photographed real-world scene).&lt;/p&gt;
+
+&lt;p&gt;The problem will happen in the moment we start running any image processing
+algorithms on our sRGB pixel buffer directly. Remember, gamma encoding is
+a non-linear transformation and sRGB encoding is basically just a funky way of
+doing gamma encoding of around γ=1/2.2. Virtually all image processing
+algorithms you will find in any computer graphics text will assume pixel data
+with  &lt;em&gt;linearly encoded light intensities&lt;/em&gt;, which means that feeding these
+algorithms with sRGB encoded data will render the results subtly—or in
+some cases quite obviously—wrong! This includes resizing, blurring,
+compositing, interpolating between pixel values, antialiasing and so on, just
+to name the most common operations!&lt;/p&gt;
+
+&lt;h2 id=&quot;effects-of-gamma-incorrectness&quot;&gt;Effects of gamma-incorrectness&lt;/h2&gt;
+
+&lt;p&gt;Alright, enough theory talk, show me how these errors actually look like!
+That’s exactly what we’ll do in this section; we will examine the most common
+scenarios when running image processing algorithms directly on sRGB data would
+manifest in incorrect results. Apart from illustrative purposes, these
+examples are also useful for spotting gamma-incorrect behaviour or bugs in
+drawing programs and image processing libraries.&lt;/p&gt;
+
+&lt;p&gt;It must be noted that I have chosen examples that clearly demonstrate the
+problems with gamma-incorrectness. In most cases, the issues are the most
+obvious when using vivid, saturated colours. With more muted colours, the
+differences might be less noticeable or even negligible &lt;em&gt;in some cases&lt;/em&gt;.
+However, the errors are always present, and image processing programs should work
+correctly for all possible inputs, not just okayish for 65.23% of all possible
+images… Also, in the area of physically based rendering gamma correctness is
+an absolute must, as we’ll see.&lt;/p&gt;
+
+&lt;h3 id=&quot;gradients&quot;&gt;Gradients&lt;/h3&gt;
+
+&lt;p&gt;The image below shows the difference between gradients calculated in linear
+(top gradient) and sRGB space (bottom gradient). Note how direct interpolation
+on the sRGB values yields much darker and sometimes more saturated looking
+images.&lt;/p&gt;
+
+&lt;p&gt;Just going by the looks, one might prefer the look of the sRGB-space versions,
+especially for the last two. However, that’s not how light would behave
+in the real world (imagine two coloured light sources illuminating a white
+wall; the colours would mix as in the linear-space case).&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/gradient.png&quot; alt=&quot;Figure 7 &amp;mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)&quot; style=&quot;width: 80%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 80%; text-align: center;&quot;&gt;Figure 7 &amp;mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)&lt;br /&gt;(&lt;a href=&quot;https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gradient.nim&quot;&gt;Nim source code&lt;/a&gt;).&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Almost everybody does this the wrong way: CSS gradients and transitions are
+wrong (see &lt;a href=&quot;https://lists.w3.org/Archives/Public/www-style/2012Jan/0607.htmlo&quot;&gt;this
+thread&lt;/a&gt; for
+details), Photoshop is wrong (as of version CS6) and there’s not even an option
+to fix it.&lt;/p&gt;
+
+&lt;p&gt;Two drawing programs that got this (and gamma-correctness in general) right
+are &lt;a href=&quot;https://krita.org/&quot;&gt;Krita&lt;/a&gt; and &lt;a href=&quot;http://www.pixelmator.com/&quot;&gt;Pixelmator&lt;/a&gt;.
+SVG also &lt;a href=&quot;https://www.w3.org/TR/SVG/painting.html#ColorInterpolationProperties&quot;&gt;let’s the user to
+specify&lt;/a&gt;
+whether to use linear or sRGB-space interpolations for gradients, compositing
+and animations.&lt;/p&gt;
+
+&lt;h3 id=&quot;colour-blending&quot;&gt;Colour blending&lt;/h3&gt;
+
+&lt;p&gt;Drawing with soft brushes in gamma-incorrect drawing programs can result in
+weird darkish transition bands with certain vivid colour combinations.
+This is really a variation of the gradient problem if you think about it (the
+transition band of a soft brush is nothing else than a small gradient).&lt;/p&gt;
+
+&lt;p&gt;Some random people claimed on the Adobe forums that by doing this Photoshop is
+really mimicking how mixing paints would work in real life. Well, no, it
+has nothing to do with that. It’s just the result of naive programming to work
+directly on the sRGB pixel data and now we’re stuck with that as the default
+legacy behaviour.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option &#39;Blend RGB Colors Using Gamma 1.0&#39; was enabled in Photoshop CS6, on the right it was disabled (that&#39;s the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option &#39;Blend RGB Colors Using Gamma 1.0&#39; was enabled in Photoshop CS6, on the right it was disabled (that&#39;s the default gamma-incorrect legacy mode).&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h3 id=&quot;alpha-blending--compositing&quot;&gt;Alpha blending / compositing&lt;/h3&gt;
+
+&lt;p&gt;As another variation on colour blending, let’s see how alpha blending holds
+up. We’ll examine some coloured rectangles first. As expected, the
+gamma-correct image on the left mimics how light would behave in real life,
+while the sRGB space blending on the right exhibits some weird hue and
+brightness shifts.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/opacity.png&quot; alt=&quot;Figure 9 &amp;mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.&quot; style=&quot;width: 100%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 9 &amp;mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;The appearance of false colours is also noticeable when blending two photos
+together. On the gamma-correct image on the left, the skin tones and the reds
+and yellows are preserved but faded into the blueish image in a natural way,
+while on the right image there’s a noticeable overall greenish cast. Again,
+this might be an effect you like, but it’s not how accurate alpha
+compositing should work.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/blending.jpg&quot; data-width=&quot;1260&quot; data-height=&quot;862&quot;&gt;
+      &lt;img src=&quot;/files/2016-09-21/blending.jpg&quot; alt=&quot;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images. The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;/a&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images. The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h3 id=&quot;image-resizing&quot;&gt;Image resizing&lt;/h3&gt;
+
+&lt;p&gt;These examples will only work if your browser doesn’t do any rescaling on the
+images below. Also, note that screens of mobile devices are more inaccurate
+with regards to gamma than regular monitors, so for best results try to view
+this on a desktop computer.&lt;/p&gt;
+
+&lt;p&gt;The image below contains a simple black and white checkerboard pixel pattern
+(100% zoom on the left, 400% zoom on the right). The black pixels are
+RGB(0,0,0), the minimum light intensity your monitor is capable of producing,
+and the white ones RGB(255,255,255), which is the maximum intensity. Now, if
+you squint a little, your eyes will blur (average) the light coming from the
+image, so you will see a grey that’s halfway in intensity between absolute
+black and white (therefore it’s referred to as &lt;strong&gt;50% grey&lt;/strong&gt;).&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/resize-large.png&quot; alt=&quot;Figure 11 &amp;mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.&quot; style=&quot;width: 220px&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 80%; text-align: center;&quot;&gt;Figure 11 &amp;mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;From this follows that if we resized the image by 50%, a similar averaging
+process should happen, but now algorithmically on the pixel data. We expect
+to get a solid rectangle filled with the same 50% grey that we saw when we
+squinted.&lt;/p&gt;
+
+&lt;p&gt;Let’s try it out! On the image below, &lt;em&gt;A&lt;/em&gt; is the checkerboard pattern, &lt;em&gt;B&lt;/em&gt; the
+result of resizing the pattern by 50% directly in sRGB-space (using bicubic
+interpolation), and &lt;em&gt;C&lt;/em&gt; the resizing it in linear space, then converted to
+sRGB.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/resize.png&quot; alt=&quot;Figure 12 &amp;mdash; Effects of gamma-incorrect image resizing. &amp;lt;em&amp;gt;A&amp;lt;/em&amp;gt; is the pixel checkerboard pattern, &amp;lt;em&amp;gt;B &amp;lt;/em&amp;gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &amp;lt;em&amp;gt;C&amp;lt;/em&amp;gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).&quot; style=&quot;width: 316px&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 80%; text-align: center;&quot;&gt;Figure 12 &amp;mdash; Effects of gamma-incorrect image resizing. &lt;em&gt;A&lt;/em&gt; is the pixel checkerboard pattern, &lt;em&gt;B &lt;/em&gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &lt;em&gt;C&lt;/em&gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Unsurprisingly, &lt;em&gt;C&lt;/em&gt; gives the correct result, but the shade of grey might not
+be an exact match for the blurred checkerboard pattern on your monitor if
+it’s not properly gamma-calibrated. Even the math shows this clearly: a 50%
+grey pixel that emits half as much light as a white pixel should have a RGB
+value of around (186,186,186), gamma-encoded:&lt;/p&gt;
+
+&lt;p&gt;$$0.5^{1\/2.2} ≈ 0.72974$$
+$$0.72974·255 = 186$$&lt;/p&gt;
+
+&lt;p&gt;(Don’t worry that on the image the 50% grey is RGB(187,187,187). That small
+difference is because the image is sRGB-encoded, but I used the much simpler
+gamma formula for my calculation here.)&lt;/p&gt;
+
+&lt;p&gt;Gamma-incorrect resizing can also result in weird hue shifts on some images.
+For more details, read &lt;a href=&quot;http://www.4p8.com/eric.brasseur/gamma.html&quot;&gt;Eric Brasseur’s excellent
+article&lt;/a&gt; on the matter.&lt;/p&gt;
+
+&lt;h3 id=&quot;antialiasing&quot;&gt;Antialiasing&lt;/h3&gt;
+
+&lt;p&gt;I guess it’s no surprise at this point that antialiasing it no exception when
+it comes to gamma-correctness. Antialiasing in γ=2.2 space results in overly
+dark “smoothing pixels” (right image); the text appears too heavy, almost as if
+it was bold. Running the algorithm in linear space produces much better
+results (left image), although in this case the font looks a bit too thin.
+Interestingly, Photoshop antialiases text using γ=1.42 by default, and this
+indeed seems to yield the best looking results (middle image). I don’t know
+the explanation for this, but the take-away point is that antialaising in sRGB
+space is almost never what you want.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option &#39;Blend Text Colors Using Gamma&#39; set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 623px;&quot;&gt;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option &#39;Blend Text Colors Using Gamma&#39; set to 1.0, the middle one with 1.45, and the right one with 2.2.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h3 id=&quot;physically-based-rendering&quot;&gt;Physically-based rendering&lt;/h3&gt;
+
+&lt;p&gt;If there’s a single area where gamma-correctness is an absolute must, that’s
+physically-based rendering (PBR). To obtain realistic looking results, gamma
+should be handled correctly throughout the whole graphics pipeline. There’s
+so many ways to screw this up, but these are the two most common ways:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Doing the calculations in linear space but failing to convert the final
+image to sRGB and then “tweaking” various material and lighting parameters
+to compensate.&lt;/li&gt;
+  &lt;li&gt;Failing to convert sRGB texture images to linear space (or set the sRGB flag
+when hardware acceleation is used).&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;These two basic errors are then usually combined in various interesting ways,
+but the end result would invariably fail to resemble a realistic looking scene
+(e.g. quadratic light falloff will not appear quadratic anymore, highlights
+will be overblown and will exhibit some weird hue and saturation shifts etc.)&lt;/p&gt;
+
+&lt;p&gt;To demonstrate the first mistake using my own &lt;a href=&quot;/tags/ray%20tracing&quot;&gt;ray racer&lt;/a&gt;, the left image below
+shows a very simple but otherwise quite natural looking image in terms of
+physical lighting accuracy. This rendering took place in linear space and then
+the contents of the framebuffer were converted to sRGB before writing it to
+disk.&lt;/p&gt;
+
+&lt;p&gt;On the right image, however, this last conversion step was omitted and I tried
+to tweak the light intensities in an attempt to match the overall brightness
+of the gamma-correct image. Well, it’s quite apparent that this is not going
+to work. Everything appears too contrasty and oversaturated, so we’d probably
+need to desaturate all material colours a bit maybe use some more fill lights
+to come closer to the look of the left image. But this is a losing battle; no
+amount of tweaking will make the image correct in the physical sense, and even
+if we got it to an acceptable level for one particular scene with a particular
+lighting setup, any further changes to the scene would potentially necessitate
+another round of tweaks to make the result look realistic again.  Even more
+importantly, the material and lighting parameters we would need to choose
+would be completely devoid of any physical meaning whatsoever; they’ll be just
+a random set of numbers that happen to produce an OK looking image &lt;em&gt;for that
+particular scene&lt;/em&gt;, and thus not transferable to other scenes or lighting
+conditions. It’s a lot of wasted energy to work like that.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/badgamma.png&quot; data-width=&quot;1237&quot; data-height=&quot;400&quot;&gt;
+      &lt;img src=&quot;/files/2016-09-21/badgamma.png&quot; alt=&quot;TODO&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;/a&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 95%; text-align: center;&quot;&gt;Figure 14 &amp;mdash; Effects of gamma-incorrect rendering on diffuse spheres. The gamma-incorrect image on the right shows an unsuccesful attempt at matching the look of the gamma-correct one on the left by tweaking the light intensities alone.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;It’s also important to point out that incorrect gamma handling in 3D rendering
+is one of the main culprits behing the “fake plasticky CGI look” in some
+(mostly older) games. As illustrated on the image below, rendering realistic
+looking human skin is almost impossible with a gamma-incorrect workflow; the
+highlights will just never look right. This gave birth to questionable
+practices such as compensating for the wrong highlights in the specular maps
+with inverted hues and all sorts of other nastiness instead of fixing the
+problem right at the source…&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+      &lt;img src=&quot;/files/2016-09-21/lineargammahead.png&quot; alt=&quot;TODO&quot; style=&quot;width: 90%&quot; /&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 90%; text-align: center;&quot;&gt;Figure 15 &amp;mdash; Effects of gamma-incorrect rendering on a human head. On the top, a real looking human head; on the bottom, a wax figure approximation.&lt;br /&gt;(Image from the &lt;a href=&quot;https://docs.unity3d.com/Manual/LinearLighting.html&quot;&gt;Unity3D manual&lt;/a&gt;.)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;This is pretty much all there is to gamma encoding and decoding.
+Congratulations for making it so far, now you’re an officially certified
+gamma-compliant developer! :)&lt;/p&gt;
+
+&lt;p&gt;To recap, the only reason to use gamma encoding for digital images is because
+it allows us to store images more efficiently on a limited bit-length. It
+takes advantage of a characteristic of human vision that we perceive
+brightness in a logarithmic way. Most image processing algorithms expect pixel
+data with linearly encoded light intensities, therefore gamma-encoded images
+need to be gamma-decoded (converted to linear space) first before we can run
+these algorithms on them. Often the results need to be converted back to
+gamma-space to store them on disk or to display them on graphics hardware that
+expects gamma-encoded values (most consumer-level graphics hardware fall into
+this category). The de-facto standard sRGB colourspace uses a gamma of
+approximately 2.2. That’s the default colourspace for images on the Internet
+and for most monitors, scanners and printers. When in doubt, just use sRGB.&lt;/p&gt;
+
+&lt;p&gt;From the end-user perspective, keep in mind that most applications and
+software libraries do not handle gamma correctly, therefore always make sure
+to do extensive testing before adopting them into your workflow. For a proper
+linear workflow, &lt;em&gt;all&lt;/em&gt; software used in the chain has to be 100%
+gamma-correct.&lt;/p&gt;
+
+&lt;p&gt;And if you’re a developer working on graphics software, please make sure
+you’re doing the correct thing. Be gamma-correct and always explicitly state
+your assumptions about the input and output colour spaces in the sofware’s
+documentation.&lt;/p&gt;
+
+&lt;p&gt;May all your lights be linear! :)&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;references--further-reading&quot;&gt;References &amp;amp; further reading&lt;/h2&gt;
+
+  &lt;h3 id=&quot;general-gammasrgb-info&quot;&gt;General gamma/sRGB info&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.poynton.com/GammaFAQ.html&quot;&gt;Charles Poynton – Gamma FAQ&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.cambridgeincolour.com/tutorials/gamma-correction.htm&quot;&gt;Cambridge in Colour – Understanding gamma correction&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://gamedevdaily.io/the-srgb-learning-curve-773b7f68cf7a#.ssgyxju0h&quot;&gt;Tom Forsynth – The sRGB Learning Curve&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://ninedegreesbelow.com/photography/linear-gamma-blur-normal-blend.html&quot;&gt;Nine Degrees Below – Linear Gamma vs Higher Gamma RGB Color Spaces: Gaussian Blur and Normal Blend Mode&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.4p8.com/eric.brasseur/gamma.html&quot;&gt;Eric Brasseur – Gamma error in picture scaling&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Gamma_correction&quot;&gt;Wikipedia – Gamma correction&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/SRGB&quot;&gt;Wikipedia – sRGB&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/RGB_color_model&quot;&gt;Wikipedia – RGB color model&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;h3 id=&quot;linear-lighting--workflow-lwf&quot;&gt;Linear lighting &amp;amp; workflow (LWF)&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;https://frictionalgames.blogspot.com/2013/11/tech-feature-linear-space-lighting.html&quot;&gt;In the Games of Madness – Tech Feature: Linear-space lighting&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://http.developer.nvidia.com/GPUGems3/gpugems3_ch24.html&quot;&gt;Larry Gritz, GPU Gems 3 – Chapter 24. The Importance of Being Linear&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.peachpit.com/articles/article.aspx?p=2165641&quot;&gt;Jeremy Birn – Top Ten Tips for More Convincing Lighting and Rendering&lt;/a&gt; – (Section 1. Use a Linear Workflow)&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://docs.unity3d.com/Manual/LinearLighting.html&quot;&gt;Unity Documentation – Linear Rendering&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://spitzak.github.io/conversion/index.html&quot;&gt;Bill Spitzak – High-speed Conversion of Floating Point Images to 8-bit&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://renderman.pixar.com/view/LinearWorkflow&quot;&gt;Renderman – Linear Workflow&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://greyscalegorilla.com/tutorials/what-is-linear-workflow-and-how-can-it-help-your-renders-look-better/&quot;&gt;Nick Campbell – What Is Linear Workflow and How Can It Help Your Renders Look Better?&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://blackhole12.blogspot.com.au/2011/12/great-mystery-of-linear-gradient.html&quot;&gt;Eric McClure – The Great Mystery of Linear Gradient Lighting&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;h3 id=&quot;bonus-stuff&quot;&gt;Bonus stuff&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.rle.mit.edu/stir/documents/VarshneyS_Significance2013.pdf&quot;&gt;Lav R. Varshney, John Z. Sun – Why do we perceive logarithmically?&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;Wikipedia – Stevens’ power law&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://userbase.kde.org/Krita/Manual/ColorManagement&quot;&gt;Krita Manual – Color management&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://ptgmedia.pearsoncmg.com/imprint_downloads/peachpit/peachpit/lightroom4/pdf_files/LightroomRGB_Space.pdf&quot;&gt;The Adobe Photoshop Lightroom Book – The Lightroom RGB space&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.openexr.com/&quot;&gt;OpenEXR&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:osgamma&quot;&gt;
+      &lt;p&gt;Only if your operating system is Mac OS X 10.6 or higher. &lt;a href=&quot;#fnref:osgamma&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Wed, 21 Sep 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</guid>
+            </item>
+        
+            <item>
                 <title>Cross-platform GUI Toolkit Trainwreck, 2016 Edition</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;Ok, I’m not too sure in what direction this post will go, an informative
 article, a rant, or both. Probably a bit of both, with an emphasis on the rant
@@ -297,7 +1039,7 @@ necessary.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/reaper-small.jpg&quot; alt=&quot;REAPER 5 screenshot showing the Funktion 1.0 skin&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -356,7 +1098,7 @@ and graphics wrappers to maintain a single codebase for all three platforms.&lt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/renoise-small.jpg&quot; alt=&quot;Renoise 3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -413,7 +1155,7 @@ developers exactly $999 lighter.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/tracktion7-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, big screen&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -426,7 +1168,7 @@ developers exactly $999 lighter.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/tracktion7-lowres-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, small screen&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -500,7 +1242,7 @@ Blender’s internals, no one has been able to do yet so in practice.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/blender-small.jpg&quot; alt=&quot;Blender screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -537,7 +1279,7 @@ rendering to draw its UI, probably via some custom wrapper libraries.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/cinema4d-small.jpg&quot; alt=&quot;Cinema 4D screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -611,7 +1353,7 @@ of performance counts.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
       &lt;img src=&quot;/files/2016-05-29/nodebox-small.jpg&quot; alt=&quot;NodeBox3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -1272,7 +2014,7 @@ CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
       &lt;img src=&quot;/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
     &lt;/a&gt;
   
@@ -1387,7 +2129,7 @@ specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
       &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
     &lt;/a&gt;
   
@@ -1463,7 +2205,7 @@ article&lt;/a&gt;.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
       &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
@@ -1488,7 +2230,7 @@ using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
       &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
     &lt;/a&gt;
   
