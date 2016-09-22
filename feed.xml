@@ -62,7 +62,7 @@ real-world examples on how to do it properly, nor explain what the
 implications of not doing it properly are, nor show image examples of
 incorrect gamma handling.&lt;/p&gt;
 
-&lt;p&gt;I came across the need for correct gamma handling during writing my &lt;a href=&quot;/tag/ray tracing/&quot;&gt;ray
+&lt;p&gt;I came across the need for correct gamma handling during writing my &lt;a href=&quot;/tag/ray%20tracing/&quot;&gt;ray
 tracer&lt;/a&gt; and I had to admit that my understanding of the
 topic was rather superficial and incomplete. So I had spent a few days reading
 up on it online, but it turned out that many articles about gamma are not much
@@ -116,13 +116,13 @@ amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
   
 &lt;/figure&gt;
 
-&lt;p&gt;On which image does the gradiation appear more even? It’s the second one! But
+&lt;p&gt;On which image does the gradation appear more even? It’s the second one! But
 why is that so? We have just established that in the first image the bars are
 evenly (&lt;em&gt;linearly&lt;/em&gt;) spaced in terms of emitted light intensity between the
 darkest black and brightest white your monitor is capable of reproducing. But
-why don’t we see that as a nice even gradiation from black to white then? And
+why don’t we see that as a nice even gradation from black to white then? And
 what is being displayed on the second image that we &lt;em&gt;perceive&lt;/em&gt; as a linear
-gradiation?&lt;/p&gt;
+gradation?&lt;/p&gt;
 
 &lt;p&gt;The answer lies in the response of the human eye to light intensity, which is
 &lt;em&gt;non-linear&lt;/em&gt;. One the first image, the &lt;strong&gt;difference&lt;/strong&gt; between the nominal light
@@ -130,18 +130,14 @@ intensity of any two neighbouring bars is constant:&lt;/p&gt;
 
 &lt;p&gt;$$\Δ_{\linear} = I_n-I_{n-1}$$&lt;/p&gt;
 
-&lt;p&gt;On the second image, however, the &lt;strong&gt;ratio&lt;/strong&gt; of the nominal light intensity of
-any two neighbouring bars is constant:&lt;/p&gt;
-
-&lt;p&gt;$$\Δ_{\ratio} = I_n / I_{n-1}$$&lt;/p&gt;
-
-&lt;p class=&quot;important&quot;&gt;Because of this, we say that there is a &lt;strong&gt;power law relationship&lt;/strong&gt; between
-&lt;strong&gt;nominal physical light intensity&lt;/strong&gt; and &lt;strong&gt;perceptual brightness&lt;/strong&gt;. We can
-also say that humans perceive brightness in a &lt;strong&gt;logarithmic&lt;/strong&gt; way.&lt;/p&gt;
-
-&lt;p&gt;All human sensory perception follows a similar &lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;power law
+&lt;p&gt;On the second image, however, this difference is not constant but changes from
+bar to bar; it follows a power law relationship, to be exact. All human
+sensory perception follows a similar &lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;power law
 relationship&lt;/a&gt; in terms of
 the magnitude of stimulus and its perceived intensity.&lt;/p&gt;
+
+&lt;p class=&quot;important&quot;&gt;Because of this, we say that there is a &lt;strong&gt;power law relationship&lt;/strong&gt; between
+&lt;strong&gt;nominal physical light intensity&lt;/strong&gt; and &lt;strong&gt;perceptual brightness&lt;/strong&gt;.&lt;/p&gt;
 
 &lt;h3 id=&quot;physical-vs-perceptual-linearity&quot;&gt;Physical vs perceptual linearity&lt;/h3&gt;
 
@@ -424,7 +420,7 @@ wall; the colours would mix as in the linear-space case).&lt;/p&gt;
 &lt;/figure&gt;
 
 &lt;p&gt;Almost everybody does this the wrong way: CSS gradients and transitions are
-wrong (see &lt;a href=&quot;https://lists.w3.org/Archives/Public/www-style/2012Jan/0607.htmlo&quot;&gt;this
+wrong (see &lt;a href=&quot;https://lists.w3.org/Archives/Public/www-style/2012Jan/0607.html&quot;&gt;this
 thread&lt;/a&gt; for
 details), Photoshop is wrong (as of version CS6) and there’s not even an option
 to fix it.&lt;/p&gt;
@@ -598,7 +594,7 @@ so many ways to screw this up, but these are the two most common ways:&lt;/p&gt;
 image to sRGB and then “tweaking” various material and lighting parameters
 to compensate.&lt;/li&gt;
   &lt;li&gt;Failing to convert sRGB texture images to linear space (or set the sRGB flag
-when hardware acceleation is used).&lt;/li&gt;
+when hardware acceleration is used).&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;These two basic errors are then usually combined in various interesting ways,
@@ -606,7 +602,7 @@ but the end result would invariably fail to resemble a realistic looking scene
 (e.g. quadratic light falloff will not appear quadratic anymore, highlights
 will be overblown and will exhibit some weird hue and saturation shifts etc.)&lt;/p&gt;
 
-&lt;p&gt;To demonstrate the first mistake using my own &lt;a href=&quot;/tags/ray%20tracing&quot;&gt;ray racer&lt;/a&gt;, the left image below
+&lt;p&gt;To demonstrate the first mistake using my own &lt;a href=&quot;/tags/ray%20tracing&quot;&gt;ray tracer&lt;/a&gt;, the left image below
 shows a very simple but otherwise quite natural looking image in terms of
 physical lighting accuracy. This rendering took place in linear space and then
 the contents of the framebuffer were converted to sRGB before writing it to
@@ -688,7 +684,7 @@ gamma-correct.&lt;/p&gt;
 
 &lt;p&gt;And if you’re a developer working on graphics software, please make sure
 you’re doing the correct thing. Be gamma-correct and always explicitly state
-your assumptions about the input and output colour spaces in the sofware’s
+your assumptions about the input and output colour spaces in the software’s
 documentation.&lt;/p&gt;
 
 &lt;p&gt;May all your lights be linear! :)&lt;/p&gt;
@@ -738,7 +734,7 @@ documentation.&lt;/p&gt;
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:osgamma&quot;&gt;
-      &lt;p&gt;Only if your operating system is Mac OS X 10.6 or higher. &lt;a href=&quot;#fnref:osgamma&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+      &lt;p&gt;Only if your operating system is Mac OS X 10.6 or higher or Linux. &lt;a href=&quot;#fnref:osgamma&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
     &lt;/li&gt;
   &lt;/ol&gt;
 &lt;/div&gt;

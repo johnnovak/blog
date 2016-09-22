@@ -333,7 +333,7 @@ article header h1 {
     padding: 0; }
   .tags li {
     line-height: 26px;
-    margin: 0 2px 0 0; }
+    margin: 0 2px 0 0 !important; }
     .tags li .tag-name {
       display: inline-block; }
     .tags li a {
@@ -342,7 +342,8 @@ article header h1 {
       font-weight: 600;
       text-transform: uppercase;
       color: #fff;
-      background: #3aa08f; }
+      background: #3aa08f;
+      white-space: nowrap; }
       .tags li a:hover {
         background: #75bdb1; }
 

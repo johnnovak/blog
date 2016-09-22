@@ -87,7 +87,7 @@
       
         <li><a href="/tag/gamma/">gamma</a></li>
       
-        <li><a href="/tag/linear&nbsp;workflow/">linear&nbsp;workflow</a></li>
+        <li><a href="/tag/linear workflow/">linear workflow</a></li>
       
       </ul>
     </nav>
@@ -147,7 +147,7 @@ real-world examples on how to do it properly, nor explain what the
 implications of not doing it properly are, nor show image examples of
 incorrect gamma handling.</p>
 
-<p>I came across the need for correct gamma handling during writing my <a href="/tag/ray tracing/">ray
+<p>I came across the need for correct gamma handling during writing my <a href="/tag/ray%20tracing/">ray
 tracer</a> and I had to admit that my understanding of the
 topic was rather superficial and incomplete. So I had spent a few days reading
 up on it online, but it turned out that many articles about gamma are not much
@@ -201,13 +201,13 @@ amount</em> from bar to bar, left to right.</p>
   
 </figure>
 
-<p>On which image does the gradiation appear more even? It’s the second one! But
+<p>On which image does the gradation appear more even? It’s the second one! But
 why is that so? We have just established that in the first image the bars are
 evenly (<em>linearly</em>) spaced in terms of emitted light intensity between the
 darkest black and brightest white your monitor is capable of reproducing. But
-why don’t we see that as a nice even gradiation from black to white then? And
+why don’t we see that as a nice even gradation from black to white then? And
 what is being displayed on the second image that we <em>perceive</em> as a linear
-gradiation?</p>
+gradation?</p>
 
 <p>The answer lies in the response of the human eye to light intensity, which is
 <em>non-linear</em>. One the first image, the <strong>difference</strong> between the nominal light
@@ -215,18 +215,14 @@ intensity of any two neighbouring bars is constant:</p>
 
 <p>$$\Δ_{\linear} = I_n-I_{n-1}$$</p>
 
-<p>On the second image, however, the <strong>ratio</strong> of the nominal light intensity of
-any two neighbouring bars is constant:</p>
-
-<p>$$\Δ_{\ratio} = I_n / I_{n-1}$$</p>
-
-<p class="important">Because of this, we say that there is a <strong>power law relationship</strong> between
-<strong>nominal physical light intensity</strong> and <strong>perceptual brightness</strong>. We can
-also say that humans perceive brightness in a <strong>logarithmic</strong> way.</p>
-
-<p>All human sensory perception follows a similar <a href="https://en.wikipedia.org/wiki/Stevens'_power_law">power law
+<p>On the second image, however, this difference is not constant but changes from
+bar to bar; it follows a power law relationship, to be exact. All human
+sensory perception follows a similar <a href="https://en.wikipedia.org/wiki/Stevens'_power_law">power law
 relationship</a> in terms of
 the magnitude of stimulus and its perceived intensity.</p>
+
+<p class="important">Because of this, we say that there is a <strong>power law relationship</strong> between
+<strong>nominal physical light intensity</strong> and <strong>perceptual brightness</strong>.</p>
 
 <h3 id="physical-vs-perceptual-linearity">Physical vs perceptual linearity</h3>
 
@@ -509,7 +505,7 @@ wall; the colours would mix as in the linear-space case).</p>
 </figure>
 
 <p>Almost everybody does this the wrong way: CSS gradients and transitions are
-wrong (see <a href="https://lists.w3.org/Archives/Public/www-style/2012Jan/0607.htmlo">this
+wrong (see <a href="https://lists.w3.org/Archives/Public/www-style/2012Jan/0607.html">this
 thread</a> for
 details), Photoshop is wrong (as of version CS6) and there’s not even an option
 to fix it.</p>
@@ -683,7 +679,7 @@ so many ways to screw this up, but these are the two most common ways:</p>
 image to sRGB and then “tweaking” various material and lighting parameters
 to compensate.</li>
   <li>Failing to convert sRGB texture images to linear space (or set the sRGB flag
-when hardware acceleation is used).</li>
+when hardware acceleration is used).</li>
 </ul>
 
 <p>These two basic errors are then usually combined in various interesting ways,
@@ -691,7 +687,7 @@ but the end result would invariably fail to resemble a realistic looking scene
 (e.g. quadratic light falloff will not appear quadratic anymore, highlights
 will be overblown and will exhibit some weird hue and saturation shifts etc.)</p>
 
-<p>To demonstrate the first mistake using my own <a href="/tags/ray%20tracing">ray racer</a>, the left image below
+<p>To demonstrate the first mistake using my own <a href="/tags/ray%20tracing">ray tracer</a>, the left image below
 shows a very simple but otherwise quite natural looking image in terms of
 physical lighting accuracy. This rendering took place in linear space and then
 the contents of the framebuffer were converted to sRGB before writing it to
@@ -773,7 +769,7 @@ gamma-correct.</p>
 
 <p>And if you’re a developer working on graphics software, please make sure
 you’re doing the correct thing. Be gamma-correct and always explicitly state
-your assumptions about the input and output colour spaces in the sofware’s
+your assumptions about the input and output colour spaces in the software’s
 documentation.</p>
 
 <p>May all your lights be linear! :)</p>
@@ -823,7 +819,7 @@ documentation.</p>
 <div class="footnotes">
   <ol>
     <li id="fn:osgamma">
-      <p>Only if your operating system is Mac OS X 10.6 or higher. <a href="#fnref:osgamma" class="reversefootnote">&#8617;</a></p>
+      <p>Only if your operating system is Mac OS X 10.6 or higher or Linux. <a href="#fnref:osgamma" class="reversefootnote">&#8617;</a></p>
     </li>
   </ol>
 </div>
