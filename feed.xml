@@ -7,6 +7,302 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>The Nim Ray Tracer Project &amp;ndash; Part 3: Lighting &amp; Vector Maths</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;[Listening &lt;em&gt;Esoterica&lt;/em&gt; from &lt;em&gt;Dan Pound&lt;/em&gt;. Very reminiscent of the Steve Roach type of tribal/electronic ambient, which is always a good thing in my book. Parts 1, 2, 6 &amp;amp; 7 are my personal highlights.]&lt;/p&gt;
+
+&lt;p&gt;Ok, so last time I ended my post with the cliffhanger that I’m going to show
+some actual Nim code in the next episode, which is this. Well, I’ll never
+make foolish promises like that again, I swear! Now I need to come up with
+some good excuses why we’re gonna do something slightly different instead…&lt;/p&gt;
+
+&lt;p&gt;But seriously, I don’t think there’s much point in dissecting my code line by
+line here, it would be just a colossal waste of time for everyone involved and
+the codebase is in constant flux anyway. Anyone who’s interested can take
+a look at the code in the &lt;a href=&quot;https://github.com/johnnovak/nim-raytracer&quot;&gt;GitHub
+repository&lt;/a&gt;. What we’ll do instead
+from here on is discuss some of my more interesting observations about ray
+tracing on a higher level and maybe present the occasional original trick or
+idea I managed to come up with.&lt;/p&gt;
+
+&lt;h2 id=&quot;idealised-light-sources&quot;&gt;Idealised light sources&lt;/h2&gt;
+
+&lt;p&gt;The teaser image at the end of the last post used a very simple shading
+mechanism called &lt;strong&gt;facing ratio shading&lt;/strong&gt; for the spheres. As the name
+implies, that just relies on the angle between the ray direction and the
+surface normal at the ray hit location. This looks really basic, although it
+still might come in handy sometimes for debugging.&lt;/p&gt;
+
+&lt;p&gt;A more useful shading method is the so called &lt;strong&gt;diffuse&lt;/strong&gt; or &lt;a href=&quot;https://en.wikipedia.org/wiki/Lambertian_reflectance&quot;&gt;Lambertian
+shading&lt;/a&gt; that simulates
+how diffusely reflecting, or matte surfaces behave in real life. Realistic
+shaders require light sources though, so the next thing to implement is some
+sort of lighting. We’re doing ray tracing kindergarten here, so the first
+light types to implement will be idealised &lt;strong&gt;directional&lt;/strong&gt; and &lt;strong&gt;point
+lights&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Directional lights&lt;/strong&gt; (or &lt;strong&gt;distant lights&lt;/strong&gt;) are light sources that are
+infinitely far away, hence they only have direction but no position, and most
+importantly, no falloff.  Light sources of this kind are therefore ideal for
+simulating the sun or other celestial light emitting objects that are “very
+far away”. Shadows cast by directional lights are always parallel. This is how
+the example scene from the previous post looks like when illuminated by two
+directional lights:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/spheres-distantlights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-15/spheres-distantlights.png&quot; alt=&quot;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&amp;lt;br&amp;gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man&#39;s Indirect Lighting&amp;trade;).&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&lt;br /&gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man&#39;s Indirect Lighting&amp;trade;).&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;strong&gt;Point lights&lt;/strong&gt; are idealised versions of light sources that are relatively
+small in size and emit light in all directions, therefore they only have
+position but no direction. From this follows that point lights cast radial
+shadows. In contrast with directional lights, point lights do exhibit falloff
+(light attenuation), which follows the well-known &lt;a href=&quot;https://en.wikipedia.org/wiki/Inverse-square_law&quot;&gt;inverse-square
+law&lt;/a&gt;. Good examples of point
+lights are light bulbs, LEDs or the candlelight.  Of course, in real life
+these light sources do have an actual measurable area, but we’re not
+simulating that (yet). Note how drastically different the exact same scene
+looks like when illuminated by a single point light:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/spheres-pointlight.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-15/spheres-pointlight.png&quot; alt=&quot;Figure 2 &amp;mdash; The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 2 &amp;mdash; The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Again, all this shading stuff in explained in great detail in the
+&lt;a href=&quot;http://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading&quot;&gt;shading
+lesson&lt;/a&gt;
+at &lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel&lt;/a&gt;, so refer to that excellent
+article series if you’re interested in the technical details.&lt;/p&gt;
+
+&lt;p class=&quot;note&quot;&gt;It is very important to note that lighting must always be calculated in
+&lt;strong&gt;linear space&lt;/strong&gt; in a physically-based renderer.  That’s how light behaves in
+the real world; to calculate the effects of multiple light sources on a given
+surface point, we just need to calculate their contribution one light at
+a time and then simply sum the results. What this means is that the data in
+our internal float framebuffer represents linear light intensities that we
+need to apply sRGB conversion to (a fancy way of doing gamma-encoding) if we
+want to write it to a typical 8-bit per channel bitmap image file. If you are
+unsure about what all this means, I highly recommend checking out &lt;a href=&quot;/2016/09/21/what-every-coder-should-know-about-gamma/&quot;&gt;my post on
+gamma&lt;/a&gt; that should
+hopefully clear things up.&lt;/p&gt;
+
+&lt;h2 id=&quot;direct-vs-indirect-illumination&quot;&gt;Direct vs indirect illumination&lt;/h2&gt;
+
+&lt;p&gt;What we’ve implemented so far is pretty much a basic classic ray tracer, or
+a path tracer, to be more exact, which works like this from a high-level
+perspective:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Primary rays are shot from the aperture of an idealised pinhole camera (a
+point) through the middle of the pixels on the image plane into the scene.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If a ray intersects with an object, we shoot a secondary shadow ray from
+the point of intersection (hit point) towards the light source (which are
+idealised too, as explained above).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;If the path of the shadow ray is not obstructed by any other objects as it
+travels toward the light source, we calculate the light intensity reflected
+towards the view direction at the hit point with some shading algorithm,
+otherwise we just set it to black (because the point is in shadow). Due to
+the additive nature of light, handling multiple light sources is very
+straightforward; just repeat steps 2 &amp;amp; 3 for all lights and then sum the
+results.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;The astute reader may have observed that there’s lots of simplification going
+on here. For a start, real world cameras and light sources are not just simple
+idealised points in 3D space, and objects are not just illuminated by the
+light sources alone (&lt;strong&gt;direct illumination&lt;/strong&gt;), but also by light bounced off
+of other objects in the scene (&lt;strong&gt;indirect illumination&lt;/strong&gt;). With our current
+model of reality, we can only render hard edged shadows and no indirect
+lighting. Additionally, partly because of the lack of indirect illumination in
+our renderer, these shadows would appear completely black.  This can be more
+or less mitigated by some fill light tricks that harken back to the old days
+of ray tracing when global illumination methods weren’t computationally
+practical yet. For example, if there’s a green coloured wall to the left of an
+object, then put some lights on the wall that emit a faint green light to the
+right to approximate the indirect light rays reflected by the wall. This is
+far from perfect for many reasons; on the example image below I used two
+directional lights and a single point light as an attempt to produce
+a somewhat even lighting in the shadow areas, but, as it can be seen, this
+hasn’t completely eliminated the black shadows.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/complex-scene-3lights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-15/complex-scene-3lights.png&quot; alt=&quot;Figure 3 &amp;mdash; Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 3 &amp;mdash; Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/complex-scene-layers.png&quot; data-width=&quot;1860&quot; data-height=&quot;400&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-15/complex-scene-layers.png&quot; alt=&quot;Figure 4 &amp;mdash; The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 4 &amp;mdash; The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;It’s easy to see how the number of lights can easily skyrocket using this
+approach, and in fact 3D artist have been known to use as many as 40-60 lights
+or more per scene to achieve realistic looking lighting without global
+illumination. As for the hard shadows, there’s no workaround for that at our
+disposal at the moment—soft shadows will have to wait until we are ready to
+tackle area lights.&lt;/p&gt;
+
+&lt;h2 id=&quot;vector-maths-addendum&quot;&gt;Vector maths (addendum)&lt;/h2&gt;
+
+&lt;p&gt;Before we finish for today, here’s some additional remarks regarding the
+vector maths stuff we discussed previously. I’m using the
+&lt;a href=&quot;https://github.com/stavenko/nim-glm&quot;&gt;nim-glm&lt;/a&gt; library in my ray tracer, which
+is a port of &lt;a href=&quot;http://glm.g-truc.net/0.9.8/index.html&quot;&gt;GLM&lt;/a&gt; (Open&lt;strong&gt;GL&lt;/strong&gt;
+&lt;strong&gt;M&lt;/strong&gt;athematics), which is a maths library based on the
+&lt;a href=&quot;https://www.opengl.org/documentation/glsl/&quot;&gt;GLSL&lt;/a&gt; standard. A quick look into
+the nim-glm sources reveals that the library uses &lt;a href=&quot;https://en.wikipedia.org/wiki/Row-major_order&quot;&gt;row-major
+order&lt;/a&gt; storage internally:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;type Vec&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*[T] = distinct array[&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, T]&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;type Mat&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; x&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$2&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*[T] = distinct array[&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$1&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;, Vec&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$2&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;[T]]&amp;quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;%&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;We don’t actually need to know about this as long as we’re manipulating the
+underlying data structures through the library, but it’s good to be aware of
+it.&lt;/p&gt;
+
+&lt;p&gt;(If you’re confused now and think that row/column-major storage ordering has
+&lt;em&gt;anything&lt;/em&gt; to do with coordinate system handedness or column versus row vector
+notation, &lt;a href=&quot;https://fgiesen.wordpress.com/2012/02/12/row-major-vs-column-major-row-vectors-vs-column-vectors/&quot;&gt;this
+explanation&lt;/a&gt;
+should set you straight.)&lt;/p&gt;
+
+&lt;p&gt;Because we’re using column vector notation, which is the standard in
+mathematics, OpenGL and pbrt, we need to do a matrix-by-vector multiplication
+to transform a vector $v↖{→}$ by a matrix $\bo M$:&lt;/p&gt;
+
+&lt;p&gt;$$ v_t↖{→} = \bo M v↖{→} $$&lt;/p&gt;
+
+&lt;section class=&quot;warning&quot;&gt;
+  &lt;p&gt;Be aware that vector-by-matrix multiplication is also defined in GLSL but
+means something completely different (see section 5.11 of the
+&lt;a href=&quot;https://www.khronos.org/registry/gles/specs/2.0/GLSL_ES_Specification_1.0.17.pdf&quot;&gt;GLSL&lt;/a&gt;
+specification):&lt;/p&gt;
+
+  &lt;pre&gt;
+vec3 v, u;
+mat3 m;
+u = v * m;
+
+is equivalent to
+
+u.x = dot(v, m[0]); // m[0] is the left column of m
+u.y = dot(v, m[1]); // dot(a,b) is the inner (dot) product of a and b
+u.z = dot(v, m[2]);
+&lt;/pre&gt;
+&lt;/section&gt;
+
+&lt;p&gt;Also, the transforms have to be read “backwards”, e.g. the vector &lt;code&gt;v&lt;/code&gt; below
+will be translated by 5 units along the z-axis first, then rotated by 60
+degrees around the y-axis, and finally translated by -30 units along the
+x-axis:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;2.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;3.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mat4x4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mat4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;translate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;30.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;rotate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Y_AXIS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;degToRad&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;60.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+                                &lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;translate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;5.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The function &lt;code&gt;vec&lt;/code&gt; and the constant &lt;code&gt;Y_AXIS&lt;/code&gt; are just some convenience stuff.
+We’re using &lt;a href=&quot;https://en.wikipedia.org/wiki/Homogeneous_coordinates#Use_in_computer_graphics&quot;&gt;homogeneous
+coordinates&lt;/a&gt;
+, so a &lt;code&gt;Vec4[float]&lt;/code&gt; can denote both points and vectors.  Points must have
+their 4th &lt;em&gt;w&lt;/em&gt; component always set to 1.0 (otherwise translation would not
+work), and vectors to 0.0 (translation is undefined for vectors).  The
+following definitions help with the construction of points and vectors and the
+conversion of one type into the other:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;X_AXIS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Y_AXIS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Z_AXIS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xyz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;point&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;point&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec4&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;xyz&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Storing the &lt;em&gt;w&lt;/em&gt; component is convenient because we don’t need to constantly
+add it to the vector when transforming it by a 4x4 matrix. Some people would
+introduce distinct point and vector types, but I don’t think that’s worth the
+trouble; it would just complicate the code too much for dubious benefits.&lt;/p&gt;
+
+&lt;p&gt;Finally, the following checks can be useful when debugging with asserts (these
+could probably be improved by using an epsilon for the equality checks):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isVec&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.0&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isPoint&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;w&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Well, looks like in the end we &lt;em&gt;did&lt;/em&gt; inspect some Nim code, after all! :)&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;further-reading&quot;&gt;Further reading&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/lessons/3d-basic-rendering/introduction-to-shading&quot;&gt;Scratchapixel – Introduction to Shading&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://fgiesen.wordpress.com/2012/02/12/row-major-vs-column-major-row-vectors-vs-column-vectors/&quot;&gt;The ryg blog – Row major vs. column major, row vectors vs. column vectors&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Row-major_order&quot;&gt;Wikipedia – Row-major order&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/section&gt;
+</description>
+                <pubDate>Sat, 15 Oct 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</guid>
+            </item>
+        
+            <item>
                 <title>What every coder should know about gamma</title>
                 <description>&lt;h2 id=&quot;a-short-quiz&quot;&gt;A short quiz&lt;/h2&gt;
 
