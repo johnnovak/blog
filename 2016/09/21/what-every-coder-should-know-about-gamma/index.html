@@ -183,7 +183,9 @@ amount</em> from bar to bar, left to right.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/linear-ramp32.png" alt="Figure 1 &mdash; Evenly-spaced greyscale bars in terms of emitted light intensity" style="width: 100%" />
+    
   
 
   
@@ -196,7 +198,9 @@ amount</em> from bar to bar, left to right.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/gamma-ramp32.png" alt="Figure 2 &mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity" style="width: 100%" />
+    
   
 
   
@@ -237,7 +241,9 @@ the “real world object” looks like:</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/linear-ramp.png" alt="Figure 3 &mdash; Ideal smooth greyscale ramp" style="width: 100%" />
+    
   
 
   
@@ -259,7 +265,9 @@ something like this (let’s just ignore dither for now to keep things simple):<
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/linear-ramp32-perceptual.png" alt="Figure 4 &mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values" style="width: 100%" />
+    
   
 
   
@@ -292,7 +300,9 @@ greyscale image we have already seen in Figure 2:</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/gamma-ramp32.png" alt="Figure 5 &mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values" style="width: 100%" />
+    
   
 
   
@@ -382,7 +392,7 @@ decoding, plus the trivial linear gamma (γ=1.0) case:</p>
 
 <figure class="image">
   
-      <img src="/files/2016-09-21/gamma.svg" alt="Figure 6 &mdash; Gamma transfer functions" style="width: 100%" />
+    <object data="/files/2016-09-21/gamma.svg" type="image/svg+xml" style="width: 100%"></object>
   
 
   
@@ -499,7 +509,9 @@ wall; the colours would mix as in the linear-space case).</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/gradient.png" alt="Figure 7 &mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)" style="width: 80%" />
+    
   
 
   
@@ -536,7 +548,9 @@ legacy behaviour.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/color-blending.jpg" alt="Figure 8 &mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode)." style="width: 100%" />
+    
   
 
   
@@ -555,7 +569,9 @@ brightness shifts.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/opacity.png" alt="Figure 9 &mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8." style="width: 100%" />
+    
   
 
   
@@ -573,9 +589,11 @@ compositing should work.</p>
 
 <figure class="image">
   
-    <a class="largeimg" href="/files/2016-09-21/blending.jpg" data-width="1260" data-height="862">
-      <img src="/files/2016-09-21/blending.jpg" alt="Figure 10 &mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)" style="width: 100%" />
-    </a>
+    
+      <a class="largeimg" href="/files/2016-09-21/blending.jpg" data-width="1260" data-height="862">
+        <img src="/files/2016-09-21/blending.jpg" alt="Figure 10 &mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)" style="width: 100%" />
+      </a>
+    
   
 
   
@@ -601,7 +619,9 @@ black and white (therefore it’s referred to as <strong>50% grey</strong>).</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/resize-large.png" alt="Figure 11 &mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification." style="width: 220px" />
+    
   
 
   
@@ -622,7 +642,9 @@ sRGB.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/resize.png" alt="Figure 12 &mdash; Effects of gamma-incorrect image resizing. &lt;em&gt;A&lt;/em&gt; is the pixel checkerboard pattern, &lt;em&gt;B &lt;/em&gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &lt;em&gt;C&lt;/em&gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode)." style="width: 316px" />
+    
   
 
   
@@ -663,7 +685,9 @@ look thinner as they should.</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/antialias.png" alt="Figure 13 &mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2." style="width: 623px" />
+    
   
 
   
@@ -716,9 +740,11 @@ conditions. It’s a lot of wasted energy to work like that.</p>
 
 <figure class="image">
   
-    <a class="largeimg" href="/files/2016-09-21/badgamma.png" data-width="1237" data-height="400">
-      <img src="/files/2016-09-21/badgamma.png" alt="TODO" style="width: 100%" />
-    </a>
+    
+      <a class="largeimg" href="/files/2016-09-21/badgamma.png" data-width="1237" data-height="400">
+        <img src="/files/2016-09-21/badgamma.png" alt="TODO" style="width: 100%" />
+      </a>
+    
   
 
   
@@ -738,7 +764,9 @@ problem right at the source…</p>
 
 <figure class="image">
   
+    
       <img src="/files/2016-09-21/lineargammahead.png" alt="TODO" style="width: 90%" />
+    
   
 
   

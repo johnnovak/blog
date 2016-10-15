@@ -269,14 +269,16 @@ article header h1 {
       padding: 0px 2px;
       font-weight: 600;
       color: #555; }
-  .post ul {
-    list-style: square;
+  .post ul, .post ol {
     margin: 0;
-    padding-left: 2em;
+    padding-left: 2.2em;
     color: #888; }
-    .post ul li {
+    .post ul li, .post ol li {
       color: #333;
-      margin: 1em 0; }
+      margin: 1em 0;
+      padding-left: 0.5em; }
+  .post ul {
+    list-style: square; }
   .post .compact li {
     margin: 0; }
   .post .compact li p {

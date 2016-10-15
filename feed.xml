@@ -94,7 +94,9 @@ amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/linear-ramp32.png&quot; alt=&quot;Figure 1 &amp;mdash; Evenly-spaced greyscale bars in terms of emitted light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -107,7 +109,9 @@ amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 2 &amp;mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -148,7 +152,9 @@ the “real world object” looks like:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/linear-ramp.png&quot; alt=&quot;Figure 3 &amp;mdash; Ideal smooth greyscale ramp&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -170,7 +176,9 @@ something like this (let’s just ignore dither for now to keep things simple):&
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/linear-ramp32-perceptual.png&quot; alt=&quot;Figure 4 &amp;mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -203,7 +211,9 @@ greyscale image we have already seen in Figure 2:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 5 &amp;mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -293,7 +303,7 @@ decoding, plus the trivial linear gamma (γ=1.0) case:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-      &lt;img src=&quot;/files/2016-09-21/gamma.svg&quot; alt=&quot;Figure 6 &amp;mdash; Gamma transfer functions&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;object data=&quot;/files/2016-09-21/gamma.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
   
 
   
@@ -410,7 +420,9 @@ wall; the colours would mix as in the linear-space case).&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/gradient.png&quot; alt=&quot;Figure 7 &amp;mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)&quot; style=&quot;width: 80%&quot; /&gt;
+    
   
 
   
@@ -447,7 +459,9 @@ legacy behaviour.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option &#39;Blend RGB Colors Using Gamma 1.0&#39; was enabled in Photoshop CS6, on the right it was disabled (that&#39;s the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -466,7 +480,9 @@ brightness shifts.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/opacity.png&quot; alt=&quot;Figure 9 &amp;mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -484,9 +500,11 @@ compositing should work.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/blending.jpg&quot; data-width=&quot;1260&quot; data-height=&quot;862&quot;&gt;
-      &lt;img src=&quot;/files/2016-09-21/blending.jpg&quot; alt=&quot;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/blending.jpg&quot; data-width=&quot;1260&quot; data-height=&quot;862&quot;&gt;
+        &lt;img src=&quot;/files/2016-09-21/blending.jpg&quot; alt=&quot;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -512,7 +530,9 @@ black and white (therefore it’s referred to as &lt;strong&gt;50% grey&lt;/stro
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/resize-large.png&quot; alt=&quot;Figure 11 &amp;mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.&quot; style=&quot;width: 220px&quot; /&gt;
+    
   
 
   
@@ -533,7 +553,9 @@ sRGB.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/resize.png&quot; alt=&quot;Figure 12 &amp;mdash; Effects of gamma-incorrect image resizing. &amp;lt;em&amp;gt;A&amp;lt;/em&amp;gt; is the pixel checkerboard pattern, &amp;lt;em&amp;gt;B &amp;lt;/em&amp;gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &amp;lt;em&amp;gt;C&amp;lt;/em&amp;gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).&quot; style=&quot;width: 316px&quot; /&gt;
+    
   
 
   
@@ -574,7 +596,9 @@ look thinner as they should.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option &#39;Blend Text Colors Using Gamma&#39; set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
+    
   
 
   
@@ -627,9 +651,11 @@ conditions. It’s a lot of wasted energy to work like that.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/badgamma.png&quot; data-width=&quot;1237&quot; data-height=&quot;400&quot;&gt;
-      &lt;img src=&quot;/files/2016-09-21/badgamma.png&quot; alt=&quot;TODO&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/badgamma.png&quot; data-width=&quot;1237&quot; data-height=&quot;400&quot;&gt;
+        &lt;img src=&quot;/files/2016-09-21/badgamma.png&quot; alt=&quot;TODO&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -649,7 +675,9 @@ problem right at the source…&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-09-21/lineargammahead.png&quot; alt=&quot;TODO&quot; style=&quot;width: 90%&quot; /&gt;
+    
   
 
   
@@ -850,7 +878,9 @@ a solution to a problem too:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-05-29/headphones.jpg&quot; alt=&quot;Solution to a problem...&quot; style=&quot;width: 70%&quot; /&gt;
+    
   
 
   
@@ -967,7 +997,9 @@ been be visualised pretty much spot on as follows:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-05-29/fail.jpg&quot; alt=&quot;FAIL&quot; style=&quot;width: auto&quot; /&gt;
+    
   
 
   
@@ -1037,9 +1069,11 @@ necessary.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/reaper-small.jpg&quot; alt=&quot;REAPER 5 screenshot showing the Funktion 1.0 skin&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/reaper-small.jpg&quot; alt=&quot;REAPER 5 screenshot showing the Funktion 1.0 skin&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1096,9 +1130,11 @@ and graphics wrappers to maintain a single codebase for all three platforms.&lt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/renoise-small.jpg&quot; alt=&quot;Renoise 3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/renoise-small.jpg&quot; alt=&quot;Renoise 3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1153,9 +1189,11 @@ developers exactly $999 lighter.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/tracktion7-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, big screen&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/tracktion7-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, big screen&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1166,9 +1204,11 @@ developers exactly $999 lighter.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/tracktion7-lowres-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, small screen&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/tracktion7-lowres-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, small screen&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1240,9 +1280,11 @@ Blender’s internals, no one has been able to do yet so in practice.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/blender-small.jpg&quot; alt=&quot;Blender screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/blender-small.jpg&quot; alt=&quot;Blender screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1277,9 +1319,11 @@ rendering to draw its UI, probably via some custom wrapper libraries.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/cinema4d-small.jpg&quot; alt=&quot;Cinema 4D screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/cinema4d-small.jpg&quot; alt=&quot;Cinema 4D screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1351,9 +1395,11 @@ of performance counts.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
-      &lt;img src=&quot;/files/2016-05-29/nodebox-small.jpg&quot; alt=&quot;NodeBox3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-05-29/nodebox-small.jpg&quot; alt=&quot;NodeBox3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -1650,7 +1696,9 @@ but fuck all that, let’s  write a whole cross-platform GUI library in Nim!&lt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-05-29/fuck-everything.jpg&quot; alt=&quot;Fuck everything&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -1736,7 +1784,7 @@ about the axis of rotation.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-      &lt;img src=&quot;/files/2016-04-30/coordinate-system.svg&quot; alt=&quot;Figure 1 &amp;mdash; The right-handed coordinate system used in our renderer.&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;object data=&quot;/files/2016-04-30/coordinate-system.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
   
 
   
@@ -1832,7 +1880,7 @@ the image aspect ratio.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-      &lt;img src=&quot;/files/2016-04-30/mappings.svg&quot; alt=&quot;Figure 2 &amp;mdash; The relationships between the raster, NDC and screen spaces.&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;object data=&quot;/files/2016-04-30/mappings.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
   
 
   
@@ -1873,7 +1921,7 @@ camera.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-      &lt;img src=&quot;/files/2016-04-30/fov.svg&quot; alt=&quot;Figure 3 &amp;mdash; Calculating the vertical field of view (FOV) factor.&quot; style=&quot;width: 100%&quot; /&gt;
+    &lt;object data=&quot;/files/2016-04-30/fov.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
   
 
   
@@ -2012,9 +2060,11 @@ CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-      &lt;img src=&quot;/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -2127,9 +2177,11 @@ specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
-      &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -2203,9 +2255,11 @@ article&lt;/a&gt;.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-      &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -2228,9 +2282,11 @@ using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-      &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-    &lt;/a&gt;
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
   
 
   
@@ -2429,7 +2485,9 @@ for choosing it over C in the first place.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-03-03/hydra_by_ruth_tay.jpg&quot; alt=&quot;A handsome Greek hydra&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
@@ -2528,7 +2586,9 @@ material, check out the reading suggestions at the end of this article).&lt;/p&g
 
 &lt;figure class=&quot;image&quot;&gt;
   
+    
       &lt;img src=&quot;/files/2016-03-03/goal.jpg&quot; alt=&quot;GOAL source code&quot; style=&quot;width: 100%&quot; /&gt;
+    
   
 
   
