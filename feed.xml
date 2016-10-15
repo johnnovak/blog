@@ -303,7 +303,7 @@ decoding, plus the trivial linear gamma (γ=1.0) case:&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;object data=&quot;/files/2016-09-21/gamma.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
+  &amp;lt;object data=&quot;/files/2016-09-21/gamma.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;
   
 
   
@@ -592,7 +592,7 @@ Interestingly, Photoshop antialiases text using γ=1.42 by default, and this
 indeed seems to yield the best looking results (middle image). The reason for
 this is that most fonts have been designed for gamma-incorrect font
 rasterizers, hence if you use linear space (correctly), then the fonts will
-look thinner as they should.&lt;/p&gt;
+look thinner than they should.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
@@ -1784,7 +1784,7 @@ about the axis of rotation.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;object data=&quot;/files/2016-04-30/coordinate-system.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
+  &amp;lt;object data=&quot;/files/2016-04-30/coordinate-system.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;
   
 
   
@@ -1880,7 +1880,7 @@ the image aspect ratio.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;object data=&quot;/files/2016-04-30/mappings.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
+  &amp;lt;object data=&quot;/files/2016-04-30/mappings.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;
   
 
   
@@ -1921,7 +1921,7 @@ camera.&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
-    &lt;object data=&quot;/files/2016-04-30/fov.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
+  &amp;lt;object data=&quot;/files/2016-04-30/fov.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;
   
 
   
