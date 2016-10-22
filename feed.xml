@@ -7,6 +7,236 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>The Nim Ray Tracer Project &amp;ndash; Part 4: Calculating Box Normals</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;[I’ve been listening to &lt;em&gt;Shadows of the Heart&lt;/em&gt; from &lt;em&gt;Dan Pound&lt;/em&gt; all week, it’s
+just the perfect definition of ambient that, &lt;a href=&quot;http://music.hyperreal.org/artists/brian_eno/MFA-txt.html&quot;&gt;according to Brian
+Eno&lt;/a&gt;, “must be as
+ignorable as it is interesting”. No track highlights this time, this is really
+meant to be listened to from beginning to end, over and over again; it’s one
+singular 55-minute piece of soothing ambient symphony!]&lt;/p&gt;
+
+&lt;p&gt;I needed a way to calculate normals for the box primitive in my ray tracer.
+Of course, this is trivial if the boxes are represented as a triangle meshes
+with stored per vertex normals—just use the triangle intersection routine
+and job done! Interestingly, all online resources I could find either suggest
+this approach or some naive algorithm that intersects the ray with all the six
+planes that define the box… Ughh, we can certainly do better than that!&lt;/p&gt;
+
+&lt;p&gt;First of all, because we’re not dealing with arbitrary boxes in 3D space here,
+we can make certain optimisations. For my case, I wanted to be able to
+calculate the normals for &lt;a href=&quot;https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box&quot;&gt;axis-aligned bounded
+boxes&lt;/a&gt;
+(AABBs) only that are defined just by their two diagonally opposite points.&lt;/p&gt;
+
+&lt;p&gt;Why just AABBs? What about boxes that are not parallel to the axes? Well, the
+way I’m doing things is that the final world position of an object is
+described by its &lt;code&gt;objectToWorld&lt;/code&gt; transform matrix that can include rotation as
+well. Using AABBs for boxes, unit spheres for spheres etc. simplifies the
+intersection routines a lot (makes them faster to calculate). Then during
+rendering, I’m using the inverse transform &lt;code&gt;worldToObject&lt;/code&gt; to transform the
+ray to object space and do the intersection there&lt;sup id=&quot;fnref:intersect&quot;&gt;&lt;a href=&quot;#fn:intersect&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;. This method is
+&lt;em&gt;vastly&lt;/em&gt; more efficient for triangle meshes as well—we only need to inverse
+transform a single ray instead of transforming potentially thousands or
+millions of triangles!&lt;/p&gt;
+
+&lt;p&gt;This is how our geometry definitions look like in Nim (we’re using
+&lt;a href=&quot;https://github.com/stavenko/nim-glm&quot;&gt;nim-glm&lt;/a&gt; for the vector maths stuff).
+We’re going to use AABBs later for constructing &lt;a href=&quot;https://en.wikipedia.org/wiki/Bounding_volume_hierarchy&quot;&gt;bounding volume
+hierarchies&lt;/a&gt;  (BVH)
+as well, hence the separate &lt;code&gt;AABB&lt;/code&gt; and &lt;code&gt;Box&lt;/code&gt; types.&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glm&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;AABB&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;vmin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vmax&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Geometry&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RootObj&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;objectToWorld&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mat4x4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;worldToObject&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Mat4x4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Sphere&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Geometry&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;r&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Plane&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Geometry&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;discard&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Box&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ref&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Geometry&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;aabb&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AABB&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;box-normal-algorithm&quot;&gt;Box normal algorithm&lt;/h2&gt;
+
+&lt;p&gt;We’ll solve the problem for the unit cube first, then we’ll find a way to map
+the solution from an arbitrary AABB to the unit cube.  For the sake of
+simplicity, we’re going to illustrate the basic algorithm in 2D only;
+extending it to 3D is trivial.&lt;/p&gt;
+
+&lt;h3 id=&quot;solution-for-the-unit-cube&quot;&gt;Solution for the unit cube&lt;/h3&gt;
+
+&lt;p&gt;Consider the blue $P$ points that lie on the rectangle in Figure 1. By
+looking at the vectors pointing to these points (blue arrows), we can make the
+observation that by taking the integer parts of the vectors’ coordinates
+(&lt;em&gt;not&lt;/em&gt; rounding!), we would get the normals we’re after (green arrows). And
+that’s it!&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+  &lt;object data=&quot;/files/2016-10-22/box-normals.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
+  
+
+  
+    
+    &lt;figcaption style=&quot; text-align: center;&quot;&gt;Figure 1 &amp;mdash; Calculating normals for the unit rectangle in 2D. The vectors pointing to the blue points P are the hit points, and the green vectors N the corresponding normals.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;There are some complications though. This approach yields perfectly correct
+results for $P_1$, $P_2$ and $P_3$, but for $P_4$ we’d get $(1,
+-1)$, which firstly is not a normal, and secondly, is diagonal. Strictly
+speaking, the diagonal-ness is a bit incorrect, although it can be argued that
+the normals are “undefined” at the corners, thus the diagonal could as
+well be accepted as a valid answer. Either way, in practice this won’t make
+any difference—we will very rarely hit the corners exactly, and even if we
+did, the “degenerate” normals will be averaged out with the “normal” ones
+during multi-sampling. We just need to normalise our resulting vector after
+the integer truncation to ensure that the length is always 1.&lt;/p&gt;
+
+&lt;p&gt;Of course, we can always put a few if statements at the end to filter out the
+diagonals, but that would make the whole algorithm slower. It’s also worth
+mentioning that in 3D we will have edge cases too in addition to the corner
+cases (no pun intended).&lt;/p&gt;
+
+&lt;h3 id=&quot;solution-for-arbitrary-aabbs&quot;&gt;Solution for arbitrary AABBs&lt;/h3&gt;
+
+&lt;p&gt;Mapping the problem from an AABB to the unit cube is basically a translation
+and scaling exercise. Our AABB is defined by its two diagonally opposite
+points, $V_{\min}$ and $V_{\max}$, from which we can easily calculate its
+centre point $C$ (now in 3D):&lt;/p&gt;
+
+&lt;p&gt;$$ C=⟨{V_{\min_\x} + V_{\max_\x}} / 2, {V_{\min_\y} + V_{\max_\y}} / 2, {V_{\min_\z} + V_{\max_\z}} / 2⟩$$&lt;/p&gt;
+
+&lt;p&gt;Next, we’ll calculate the vector $p↖{→}$ that points from the centre point to
+the hit point $P_{\hit}$:&lt;/p&gt;
+
+&lt;p&gt;$$ p↖{→} = P_{\hit} - C $$&lt;/p&gt;
+
+&lt;p&gt;This vector corresponds to the blue vectors in Figure 1. What we need to do
+next is map $p↖{→}$ to the unit cube by calculating divisor values
+for each of its dimensions:&lt;/p&gt;
+
+&lt;p&gt;$$ \d_x = {\abs(V_{\min_\x}-V_{\max_\x})} / 2 $$
+$$ \d_y = {\abs(V_{\min_\y}-V_{\max_\y})} / 2 $$
+$$ \d_z = {\abs(V_{\min_\z}-V_{\max_\z})} / 2 $$&lt;/p&gt;
+
+&lt;p&gt;From $p↖{→}$ and the scalar divisors $\d_x$, $\d_y$ and $\d_z$ we can
+calculate the normal $n↖{→}$ at the hit point (the green vectors in Figure
+1):&lt;/p&gt;
+
+&lt;p&gt;$$ n↖{→} = ⟨\int(p_\x / \d_x), \int(p_\y / \d_y), \int(p_\z / \d_z)⟩ $$&lt;/p&gt;
+
+&lt;h2 id=&quot;implementation&quot;&gt;Implementation&lt;/h2&gt;
+
+&lt;p&gt;Okay, time to have a look at some Nim code!  This is a slightly optimised
+version of the above algorithm:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;normal&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Box&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec4&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;let&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aabb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vmin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aabb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vmax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hit&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aabb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vmin&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;aabb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;vmax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;bias&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1.000001&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;vec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+               &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+               &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;p&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;abs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;normalize&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Wait a minute, what’s that multiplier &lt;code&gt;bias&lt;/code&gt; doing there? That, my friend, is
+&lt;strong&gt;the amount of difference between theory of practice&lt;/strong&gt;. For educational
+purposes only, this is what we would get if we left it off:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/boxes-bad.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-22/boxes-bad.png&quot; alt=&quot;Figure 2 &amp;mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; text-align: center;&quot;&gt;Figure 2 &amp;mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;Ooops, not exactly the result we were hoping for! What’s going on here? The
+problem is that because of floating point inaccuracies, our final coordinates
+that are supposed to be 1.0 will sometimes end up being a bit less than that,
+say 0.999999994, and in the final casting to int step they will become
+0 instead of 1. To fix this, we’ll need to nudge the points a tiny bit
+outwards by scaling them up by a multiplicative epsilon value. The good news
+is that this bias value doesn’t have to be terribly accurate; we’re going to
+truncate the decimals away anyway. With this fix in place, we’ll get the
+correct results:&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/boxes-ok.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-22/boxes-ok.png&quot; alt=&quot;Figure 3 &amp;mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; text-align: center;&quot;&gt;Figure 3 &amp;mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h2 id=&quot;correctness-vs-real-life&quot;&gt;Correctness vs real life&lt;/h2&gt;
+
+&lt;p&gt;As I explained above, although this fast normal calculation method can be
+considered incorrect by the mathematician types (and perhaps it is, I don’t
+know for sure), it seems to work perfectly fine for practical purposes. At
+least, I couldn’t spot any unwanted artefacts on my test renders, and
+theoretically, there’s very little chance to run into those diagonal normals,
+and even then, their contribution to the final image would be minimal.&lt;/p&gt;
+
+&lt;p&gt;In parting, here is a more complex scene to prove my point.  If anyone is
+aware of a situation where this algorithm could cause problems, I am
+interested to hear about it though!&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/cube.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;/files/2016-10-22/cube.png&quot; alt=&quot;&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; text-align: center;&quot;&gt;Figure 4 &amp;mdash; A cube made up of 64 smaller cubes. Even with our slightly &amp;ldquo;incorrect&amp;rdquo; normal calculation method, no weird artifacts can be observed whatsoever.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:intersect&quot;&gt;
+      &lt;p&gt;Transforming the &lt;em&gt;object to world space&lt;/em&gt; with the object-to-world matrix and intersecting it with the world space ray is mathematically equivalent to transforming the &lt;em&gt;ray to object space&lt;/em&gt; with the world-to-object matrix (which is the simple matrix inverse of the object-to-world matrix) and doing the intersection there. I’m saying “mathematically” because due to floating point inaccuracies the two methods won’t yield exactly identical results. But the ray-to-object-space way actually keeps the relative error smaller and more uniform—as long as the object space coordinates have similar scale and are centred around the origin. &lt;a href=&quot;#fnref:intersect&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Sat, 22 Oct 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</guid>
+            </item>
+        
+            <item>
                 <title>The Nim Ray Tracer Project &amp;ndash; Part 3: Lighting &amp; Vector Maths</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;[Listening &lt;em&gt;Esoterica&lt;/em&gt; from &lt;em&gt;Dan Pound&lt;/em&gt;. Very reminiscent of the Steve Roach type of tribal/electronic ambient, which is always a good thing in my book. Parts 1, 2, 6 &amp;amp; 7 are my personal highlights.]&lt;/p&gt;
 
