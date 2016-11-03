@@ -282,14 +282,14 @@ directional lights:&lt;/p&gt;
   
     
       &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/spheres-distantlights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-15/spheres-distantlights.png&quot; alt=&quot;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&amp;lt;br&amp;gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man&#39;s Indirect Lighting&amp;trade;).&quot; style=&quot;width: 100%&quot; /&gt;
+        &lt;img src=&quot;/files/2016-10-15/spheres-distantlights.png&quot; alt=&quot;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&amp;lt;br&amp;gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting&amp;trade;).&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
 
   
     
-    &lt;figcaption style=&quot;&quot;&gt;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&lt;br /&gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man&#39;s Indirect Lighting&amp;trade;).&lt;/figcaption&gt;
+    &lt;figcaption style=&quot;&quot;&gt;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&lt;br /&gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting&amp;trade;).&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -662,7 +662,7 @@ intensity of any two neighbouring bars is constant:&lt;/p&gt;
 
 &lt;p&gt;On the second image, however, this difference is not constant but changes from
 bar to bar; it follows a power law relationship, to be exact. All human
-sensory perception follows a similar &lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;power law
+sensory perception follows a similar &lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens'_power_law&quot;&gt;power law
 relationship&lt;/a&gt; in terms of
 the magnitude of stimulus and its perceived intensity.&lt;/p&gt;
 
@@ -986,13 +986,13 @@ legacy behaviour.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option &#39;Blend RGB Colors Using Gamma 1.0&#39; was enabled in Photoshop CS6, on the right it was disabled (that&#39;s the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
   
     
-    &lt;figcaption style=&quot;&quot;&gt;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option &#39;Blend RGB Colors Using Gamma 1.0&#39; was enabled in Photoshop CS6, on the right it was disabled (that&#39;s the default gamma-incorrect legacy mode).&lt;/figcaption&gt;
+    &lt;figcaption style=&quot;&quot;&gt;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode).&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -1123,13 +1123,13 @@ look thinner than they should.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option &#39;Blend Text Colors Using Gamma&#39; set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
+      &lt;img src=&quot;/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
     
   
 
   
     
-    &lt;figcaption style=&quot; width: 623px;&quot;&gt;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option &#39;Blend Text Colors Using Gamma&#39; set to 1.0, the middle one with 1.45, and the right one with 2.2.&lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 623px;&quot;&gt;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -1280,7 +1280,7 @@ documentation.&lt;/p&gt;
 
   &lt;ul class=&quot;compact&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;http://www.rle.mit.edu/stir/documents/VarshneyS_Significance2013.pdf&quot;&gt;Lav R. Varshney, John Z. Sun – Why do we perceive logarithmically? [PDF]&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens&#39;_power_law&quot;&gt;Wikipedia – Stevens’ power law&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Stevens'_power_law&quot;&gt;Wikipedia – Stevens’ power law&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;https://userbase.kde.org/Krita/Manual/ColorManagement&quot;&gt;Krita Manual – Color management&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;http://ptgmedia.pearsoncmg.com/imprint_downloads/peachpit/peachpit/lightroom4/pdf_files/LightroomRGB_Space.pdf&quot;&gt;The Adobe Photoshop Lightroom Book – The Lightroom RGB space [PDF]&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;http://www.openexr.com/&quot;&gt;OpenEXR&lt;/a&gt;&lt;/li&gt;
@@ -1724,7 +1724,7 @@ developers exactly $999 lighter.&lt;/p&gt;
 
   
     
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Tracktion 7 in it&#39;s fully anti-aliased single-window glory. Previous versions might have looked somewhat less sleek, but the UI was designed to be highly scalable right from the very first release.&lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Tracktion 7 in it's fully anti-aliased single-window glory. Previous versions might have looked somewhat less sleek, but the UI was designed to be highly scalable right from the very first release.&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -1739,7 +1739,7 @@ developers exactly $999 lighter.&lt;/p&gt;
 
   
     
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Still Tracktion 7, but now on a smaller screen. Contrast this screenshot with the one above: all common UI elements are still there but their sizes are vastly different. Tracktion has the most adaptable dynamic interface of all applications presented in this article, thanks to JUCE&#39;s extensive anti-aliased vector graphics support. &lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Still Tracktion 7, but now on a smaller screen. Contrast this screenshot with the one above: all common UI elements are still there but their sizes are vastly different. Tracktion has the most adaptable dynamic interface of all applications presented in this article, thanks to JUCE's extensive anti-aliased vector graphics support. &lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -1815,7 +1815,7 @@ Blender’s internals, no one has been able to do yet so in practice.&lt;/p&gt;
 
   
     
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Blender&#39;s OpenGL-based interface is quite sleek and modern looking. Notice the semi-transparent widgets on top of the 3D views.&lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Blender's OpenGL-based interface is quite sleek and modern looking. Notice the semi-transparent widgets on top of the 3D views.&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -2595,7 +2595,7 @@ CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
 
   
     
-    &lt;figcaption style=&quot; width: 80%;&quot;&gt;This might look like total crap, but it&#39;s 16x MSAA anti-aliased, yo, and it was generated by first ray tracing &quot;engine&quot;!&lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 80%;&quot;&gt;This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing &quot;engine&quot;!&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
@@ -2872,7 +2872,7 @@ Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
             </item>
         
             <item>
-                <title>The Quest for a Programming Language That Doesn&#39;t Suck &amp;ndash; Part 1</title>
+                <title>The Quest for a Programming Language That Doesn't Suck &amp;ndash; Part 1</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;[Listening to: &lt;em&gt;Aglaia – Three Organic Experiences&lt;/em&gt;. Track #3, &lt;em&gt;Seven
 Ancient Glaciers&lt;/em&gt; is a definite stand-out!]&lt;/p&gt;
 
@@ -3018,7 +3018,7 @@ for choosing it over C in the first place.&lt;/p&gt;
 
   
     
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Contrary to popular belief, C++ was well-known and feared among the ancient Greeks. The hellish abomination was commonly depicted as a fiendish, many-headed water serpent rising from the dark depths of the sea, each head representing a different programming paradigm totally incompatible with the rest of the language. The actual number of fully functional heads varies greatly and depends on the target platform, the version of the C++ standard being depicted, the compiler vendor, the exact shade of the compiler vendor&#39;s CEO&#39;s wife&#39;s niece&#39;s toe polish, and the favourite food of the chief compiler implementor&#39;s pet baby wombat. (Illustration by &lt;a href=&quot;http://ruthtaylor.nl&quot;&gt;Ruth Taylor&lt;/a&gt;)&lt;/figcaption&gt;
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Contrary to popular belief, C++ was well-known and feared among the ancient Greeks. The hellish abomination was commonly depicted as a fiendish, many-headed water serpent rising from the dark depths of the sea, each head representing a different programming paradigm totally incompatible with the rest of the language. The actual number of fully functional heads varies greatly and depends on the target platform, the version of the C++ standard being depicted, the compiler vendor, the exact shade of the compiler vendor's CEO's wife's niece's toe polish, and the favourite food of the chief compiler implementor's pet baby wombat. (Illustration by &lt;a href=&quot;http://ruthtaylor.nl&quot;&gt;Ruth Taylor&lt;/a&gt;)&lt;/figcaption&gt;
   
 &lt;/figure&gt;
 
