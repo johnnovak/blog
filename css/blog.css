@@ -595,10 +595,9 @@ article header h1 {
   .post-list h4 {
     margin-left: 110px;
     font-size: 18px; }
-  .post-list .tags li {
+  .post-list .tags li .tag-name {
+    width: 180px;
     margin-bottom: 5px; }
-    .post-list .tags li .tag-name {
-      width: 180px; }
 
   .post {
     margin-bottom: 60px; }
