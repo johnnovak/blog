@@ -7,6 +7,671 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>A minimalist Openbox desktop for Vim freaks</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;Are you the sort of person who is looking for a Vim plugin for everything?
+Does having to reach out for the mouse sideways cause you involuntary facial
+muscles twitches? Is breaking out the arrow keys with a screwdriver among the
+first few things you do on a new computer (after swapping Caps Lock with
+Left Ctrl, of course)? Then welcome, you’re among friends here.&lt;/p&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;Now that we’re done with the formalities and  have dissuaded normal computer
+users and non-fanatical Vim aficionados from reading any further, let’s get to
+the good stuff! I vastly prefer to use a Linux desktop for development and my
+trusty 32-bit Crunchbang Waldorf VM has just reached the end of its useful
+life because of my sudden realisation that I really need 64-bit support.
+I had spent a considerable time “vimifying” my old setup (more on that later),
+which, of course, I wanted to carry over to the new installation. This post
+documents all the hackery I needed to do on the stock install to achieve that.&lt;/p&gt;
+
+&lt;p&gt;We will use &lt;a href=&quot;https://crunchbangplusplus.org/&quot;&gt;Crunchbang++ 1.0&lt;/a&gt; 64-bit as our
+starting point which is based on &lt;a href=&quot;https://www.debian.org/&quot;&gt;Debian Jessie&lt;/a&gt;
+stable. Why not use vanilla Debian instead? Because I really like the choices
+&lt;a href=&quot;https://corenominal.org/about/&quot;&gt;Philip Newborough&lt;/a&gt; had made for the original
+Crunchbang series and it would be an awful lot of work to replicate them from
+scratch. Crunchbang is small, fast, stable and prioritises function over
+form—it’s the perfect Openbox based system for a minimalist. Instead of
+reinventing everything, we will just make a few strategic tweaks here and
+there to make it more Vim friendly.&lt;/p&gt;
+
+&lt;p&gt;Why VM? Because I also do &lt;a href=&quot;http://music.johnnovak.net/&quot;&gt;music&lt;/a&gt;, &lt;a href=&quot;http://www.johnnovak.net/&quot;&gt;graphics
+design&lt;/a&gt; and
+&lt;a href=&quot;http://photo.johnnovak.net/&quot;&gt;photography&lt;/a&gt;, and most creative apps on Linux
+just suck&lt;sup id=&quot;fnref:linuxsucks&quot;&gt;&lt;a href=&quot;#fn:linuxsucks&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, plus I don’t like dual booting. The performance hit is
+negligible nowadays anyway on these new 4 or 8 core Intel i7 CPUs.  But most
+of the instructions will be applicable to non-VM installs as well as I will
+always make it clear whether a particular step is VM specific or not.&lt;/p&gt;
+
+&lt;p&gt;The bulk of the information presented in this article is a distillation of
+ideas, tips and config snippets from various online sources far too numerous
+to mention (or even just remember). Still, the &lt;a href=&quot;http://crunchbang.org/forums/&quot;&gt;old Crunchbang
+forums&lt;/a&gt; and the excellent &lt;a href=&quot;https://wiki.archlinux.org/&quot;&gt;ArchLinux
+wiki&lt;/a&gt; definitely stand out as the two best
+sources of quality information on more arcane issues that you can’t always
+figure out by reading the man pages alone.&lt;/p&gt;
+
+&lt;h2 id=&quot;philosophy--main-features&quot;&gt;Philosophy &amp;amp; main features&lt;/h2&gt;
+
+&lt;p&gt;Although I like the concept of tiling window managers, after analysing my
+common usage patterns I realised that they would be an overkill for my needs.
+Most of the time I just use tmux inside a maximised terminal window and
+I rarely use more than a single window per desktop. I like to put my browser
+windows (Firefox with &lt;a href=&quot;http://www.vimperator.org/vimperator&quot;&gt;Vimperator&lt;/a&gt;) and
+PDF viewers (&lt;a href=&quot;http://mupdf.com/&quot;&gt;mupdf&lt;/a&gt;) onto separate desktops, so I just
+need a way to quickly switch between them. Sometimes I need to view two
+vertically maximised windows side-by-side on the same desktop (e.g.
+a terminal and a PDF viewer), but that’s pretty much it. Anything else is so
+infrequent and random that it can be just done easily with the mouse, which is
+less than 5% of the total use cases, so efficiency really doesn’t matter
+there.  The important thing is that 95% of the time I won’t need to lift my
+fingers off the home row with this configuration!&lt;/p&gt;
+
+&lt;p&gt;So with all this in mind, let’s take a look at the main features
+on a high-level:&lt;/p&gt;
+
+&lt;dl&gt;
+  &lt;dt&gt;Minimal &amp;amp; highly functional interface&lt;/dt&gt;
+  &lt;dd&gt;I find the default Crunchbang theme just perfect, so we will be building
+everything on top of that. The main components of the setup will be Openbox,
+zsh, urxvt, tmux and—of course—Vim.&lt;/dd&gt;
+  &lt;dt&gt;Global Vim-style navigation&lt;/dt&gt;
+  &lt;dd&gt;Seamless navigation between Vim splits and tmux panes and a Vim-like way to
+switch between 4 virtual desktops.&lt;/dd&gt;
+  &lt;dt&gt;System clipboard support&lt;/dt&gt;
+  &lt;dd&gt;While Vim and tmux have their own internal clipboards, other GUI apps
+generally use the system clipboard, so we’ll need to invent a sane mechanism
+to interoperate between them.&lt;/dd&gt;
+  &lt;dt&gt;Mouse support&lt;/dt&gt;
+  &lt;dd&gt;I don’t use the mouse very much, but when I do, I want it to work correctly
+in tmux and Vim (e.g. changing focus, resizing panes, selecting &amp;amp; middle-click
+pasting text etc.)&lt;/dd&gt;
+  &lt;dt&gt;Unified colour scheme&lt;/dt&gt;
+  &lt;dd&gt;I really like the &lt;a href=&quot;https://github.com/jonathanfilip/vim-lucius&quot;&gt;Lucius&lt;/a&gt; Vim
+colour scheme (the default dark variant), so the whole setup will use Lucius
+dark colours consistently.&lt;/dd&gt;
+&lt;/dl&gt;
+
+&lt;p&gt;And now some screenshots, because everybody loves screenshots!&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop1.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-11-13/desktop1-small.jpg&quot; alt=&quot;Figure 1 &amp;mdash; urxvt + tmux + Vim. That's how I'm spending way too much of my waking time inside a darkened room. The x86 assembly listing in the top right pane serves an important dual purpose: firstly, it is an attempt to make my programmer peers believe that I &amp;lt;em&amp;gt;really know a lot&amp;lt;/em&amp;gt; about computers, and secondly, it distances me from JavaScript wielding hipsters.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 1 &amp;mdash; urxvt + tmux + Vim. That's how I'm spending way too much of my waking time inside a darkened room. The x86 assembly listing in the top right pane serves an important dual purpose: firstly, it is an attempt to make my programmer peers believe that I &lt;em&gt;really know a lot&lt;/em&gt; about computers, and secondly, it distances me from JavaScript wielding hipsters.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop2.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-11-13/desktop2-small.jpg&quot; alt=&quot;Figure 2 &amp;mdash; Another common use-case showcasing the window tiling functionality. Yes, the browser window shows the post you are reading right now (plus a Vimperator window, signalling my technical expertise to those in the know). Life is a big recursion, is it not? Also note the common staple of wannabe l33t Linux haxxorz, the ubiquitous tmux clock.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 2 &amp;mdash; Another common use-case showcasing the window tiling functionality. Yes, the browser window shows the post you are reading right now (plus a Vimperator window, signalling my technical expertise to those in the know). Life is a big recursion, is it not? Also note the common staple of wannabe l33t Linux haxxorz, the ubiquitous tmux clock.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop3.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-11-13/desktop3-small.jpg&quot; alt=&quot;Figure 3 &amp;mdash; The obligatory 'just showing off' screenshot because I like the number three. Thunar makes an appearance here.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;Figure 3 &amp;mdash; The obligatory &quot;just showing off&quot; screenshot because I like the number three. Thunar makes an appearance here too.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;h2 id=&quot;some-implementation-details&quot;&gt;Some implementation details&lt;/h2&gt;
+
+&lt;p&gt;In the following sub-sections we’ll take a detailed look at some of the more
+difficult to configure features. I won’t go through every single line in every
+config file because then I would be sitting here writing this article for the
+next two months… Just take a look at &lt;a href=&quot;https://github.com/johnnovak/dotfiles&quot;&gt;my
+dotfiles&lt;/a&gt; if you’re interested, or
+better yet, clone/download the repo and run &lt;code&gt;install.sh&lt;/code&gt; to set it up on your
+system. The installer assumes a vanilla &lt;a href=&quot;https://crunchbangplusplus.org/&quot;&gt;Crunchbang++
+1.0&lt;/a&gt; with some extra packages. The second
+part of this article provides detailed instructions on how to set up the whole
+thing from scratch into a new VirtualBox VM (mostly for my own reference, but
+perhaps others will find it useful too).&lt;/p&gt;
+
+&lt;h3 id=&quot;navigation&quot;&gt;Navigation&lt;/h3&gt;
+
+&lt;h4 id=&quot;vim--tmux&quot;&gt;Vim &amp;amp; tmux&lt;/h4&gt;
+
+&lt;p&gt;Seamless navigation among Vim splits and tmux panes is accomplished via the
+excellent &lt;a href=&quot;https://github.com/christoomey/vim-tmux-navigator&quot;&gt;Vim Tmux
+Navigator&lt;/a&gt;. We’ll just use
+the default settings that will use the shortcuts
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;H&lt;/kbd&gt;&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt; to move
+between panes.&lt;/p&gt;
+
+&lt;p&gt;A side effect of this configuration is that we won’t be able to use
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;L&lt;/kbd&gt; to clear the terminal anymore. There’s an easy
+workaround for that; we’ll remap &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;L&lt;/kbd&gt; to
+&lt;kbd&gt;&amp;lt;Prefix&amp;gt;&lt;/kbd&gt;+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;L&lt;/kbd&gt; in the tmux config:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bind C-l send-keys &quot;C-l&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;xmodmap&quot;&gt;xmodmap&lt;/h4&gt;
+
+&lt;p&gt;Hey, wait a minute, chief! What’s xmodmap doing here? xmodmap is a tool for
+modifying X keymaps and mouse button mappings. We are going to use it to
+differentiate between the left and right &lt;kbd&gt;Alt&lt;/kbd&gt; modifiers when
+defining our Openbox shortcuts. I happened to come up with this bright idea of
+switching between desktops 1 to 4 with &lt;kbd&gt;R
+Alt&lt;/kbd&gt;+&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt;&lt;kbd&gt;;&lt;/kbd&gt; and to send the
+current window to another desktop with &lt;kbd&gt;L Alt&lt;/kbd&gt;+&lt;kbd&gt;R
+Alt&lt;/kbd&gt;+&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt;&lt;kbd&gt;;&lt;/kbd&gt;. Try them out,
+they’re really comfortable and quick to use from the home row if you pressed
+the &lt;kbd&gt;Alt&lt;/kbd&gt; buttons with your thumbs!&lt;/p&gt;
+
+&lt;p&gt;This is how our &lt;code&gt;~/.Xmodmap&lt;/code&gt; file will look like. First, we’ll need to map the
+keycode of &lt;kbd&gt;L Alt&lt;/kbd&gt; to &lt;code&gt;Alt_L&lt;/code&gt; and &lt;kbd&gt;R Alt&lt;/kbd&gt; to  &lt;code&gt;Hyper_R&lt;/code&gt;.
+Why &lt;code&gt;Hyper_R&lt;/code&gt; and not &lt;code&gt;Alt_R&lt;/code&gt;? Well, because my keyboard happens to generate
+the keycode for &lt;code&gt;Hyper_R&lt;/code&gt; when I press &lt;kbd&gt;R Alt&lt;/kbd&gt;. To find out the exact
+keycode for your keyboard (it might be different), use the &lt;code&gt;xev&lt;/code&gt; (X Event
+Viewer) utility.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;keycode 64 = Alt_L NoSymbol Alt_L
+keycode 108 = Hyper_R NoSymbol Hyper_R
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After this, we’ll clear all existing modifier bindings and set our own. This
+is not strictly necessary as we’re just setting the defaults again for most,
+but I find this method cleaner and easier to troubleshoot because then we can
+see all the modifier definitions in one place.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;clear Shift
+clear Control
+clear Mod1
+clear Mod2
+clear Mod3
+clear Mod4
+clear Mod5
+
+add Shift = Shift_L Shift_R
+add Control = Control_L Control_R
+add Mod1 = Alt_L
+add Mod2 = Num_Lock
+add Mod3 = Hyper_R
+add Mod4 = Super_L
+add Mod5 = ISO_Level3_Shift
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;There’s one very confusing and non-obvious thing about this config that I will
+illustrate with a concrete example. We are mapping &lt;code&gt;Hyper_R&lt;/code&gt; to &lt;code&gt;Mod3&lt;/code&gt;, yet in
+our Openbox config we won’t be using &lt;code&gt;Mod3&lt;/code&gt; for any of the keybindings, but
+just the hyper key directly (e.g. &lt;code&gt;A-H-j&lt;/code&gt;, which stands for Alt-Hyper-j, which
+will be bound to &lt;kbd&gt;L Alt&lt;/kbd&gt;+&lt;kbd&gt;R Alt&lt;/kbd&gt;+&lt;kbd&gt;J&lt;/kbd&gt;). The logical
+conclusion would be that we won’t need to bind anything to &lt;code&gt;Mod3&lt;/code&gt; then. Not
+so! Due to the &lt;a href=&quot;https://bugs.freedesktop.org/show_bug.cgi?id=926&quot;&gt;extremely arcane
+ways&lt;/a&gt; how applications need
+to communicate with the X server, Openbox can only get keydown events for
+a modifier key if it is bound to one of the &lt;code&gt;Mod*&lt;/code&gt; modifiers. I’m sure the
+real situation is even more messy and complicated than that, but this is all
+we need to know for our purposes.&lt;/p&gt;
+
+&lt;p&gt;One more thing, I like to switch &lt;kbd&gt;Caps Lock&lt;/kbd&gt; with &lt;kbd&gt;L Ctrl&lt;/kbd&gt;
+on all my computers, but we won’t need to do that here because I’m using
+&lt;a href=&quot;https://sharpkeys.codeplex.com/&quot;&gt;SharpKeys&lt;/a&gt; on Windows for that purpose, and 
+luckily the settings carry over to the guest VM.&lt;/p&gt;
+
+&lt;h4 id=&quot;openbox&quot;&gt;Openbox&lt;/h4&gt;
+
+&lt;p&gt;Ok, time to teach Openbox a few new tricks as well. Let’s start with setting
+the number of desktops to four in &lt;code&gt;~/.config/openbox/rc.xml&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;desktops&amp;gt;
+  &amp;lt;number&amp;gt;4&amp;lt;/number&amp;gt;
+  &amp;lt;firstdesk&amp;gt;1&amp;lt;/firstdesk&amp;gt;
+  &amp;lt;names&amp;gt;
+    &amp;lt;name&amp;gt;1&amp;lt;/name&amp;gt;
+    &amp;lt;name&amp;gt;2&amp;lt;/name&amp;gt;
+    &amp;lt;name&amp;gt;3&amp;lt;/name&amp;gt;
+    &amp;lt;name&amp;gt;4&amp;lt;/name&amp;gt;
+  &amp;lt;/names&amp;gt;
+  &amp;lt;popupTime&amp;gt;875&amp;lt;/popupTime&amp;gt;
+&amp;lt;/desktops&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Then we’ll disable the window decorations for &lt;code&gt;urvxt&lt;/code&gt; and &lt;code&gt;terminator&lt;/code&gt; because
+they look much cooler that way:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;application name=&quot;terminator&quot;&amp;gt;
+  &amp;lt;decor&amp;gt;no&amp;lt;/decor&amp;gt;
+&amp;lt;/application&amp;gt;
+&amp;lt;application name=&quot;urxvt&quot;&amp;gt;
+  &amp;lt;decor&amp;gt;no&amp;lt;/decor&amp;gt;
+&amp;lt;/application&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To recap, this is the final list of shortcuts for our Vim-style desktop (in
+addition to the standard stuff like &lt;kbd&gt;L Alt&lt;/kbd&gt;+&lt;kbd&gt;Tab&lt;/kbd&gt; to switch
+between windows etc.):&lt;/p&gt;
+
+&lt;table class=&quot;no-border&quot;&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;shortcut&quot;&gt;&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;H&lt;/kbd&gt;&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt;&lt;/td&gt;
+    &lt;td&gt;Move between Vim splits &amp;amp; tmux panels&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;shortcut&quot;&gt;&lt;kbd&gt;R Alt&lt;/kbd&gt;+&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt;&lt;kbd&gt;;&lt;/kbd&gt;&lt;/td&gt;
+    &lt;td&gt;Switch to desktop 1 to 4&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;shortcut&quot;&gt;&lt;kbd&gt;L Alt&lt;/kbd&gt;+&lt;kbd&gt;R Alt&lt;/kbd&gt;+&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;L&lt;/kbd&gt;&lt;kbd&gt;;&lt;/kbd&gt;&lt;/td&gt;
+    &lt;td&gt;Send window to desktop 1 to 4&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td class=&quot;shortcut&quot;&gt;&lt;kbd&gt;Win&lt;/kbd&gt;+&lt;kbd&gt;Shift&lt;/kbd&gt;+&lt;kbd&gt;H&lt;/kbd&gt;&lt;kbd&gt;J&lt;/kbd&gt;&lt;kbd&gt;K&lt;/kbd&gt;&lt;kbd&gt;;&lt;/kbd&gt;&lt;/td&gt;
+    &lt;td&gt;Half-screen tile window&lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;p&gt;The only thing left to do is to remap the existing keybindings in &lt;code&gt;rc.xml&lt;/code&gt;.
+For example, this is how the desktop switching shortcuts look like.  Note that
+we need to bind to &lt;code&gt;H-x&lt;/code&gt; (Hyper + x) for the shortcut &lt;kbd&gt;R
+Alt&lt;/kbd&gt;+&lt;kbd&gt;X&lt;/kbd&gt;. Another interesting thing to note is that the key
+&lt;kbd&gt;;&lt;/kbd&gt; (semicolon) has to be specified by its keycode (47 decimal, 0x2f
+hex). Again, &lt;code&gt;xev&lt;/code&gt; is your friend to find out the keycode for a particular key.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;keybind key=&quot;H-j&quot;&amp;gt;
+  &amp;lt;action name=&quot;GoToDesktop&quot;&amp;gt;
+    &amp;lt;to&amp;gt;1&amp;lt;/to&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&amp;lt;keybind key=&quot;H-k&quot;&amp;gt;
+  &amp;lt;action name=&quot;GoToDesktop&quot;&amp;gt;
+    &amp;lt;to&amp;gt;2&amp;lt;/to&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&amp;lt;keybind key=&quot;H-l&quot;&amp;gt;
+  &amp;lt;action name=&quot;GoToDesktop&quot;&amp;gt;
+    &amp;lt;to&amp;gt;3&amp;lt;/to&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&amp;lt;keybind key=&quot;H-0x2f&quot;&amp;gt;
+  &amp;lt;action name=&quot;GoToDesktop&quot;&amp;gt;
+    &amp;lt;to&amp;gt;4&amp;lt;/to&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The send to desktop bindings will be very similar. Here’s the first one from
+which you can figure out the rest:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;keybind key=&quot;A-H-j&quot;&amp;gt;
+  &amp;lt;action name=&quot;SendToDesktop&quot;&amp;gt;
+    &amp;lt;to&amp;gt;1&amp;lt;/to&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Finally, we’ll just need to remap the existing window tiling shortcuts and
+we’re done. Example for tile left:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;&amp;lt;keybind key=&quot;W-S-h&quot;&amp;gt;    	# HalfLeftScreen
+  &amp;lt;action name=&quot;UnmaximizeFull&quot;/&amp;gt;
+  &amp;lt;action name=&quot;MoveResizeTo&quot;&amp;gt;
+    &amp;lt;x&amp;gt;0&amp;lt;/x&amp;gt;
+    &amp;lt;y&amp;gt;0&amp;lt;/y&amp;gt;
+    &amp;lt;height&amp;gt;100%&amp;lt;/height&amp;gt;
+    &amp;lt;width&amp;gt;50%&amp;lt;/width&amp;gt;
+  &amp;lt;/action&amp;gt;
+&amp;lt;/keybind&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;clipboard-support&quot;&gt;Clipboard support&lt;/h3&gt;
+
+&lt;p&gt;Getting the shared system clipboard (X11 selections) to work consistently
+across different GUI and command line apps on Linux can undoubtedly be a hair
+loss-inducing experience. One of the sources of confusion is that we are
+usually dealing with two clipboards in X11, not just one like on Windows or OS
+X. First, there’s the normal clipboard most well-behaved GUI apps use for the
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;X&lt;/kbd&gt;&lt;kbd&gt;C&lt;/kbd&gt;&lt;kbd&gt;V&lt;/kbd&gt; operations (officially
+referred to as the &lt;strong&gt;clipboard selection&lt;/strong&gt;), and then there’s the
+select-with-mouse-and-paste-with-middle-click variant (the &lt;strong&gt;primary
+selection&lt;/strong&gt;). (There’s a third one called &lt;strong&gt;secondary selection&lt;/strong&gt; too, but no
+one ever uses that for anything, as far as I’m aware. One less thing to worry
+about!)&lt;/p&gt;
+
+&lt;p&gt;Most GUI apps handle the clipboard and primary selections just as expected
+(the GTK apps included with Crunchbang certainly do). The problems start when
+we want certain console apps—like tmux and Vim—that have their own
+internal buffers, to interoperate with X11 selections, so we can copy/paste
+text from them into GUI apps, and vice versa. This is also needed for
+clipboard interoperability with the guest OS; with bidirectional clipboard
+support enabled in VirtualBox, the Windows clipboard operations will use the
+X11 clipboard selection just like Linux GUI apps do (but note that the primary
+selection is not supported, so no middle-click copy/paste between the host and
+the guest).&lt;/p&gt;
+
+&lt;p&gt;My general idea is to use the
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;X&lt;/kbd&gt;&lt;kbd&gt;C&lt;/kbd&gt;&lt;kbd&gt;V&lt;/kbd&gt; shortcuts in tmux and Vim
+to interact with the clipboard selection, while retaining the ability to use
+their internal buffers with their native clipboard commands. Let’s see how we
+can achieve that!&lt;/p&gt;
+
+&lt;h4 id=&quot;vim&quot;&gt;Vim&lt;/h4&gt;
+
+&lt;p&gt;Teaching Vim how to do this is quite simple by defining the following
+mappings in our &lt;code&gt;.vimrc&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;vnoremap &amp;lt;C-x&amp;gt; &quot;+x
+vnoremap &amp;lt;C-c&amp;gt; &quot;+y
+noremap  &amp;lt;C-v&amp;gt; &quot;+gP
+inoremap &amp;lt;C-v&amp;gt; &amp;lt;C-r&amp;gt;+
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, we now have just overridden the default &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;V&lt;/kbd&gt;
+block selection shortcut. Let’s remap it to &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;Q&lt;/kbd&gt;
+instead (gVim on Windows does the same thing by default, by the way ):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;noremap &amp;lt;C-q&amp;gt; &amp;lt;C-v&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is almost good, but sadly it turns out that &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;Q&lt;/kbd&gt;
+and &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;S&lt;/kbd&gt; are reserved for an ancient terminal feature
+called &lt;a href=&quot;https://en.wikipedia.org/wiki/Software_flow_control&quot;&gt;flow control&lt;/a&gt;. We
+definitely don’t need that, so let’s reclaim these shortcuts and put them to
+a better use:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# reclaim Ctrl-S
+stty stop undef
+
+# reclaim Ctrl-Q
+stty start undef
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Middle-click pasting from GUI apps into Vim works perfectly fine both in command
+and insert mode, so we’re done.&lt;/p&gt;
+
+&lt;h4 id=&quot;tmux&quot;&gt;tmux&lt;/h4&gt;
+
+&lt;p&gt;The situation gets a bit trickier in the case of tmux, which doesn’t have any
+direct support for X selections, so we’ll need to resort to external tools
+combined with some shell magic.&lt;/p&gt;
+
+&lt;p&gt;The GTK+ clipboard manager &lt;a href=&quot;https://github.com/CristianHenzel/ClipIt&quot;&gt;ClipIt&lt;/a&gt;
+included with Crunchbang has a command line interface that can interact with
+the system clipboard (in theory), however, I could never get it to work, and
+neither could others, according to the old Crunchbang forums. So we’ll need to
+grab another tool that does actually work, and the aptly titled &lt;strong&gt;xclip&lt;/strong&gt;
+happens to just fit the bill:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install xclip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Armed with xclip, we can now configure tmux to pipe our selection to xclip
+when we hit &lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; in vi-copy mode:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bind -t vi-copy &quot;C-c&quot; copy-pipe &quot;xclip -selection clipboard&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pasting is a bit more difficult because tmux shortcuts have precedence over
+the Vim ones, so we’ll need to detect whether we’re pressing
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;V&lt;/kbd&gt; in a Vim session inside a tmux pane or just in
+a regular terminal pane. In the Vim pane case we’ll simply pass the
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;V&lt;/kbd&gt; through to Vim, otherwise we’ll execute our tmux
+specific paste magic. Without the passthrough trick tmux would send the
+contents of the clipboard to Vim as a sequence of commands to execute, which
+would be a total disaster in command mode. It would work in insert mode,
+though, but that’s a crappy half-assed solution— let’s just do this properly
+and make it work correctly in both modes! Here’s how (apologies for the two
+levels of escaping, but that’s unavoidable):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;bind -n C-v if-shell &quot;\$is_vim&quot; &quot;send-keys C-v&quot; &quot;run-shell \
+    \&quot;tmux set-buffer \\\&quot;\$(xclip -o -selection clipboard)\\\&quot;; \
+    tmux paste-buffer\&quot;&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This idea is taken from
+&lt;a href=&quot;https://github.com/christoomey/vim-tmux-navigator&quot;&gt;Vim Tmux Navigator&lt;/a&gt;, and
+in fact, we are reusing the &lt;code&gt;is_vim&lt;/code&gt; command from their tmux config snippet.
+For the sake of completeness (and because it contains a marvellously repulsive
+regular expression), I will include it here:&lt;/p&gt;
+
+&lt;pre class=&quot;no-math&quot;&gt;&lt;code&gt;is_vim=&quot;ps -o state= -o comm= -t '#{pane_tty}' \
+    | grep -iqE '^[^TXZ ]+ +(\\S+\\/)?g?(view|n?vim?x?)(diff)?$'&quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Quite obvious what it’s doing, isn’t it? I thought so too.&lt;/p&gt;
+
+&lt;h3 id=&quot;mouse-support&quot;&gt;Mouse support&lt;/h3&gt;
+
+&lt;h4 id=&quot;vim-1&quot;&gt;Vim&lt;/h4&gt;
+
+&lt;p&gt;Enabling mouse support in Vim is surprisingly easy:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;if has('mouse')
+  set mouse=a
+endif
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That’s it! This will let us navigate and resize splits with the mouse and use
+the select/middle-click primary clipboard mechanism.  Of course, you’ll need
+a Vim version compiled with mouse support enabled for this (I recommend the
+kitchen-sink &lt;code&gt;vim-nox&lt;/code&gt; package that contains support for basically all Vim
+features).&lt;/p&gt;
+
+&lt;h4 id=&quot;tmux-1&quot;&gt;tmux&lt;/h4&gt;
+
+&lt;p&gt;As we would expect, tmux is a harder nut to crack. The following will enable
+mouse support on tmux &amp;lt;2.0 (1.9-6 is the latest stable version for Jessie).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;set -g mode-mouse on
+set -g mouse-resize-pane on
+set -g mouse-select-pane on
+set -g mouse-select-window on
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is all good so far, but there are a few caveats with how mouse selections
+will interact with the system clipboard handling we have configured earlier.
+First of all, just selecting some text and then releasing the mouse button
+will copy the selection into the internal tmux buffer. If we want it to be
+copied into the clipboard selection instead, we must press
+&lt;kbd&gt;Ctrl&lt;/kbd&gt;+&lt;kbd&gt;C&lt;/kbd&gt; &lt;em&gt;before&lt;/em&gt; releasing the mouse button!&lt;/p&gt;
+
+&lt;p&gt;The handling of primary selections is similarly quirky: to paste the contents
+of the primary selection into a tmux pane, we must hold &lt;kbd&gt;Shift&lt;/kbd&gt; while
+middle-clicking. To make a primary selection, we must again hold
+&lt;kbd&gt;Shift&lt;/kbd&gt; while click-dragging, but this unfortunately bypasses tmux
+altogether, so multiline selections with vertically split panes won’t work
+very well (experiment with this a bit and you’ll see what I mean). The
+workaround for this is to maximise the pane before making the selection. To
+the best of my knowledge, there are no better solutions for the tmux primary
+selection issues at the moment.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;h2 id=&quot;installation&quot;&gt;Installation&lt;/h2&gt;
+
+&lt;p&gt;We’ll need the following ingredients:&lt;/p&gt;
+
+&lt;ul class=&quot;compact&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.virtualbox.org/wiki/Downloads&quot;&gt;VirtualBox 5.1.8&lt;/a&gt; (or newer)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://crunchbangplusplus.org/&quot;&gt;Crunchbang++ 1.0&lt;/a&gt; 64-bit image (&lt;a href=&quot;https://crunchbangplusplus.org/assets/misc/cbpp-1.0-amd64-20150428.iso.torrent&quot;&gt;torrent&lt;/a&gt;)&lt;/li&gt;
+  &lt;li&gt;Internet connection (Crunchbang is based on Debian netinstall)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;We’ll need to create a new VM with &lt;em&gt;Linux 2.6 / 3.x / 4.x (64-bit)&lt;/em&gt; selected
+as the guest operating system type. &lt;em&gt;Debian (64-bit)&lt;/em&gt; would probably work too,
+but I haven’t tested it. I’m on an Intel i7 4790k 4.0 GHz with 16 gigs of RAM,
+so I just allocated 4 CPU cores and 4 gigs to the new VM and created a 40 GB
+dynamic storage on an SSD partition (recommended). Pretty standard stuff, but
+pay attention to the following issues:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Make sure that &lt;em&gt;Enable PAE/NX System&lt;/em&gt; is checked under &lt;em&gt;System / Processor
+/ Extended Features&lt;/em&gt;, otherwise the installer will fail.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Check &lt;em&gt;Enable VT-x/AMD-V&lt;/em&gt; under &lt;em&gt;System / Acceleration / Hardware
+Virtualization&lt;/em&gt;, otherwise AVX passthrough won’t work (if this doesn’t make
+sense to you, then you have nothing to worry about). Of course, your processor
+must support that and it has to be enabled in the BIOS.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;From this point it’s easy sailing—just insert the ISO and proceed with the
+install. I recommend using the text mode installer because the GUI one hung at
+some point during downloading the packages. Everything should be
+self-explanatory, just accept the default HDD partitioning scheme (or you can
+complicate things, up to you).&lt;/p&gt;
+
+&lt;h2 id=&quot;on-first-boot&quot;&gt;On first boot&lt;/h2&gt;
+
+&lt;p&gt;About 30-60 minutes later, we will be greeted by the &lt;code&gt;cbpp-welcome&lt;/code&gt; script
+that will offer us to update the system and install some optional packages.
+We’ll do that, but later, so just exit for now. Our first objective is to get
+the desktop environment up and running, then we’ll do the system update, and
+finally we’ll fix a few issues and perform some other usability enhancements.&lt;/p&gt;
+
+&lt;h3 id=&quot;set-zsh-as-the-default-shell&quot;&gt;Set zsh as the default shell&lt;/h3&gt;
+
+&lt;p&gt;My first thing to do on a new system is switch to &lt;strong&gt;zsh&lt;/strong&gt;, so let’s install
+that quickly with &lt;code&gt;sudo apt-get install zsh&lt;/code&gt; and then set it as the default
+login shell. Just run &lt;code&gt;chsh&lt;/code&gt; and enter &lt;code&gt;/bin/zsh&lt;/code&gt; as the new value. Note that
+the change will only take effect on the next login.&lt;/p&gt;
+
+&lt;p&gt;It is also recommended to set &lt;code&gt;x-terminal-emulator&lt;/code&gt; to zsh because the
+built-in Openbox menus use it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% sudo update-alternatives --config x-terminal-emulator
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;install-virtualbox-guest-additions&quot;&gt;Install VirtualBox Guest Additions&lt;/h3&gt;
+
+&lt;p&gt;We need to install the VirtualBox Guest Additions to get fullscreen,
+bidirectional clipboard and drag-and-drop support working. This will also make
+the screen updates snappier and it will fix the default jerky mouse pointer
+behaviour, which is quite horrible. But before we could proceed, the kernel
+headers must be installed first:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% sudo apt-get install linux-headers-$(uname -r)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;After this, select &lt;em&gt;Insert Guest Additions CD image…&lt;/em&gt; in the &lt;em&gt;Devices&lt;/em&gt; menu
+in VirtualBox. You might need to create a virtual optical drive first in the
+VM settings if you haven’t done so already (remember that you can only do that
+when the VM is shut down, otherwise the &lt;em&gt;Add optical drive&lt;/em&gt; button on the
+&lt;em&gt;Storage&lt;/em&gt; tab will be disabled).&lt;/p&gt;
+
+&lt;p&gt;Now we can install the additions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% cd /media/cdrom
+% sudo sh ./VBoxLinuxAdditions.run
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Don’t forget to tick &lt;em&gt;Shared Clipboard&lt;/em&gt; and &lt;em&gt;Drag’n’Drop&lt;/em&gt; to &lt;em&gt;Bidirectional&lt;/em&gt;
+under &lt;em&gt;General / Advanced&lt;/em&gt; in the VM settings. Enter fullscreen mode (&lt;kbd&gt;R
+Ctrl&lt;/kbd&gt;+&lt;kbd&gt;F&lt;/kbd&gt;), reboot, and you should be rewarded for your efforts
+with a glorious fullscreen Crunchbang desktop sporting a fluid mouse pointer!&lt;/p&gt;
+
+&lt;h3 id=&quot;perform-system-update&quot;&gt;Perform system update&lt;/h3&gt;
+
+&lt;p&gt;CrunchBangPlusPlus 1.0 was released more than a year ago, so we should
+definitely update the system to the latest Debian Jessie packages. The easiest
+way to do this is to run the &lt;code&gt;cbpp-welcome&lt;/code&gt; script again and let it update the
+software sources and the system (answer &lt;em&gt;Yes&lt;/em&gt; to the first two questions).
+This will take a while, depending on the speed of your network (I think it
+took about an hour for me). After this, you’ll have the option to install
+a few more additional packages.&lt;/p&gt;
+
+&lt;h3 id=&quot;fix-compton&quot;&gt;Fix Compton&lt;/h3&gt;
+
+&lt;p&gt;For some reason, Compton (the compositor responsible for window transparency,
+drop shadows and other eye candy) could not start up properly in my VirtualBox
+setup. It turned out that the startup script tried to enable OpenGL vsync by
+default and that was causing the issues, so we’ll just disable that by
+commenting lines 18-20 out in &lt;code&gt;/usr/bin/cbpp-compositor&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#if glxinfo | egrep -iq 'direct rendering: yes'; then
+#    EXECXCOMP+=' --vsync opengl'
+#fi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Restart Compton by selecting &lt;em&gt;Settings / Compositor / Restart Compositing&lt;/em&gt; in
+the Openbox right-click menu and take a quiet moment to marvel at the tasteful
+drop shadows around your window edges!&lt;/p&gt;
+
+&lt;h3 id=&quot;enable-autologin&quot;&gt;Enable autologin&lt;/h3&gt;
+
+&lt;p&gt;If you’re the sole user of this VM, you’ll probably want to enable autologin.
+Edit &lt;code&gt;/etc/slim.conf&lt;/code&gt; and change the following three parameters:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;login_cmd       exec /bin/bash -login /etc/X11/Xsession %session
+auto_login      yes
+default_user    YOUR_USERNAME
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;installing-powerline-fonts&quot;&gt;Installing Powerline fonts&lt;/h3&gt;
+
+&lt;p&gt;Some people maintain that one can live a full and prosperous life without
+&lt;a href=&quot;https://github.com/powerline/fonts&quot;&gt;Powerline fonts&lt;/a&gt;.  Needless to say, this
+is utter bollocks. Those in the know will surely follow my wise advice and
+issue the following sequence of commands:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% cd /tmp/
+% wget https://github.com/powerline/fonts/archive/2015-12-04.zip
+% unzip 2015-12-04.zip
+% cd fonts-2015-12-04
+% mkdir ~/.fonts/
+% cp LiberationMono/Literation\ Mono\ Powerline.ttf ~/.fonts/
+% fc-cache -vf ~/.fonts/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;setting-the-right-wallpaper&quot;&gt;Setting the &lt;em&gt;right&lt;/em&gt; wallpaper&lt;/h3&gt;
+
+&lt;p&gt;No desktop Linux setup is ever complete without a wallpaper, but, of course,
+the chosen wallpaper must be the &lt;em&gt;correct&lt;/em&gt; one. Look no further than &lt;a href=&quot;/files/2016-11-12/lotus.png&quot;&gt;this&lt;/a&gt;!&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt; … aaaand congratulations, you’re done. Enjoy your brand new vimified
+desktop! :)&lt;/p&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;further-reading&quot;&gt;Further reading&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;https://xaizek.github.io/2016-08-13/big-list-of-vim-like-software/&quot;&gt;The big list of Vi[m]-like software&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:linuxsucks&quot;&gt;
+      &lt;p&gt;There are a few good ones though, for example I’m using the Windows version of Inkscape, but there’s really no match for Lightroom or Photoshop (if you want to recommend me The Gimp at this point, please save your energy).  Moreover, the driver support for (semi-)pro audio interfaces is just non-existent on Linux, and let’s not even talk about the audio software front… &lt;a href=&quot;#fnref:linuxsucks&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Sun, 13 Nov 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</guid>
+            </item>
+        
+            <item>
                 <title>The Nim Ray Tracer Project &amp;ndash; Part 4: Calculating Box Normals</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;[I’ve been listening to &lt;em&gt;Shadows of the Heart&lt;/em&gt; from &lt;em&gt;Dan Pound&lt;/em&gt; all week, it’s
 just the perfect definition of ambient that, &lt;a href=&quot;http://music.hyperreal.org/artists/brian_eno/MFA-txt.html&quot;&gt;according to Brian
