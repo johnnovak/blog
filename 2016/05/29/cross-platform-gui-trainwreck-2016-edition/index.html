@@ -99,7 +99,8 @@
           </ul>
         </nav>
         <p class="intro">Ok, I’m not too sure in what direction this post will go, an informative article, a rant, or both. Probably a bit of both, with an emphasis on the rant part, given my current not-quite-positive emotional involvement with the topic. Gentlemen (and gentlewomen), please fasten your seatbelts!</p>
-        <p class="intro">(UPDATE: It turned out to be a quite informative mega-post in the end, just don’t give up reading after the first section…)</p>
+        <p class="intro">(UPDATE #1: It turned out to be a quite informative mega-post in the end, just don’t give up reading after the first section…)</p>
+        <p class="intro">(UPDATE #2: There’s some very interesting alternative UI framework recommendations in the comments that I haven’t discussed in the article, so you might want to check those out as well…)</p>
         <h2 id="buttons-and-pixels">Buttons and pixels</h2>
         <p>In 2016, developing a program in entirety on one particular platform, for example OS X, and then successfully compiling and running it on another, say Windows, with zero or minimal modifications required is no longer an utopistic dream. In fact, users of dynamic, interpreted or scripting languages (however you like to call them today) have been enjoying the luxuries of easy cross-platform development for many decades now; they won’t even raise an eyebrow on such trivial matters. But even the lowly C and C++ plebs are able to perform this feat with relative ease nowadays—at least, if they stuck to their respective language standards religiously and turned their compiler warnings up to nuclear-strength…</p>
         <p>Being able to use a single codebase for multi-platform applications is of crucial importance. After all, who wants to maintain two or three (or more) codebases that are mostly similar, but <em>not quite</em>? I sure don’t. And then there’s the convenience and flexibility factor too: you can happily develop on your Linux VM on your desktop PC at home, then maybe fix some bugs on your MacBook while sitting on the train, with the confidence that your program will work flawlessly on Windows too. Not having to deal with platform differences and idiosyncrasies takes a huge burden off of the developer’s shoulder that is not to be underestimated.</p>
@@ -178,9 +179,18 @@
             </tr>
           </tbody>
         </table>
-        <p><a href="http://www.reaper.fm/">REAPER</a> is a highly advanced cross-platform digital audio production workstation (DAW) for Windows and Mac OS X developed by the same guy who wrote the original WinAmp. REAPER is written in C++ and it uses the open-source <a href="http://www.cockos.com/wdl/">WDL</a> library (from the same developer) for cross-platform graphics, audio and UI tasks.</p>
+        <p><a href="http://www.reaper.fm/">REAPER</a> is a highly advanced cross-platform digital audio production workstation (DAW) for Windows and Mac OS X originally developed by <a href="https://en.wikipedia.org/wiki/Justin_Frankel">Justin Frankel</a>, the guy who wrote the original WinAmp. REAPER is written in C++ and it uses the open-source <a href="http://www.cockos.com/wdl/">WDL</a> library (from the same developer) for cross-platform graphics, audio and UI tasks.</p>
         <p>It is a very much no-bullshit app, just look at the 11 MiB executable size! By examining the WDL sources it becomes pretty clear that REAPER uses a mixture of native software rendering (GDI on Windows, because it still supports XP) and an anti-aliased software rasterizer. The GUI is skinnable but non-scalable as the skins are completely bitmap based, so a good proportion of the GUI drawing consists of blitting operations, presumably. There are some font rendering differences between the OS X and Windows versions that suggests that the app uses OS native text rendering under the hood. The menu bar and all dialog windows (e.g. file dialogs, preferences) are OS-native too.</p>
         <p>It is evident that REAPER’s strategy in terms of the UI is to use as much OS provided functionality as possible and resort to custom code only when necessary.</p>
+        <p><strong>Update 2017-03-17:</strong> Justin, the man himself has enlightened me in the comments below that the situation is a bit more complicated than what I thought (quoted verbatim):</p>
+        <blockquote>
+          <p>It’s worth noting that REAPER actually uses SWELL (which is a part of WDL) for cross-platform compatibility… SWELL allows you to write minimal win32 code and target Cocoa or GDK… you can do all native controls, GDI rendering, software bitmap rendering, or any combination of the above…</p>
+        </blockquote>
+        <p>Neat, looks like I wasn’t too far off the mark. Then he adds:</p>
+        <blockquote>
+          <p>It takes a special sort of soul to willingly program UIs using a minimal subset of win32, so I wouldn’t go recommending it… but for those people writing win32 applications, SWELL might be handy.</p>
+        </blockquote>
+        <p>I certainly don’t disagree with that! (so, in short, no thanks…)</p>
         <figure class="image">
           <a class="largeimg" href="/files/2016-05-29/reaper.png" data-width="1920" data-height="1080"><img src="/files/2016-05-29/reaper-small.jpg" alt="REAPER 5 screenshot showing the Funktion 1.0 skin" style="width: 100%"></a>
           <figcaption style=" width: 100%;">

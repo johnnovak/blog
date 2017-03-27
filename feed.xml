@@ -1972,8 +1972,12 @@ article, a rant, or both. Probably a bit of both, with an emphasis on the rant
 part, given my current not-quite-positive emotional involvement with the
 topic. Gentlemen (and gentlewomen), please fasten your seatbelts!&lt;/p&gt;
 
-&lt;p class=&quot;intro&quot;&gt;(UPDATE: It turned out to be a quite informative mega-post in the end, just
+&lt;p class=&quot;intro&quot;&gt;(UPDATE #1: It turned out to be a quite informative mega-post in the end, just
 don’t give up reading after the first section…)&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;(UPDATE #2: There’s some very interesting alternative UI framework
+recommendations in the comments that I haven’t discussed
+in the article, so you might want to check those out as well…)&lt;/p&gt;
 
 &lt;h2 id=&quot;buttons-and-pixels&quot;&gt;Buttons and pixels&lt;/h2&gt;
 
@@ -2239,8 +2243,9 @@ attempt to get a feel for what is considered acceptable in 2016. I used the
 &lt;/table&gt;
 
 &lt;p&gt;&lt;a href=&quot;http://www.reaper.fm/&quot;&gt;REAPER&lt;/a&gt; is a highly advanced cross-platform digital
-audio production workstation (DAW) for Windows and Mac OS X developed by the
-same guy who wrote the original WinAmp. REAPER is written in C++ and it uses
+audio production workstation (DAW) for Windows and Mac OS X originally
+developed by &lt;a href=&quot;https://en.wikipedia.org/wiki/Justin_Frankel&quot;&gt;Justin Frankel&lt;/a&gt;,
+the guy who wrote the original WinAmp. REAPER is written in C++ and it uses
 the open-source &lt;a href=&quot;http://www.cockos.com/wdl/&quot;&gt;WDL&lt;/a&gt; library (from the same
 developer) for cross-platform graphics, audio and UI tasks.&lt;/p&gt;
 
@@ -2257,6 +2262,27 @@ bar and all dialog windows (e.g. file dialogs, preferences) are OS-native too.&l
 &lt;p&gt;It is evident that REAPER’s strategy in terms of the UI is to use as much OS
 provided functionality as possible and resort to custom code only when
 necessary.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Update 2017-03-17:&lt;/strong&gt; Justin, the man himself has enlightened me in the
+comments below that the situation is a bit more complicated than what
+I thought (quoted verbatim):&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It’s worth noting that REAPER actually uses SWELL (which is a part of WDL)
+for cross-platform compatibility… SWELL allows you to write minimal win32
+code and target Cocoa or GDK… you can do all native controls, GDI
+rendering, software bitmap rendering, or any combination of the above…&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Neat, looks like I wasn’t too far off the mark. Then he adds:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;It takes a special sort of soul to willingly program UIs using a minimal
+ subset of win32, so I wouldn’t go recommending it… but for those people
+ writing win32 applications, SWELL might be handy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;I certainly don’t disagree with that! (so, in short, no thanks…)&lt;/p&gt;
 
 &lt;figure class=&quot;image&quot;&gt;
   
