@@ -76,6 +76,8 @@ table {
   font-size: 13px;
   line-height: 1.45em;
   width: 100%; }
+  table.nopadleft td, table.nopadleft th {
+    padding-left: 0; }
 
 tr {
   vertical-align: top; }
@@ -88,14 +90,14 @@ table:not(.no-border) tr:not(:first-child) {
     border-top: 1px solid #ccc; }
 
 th {
+  padding: 8px 0.9em 6px 0.9em;
   font-weight: 700;
-  color: #666;
   text-align: left;
-  background: #f2f2f2;
-  padding: 8px 0.9em 6px 0; }
+  color: #666;
+  background: #f2f2f2; }
 
 td {
-  padding: 6px 0.9em 6px 0; }
+  padding: 6px 0.9em 6px 0.9em; }
   td.h {
     font-weight: 700;
     color: #666; }
