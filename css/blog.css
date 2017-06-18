@@ -164,6 +164,9 @@ hr {
   margin-top: 40px;
   border: 1px solid #aaa;
   border-width: 1px 0 0 0; }
+  hr.noline {
+    border-color: #fff;
+    margin-top: 30px; }
 
 kbd {
   display: inline-block;

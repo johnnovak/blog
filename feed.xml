@@ -446,16 +446,21 @@ price.&lt;/p&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+&lt;hr class=&quot;noline&quot; /&gt;
 
-&lt;ul class=&quot;compact&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf&quot;&gt;Kenneth E. Hoff III – Deriving 2D and 3D Rotations&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://tutorial.math.lamar.edu/download.aspx&quot;&gt;Paul’s Online Math Notes&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;section class=&quot;links&quot;&gt;
 
+  &lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf&quot;&gt;Kenneth E. Hoff III – Deriving 2D and 3D Rotations&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://tutorial.math.lamar.edu/download.aspx&quot;&gt;Paul’s Online Math Notes&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/section&gt;
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:small&quot;&gt;
@@ -1194,26 +1199,31 @@ possible in C in terms of performance, there’s a way to replicate that in Nim
 too, and with careful coding the runtime efficiency of both languages can be
 virtually identical.&lt;/p&gt;
 
-&lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+&lt;hr class=&quot;noline&quot; /&gt;
 
-&lt;ul class=&quot;compact&quot;&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html&quot;&gt;Gwynne Raskind — Disassembling the Assembly, Part 1&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html&quot;&gt;Gwynne Raskind — Disassembling the Assembly, Part 2&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/&quot;&gt;Andreas on Coding — Optimizable Code&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;http://www.dataorienteddesign.com/dodmain/dodmain.html&quot;&gt;Richard Fabian — Data-Oriented Design&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;a href=&quot;https://godbolt.org/&quot;&gt;Compiler Explorer&lt;/a&gt;&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ul&gt;
+&lt;section class=&quot;links&quot;&gt;
 
+  &lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html&quot;&gt;Gwynne Raskind — Disassembling the Assembly, Part 1&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;&lt;a href=&quot;https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html&quot;&gt;Gwynne Raskind — Disassembling the Assembly, Part 2&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;&lt;a href=&quot;https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/&quot;&gt;Andreas on Coding — Optimizable Code&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;&lt;a href=&quot;http://www.dataorienteddesign.com/dodmain/dodmain.html&quot;&gt;Richard Fabian — Data-Oriented Design&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;&lt;a href=&quot;https://godbolt.org/&quot;&gt;Compiler Explorer&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/section&gt;
 &lt;div class=&quot;footnotes&quot;&gt;
   &lt;ol&gt;
     &lt;li id=&quot;fn:sse&quot;&gt;
