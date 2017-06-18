@@ -1,9 +1,0 @@
-#header ul li.last:after {
-  content: none; }
-
-@media only screen and (min-width: 740px) {
-  .lt-ie9 #header-bg {
-    width: 452px;
-    height: 415px;
-    background: url("/img/bg-header.png") 1px 1px no-repeat;
-    background-size: 450px 413px; } }

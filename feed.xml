@@ -7,6 +7,469 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
+                <description>&lt;p&gt;I started reading the awesome &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;Physically Based Rendering: From Theory to
+Implementation&lt;/a&gt; book a few weeks ago, which made me
+realise that it’s probably for the best if I rewrote &lt;a href=&quot;/tag/ray%20tracing&quot;&gt;my ray tracer&lt;/a&gt; from the
+ground up based on the ideas presented in the book. After all, good coders
+borrow, great coders steal, and at the very least we can say that I’m
+proficient at stealing—the rest will hopefully follow!&lt;/p&gt;
+
+&lt;p&gt;I also got a bit tired with the long titles of my previous &lt;a href=&quot;/tag/ray tracing&quot;&gt;ray tracing
+related posts&lt;/a&gt;, so from now on I will call the project just
+&lt;strong&gt;Ao&lt;/strong&gt;. Why on Earth &lt;em&gt;that&lt;/em&gt; particular name? Well, first I wanted to use the
+name &lt;strong&gt;Ra&lt;/strong&gt; after the &lt;a href=&quot;https://en.wikipedia.org/wiki/Ra&quot;&gt;ancient Egyptian sun
+god&lt;/a&gt;, but it looks like some French guy &lt;a href=&quot;http://cheesechess.free.fr/ra/imgbillard.html&quot;&gt;had
+already beaten me to it&lt;/a&gt;.
+I liked the idea of using the name of some &lt;a href=&quot;https://en.wikipedia.org/wiki/List_of_solar_deities&quot;&gt;ancient solar
+deity&lt;/a&gt; (it looks like I’m
+&lt;a href=&quot;https://github.com/iat-cener/tonatiuh&quot;&gt;not alone&lt;/a&gt; with this), but then
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Sol_(mythology)&quot;&gt;Sol&lt;/a&gt; was &lt;a href=&quot;https://www.nrel.gov/csp/soltrace.html&quot;&gt;kind of
+taken&lt;/a&gt;, and
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Huitzilopochtli&quot;&gt;Huitzilopochtli&lt;/a&gt; doesn’t quite
+roll off the tongue either… So in the end, I chose &lt;strong&gt;Ao&lt;/strong&gt;, which I think is
+quite cool and could also stand for &lt;a href=&quot;https://en.wikipedia.org/wiki/Ambient_occlusion&quot;&gt;ambient
+occlusion&lt;/a&gt; as well. Moreover,
+I live in Australia, so that’s another good reason for choosing a Polynesian
+god in this geographical vicinity.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;“In the Polynesian mythology of the Maori, Ao (“daylight”) is one of the
+primal deities who are the unborn forces of nature. Ao is the
+personification of light and the ordinary world, as opposed to darkness and
+the underworld. He is spoken of under many forms or manifestations,
+including Aoturoa, “enduring day, this world,” Aomarama, “bright day, world
+of light and life”. With his companions, Ata, “morning,” and Whaitua,
+“space,” Ao resists the forces of darkness.”
+&lt;a href=&quot;http://everythingunderthemoon.net/forum/comprehensive-list-gods-goddesses-worldwide-t20390.html&quot;&gt;(source)&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;em&gt;&amp;lt;ominous sound effects&amp;gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p class=&quot;heightened-dramatic-tension&quot;&gt;From henceforth, Ao shall resist the Forces of Darkness!&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&amp;lt;/ominous sound effects&amp;gt;&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Okay, now that we got that out of the way, here’s some words about my
+experience with the book so far. The general idea is that I will read the book
+from start to end and (re)implement everything in Nim as I go. I am not going
+to follow it to the letter though; sometime I might use a different
+convention, approach or algorithm either for performance reasons or simply due
+to personal preference.&lt;/p&gt;
+
+&lt;h2 id=&quot;notes-on-the-book&quot;&gt;Notes on the book&lt;/h2&gt;
+
+&lt;p&gt;I have only read the first two chapters so far, but I can already say that
+I am extremely impressed by the book; it’s a work of art and very obviously
+a labour of love. The topics are well presented, the explanatory texts are
+very well written in a somewhat terse but interesting style, and the authors
+generally do a good to excellent job at explaining the theory behind the
+algorithms.  I say generally because a few times I found myself wanting to do
+further research on a given proof, but this is probably more due to me not
+exactly being a math genius than the authors’ fault…&lt;/p&gt;
+
+&lt;p&gt;For example, their less than one page derivation of the rotation transforms
+wasn’t quite clear to me, so I went googling and finally found &lt;a href=&quot;http://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf&quot;&gt;this paper&lt;/a&gt;
+that made everything crystal clear. But then, the book is already 1100+ pages
+long and giving more detailed proofs could easily have doubled that I guess,
+so I’m okay with having to do some extra reading from time to time. Doing your
+own research helps internalising knowledge better anyway.&lt;/p&gt;
+
+&lt;p&gt;One good source of computer graphics related information where the proofs are
+explained in a bit more detail is
+&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel&lt;/a&gt; which I wholeheartedly
+recommend. For the math stuff I found a very good online resource, &lt;a href=&quot;http://tutorial.math.lamar.edu/download.aspx&quot;&gt;Paul’s
+Online Math Notes&lt;/a&gt;, that seems
+very promising (I just prefer reading to watching videos and he provides 
+downloadable PDF versions of most of his materials).&lt;/p&gt;
+
+&lt;h3 id=&quot;coordinate-system&quot;&gt;Coordinate system&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt; uses a left-handed coordinate system, which is
+the default coordinate system of
+&lt;a href=&quot;https://msdn.microsoft.com/en-us/library/windows/desktop/bb324490(v=vs.85).aspx&quot;&gt;DirectX&lt;/a&gt;,
+&lt;a href=&quot;http://www.povray.org/documentation/3.7.0/t2_2.html#t2_2_1_1&quot;&gt;POV-Ray&lt;/a&gt;,
+&lt;a href=&quot;https://renderman.pixar.com/resources/RenderMan_20/interfaceIntro.html#coordinate-systems&quot;&gt;RenderMan&lt;/a&gt;
+and
+&lt;a href=&quot;http://answers.unity3d.com/questions/38924/unity-is-a-left-handed-coordinate-system-why.html&quot;&gt;Unity&lt;/a&gt;,
+among many others.  Right-handed coordinate systems, on the other hand (no pun
+intended), are the standard in mathematics, physics and engineering.
+&lt;a href=&quot;https://learnopengl.com/#!Getting-started/Coordinate-Systems&quot;&gt;OpenGL&lt;/a&gt; also
+uses a right-handed coordinate system by default (although that’s been the
+source of a perpetual debate for quite some time now, just have a look
+&lt;a href=&quot;https://stackoverflow.com/questions/5168163/is-the-opengl-coordinate-system-right-handed-or-left-handed&quot;&gt;here&lt;/a&gt;
+or
+&lt;a href=&quot;https://stackoverflow.com/questions/4124041/is-opengl-coordinate-system-left-handed-or-right-handed&quot;&gt;here&lt;/a&gt;).&lt;/p&gt;
+
+&lt;p&gt;In practical terms, most graphics environments allow to switch their default
+handedness (OpenGL and DirectX certainly do), but as in the world of science
+right-handed is the standard and I’m also interested in OpenGL programming
+(plus I have zero interest in DirectX), I am just going to stick with
+right-handed.  One consequence of this is that occasionally I’ll have to work
+a bit harder to correctly implement the algorithms presented in the book.
+Well, if nothing else, this will require me to have a really solid
+understanding of what I’m doing!&lt;/p&gt;
+
+&lt;h3 id=&quot;vectors-normals-points&quot;&gt;Vectors, Normals, Points&lt;/h3&gt;
+
+&lt;p&gt;The book introduces separate vector, normal and point templates, which contain
+an awful lot of code duplication, and in my opinion just complicate things for
+little gain. Overall, I don’t think the better type safety is worth the added
+code complexity and the potential performance penalty (because you’d need to
+convert data back and forth between different types a lot). Because of this,
+many systems just don’t bother with making these distinctions
+(&lt;a href=&quot;https://www.khronos.org/opengl/wiki/Data_Type_(GLSL)#Vector_constructors&quot;&gt;GLSL&lt;/a&gt;
+and &lt;a href=&quot;http://www.openexr.com/&quot;&gt;OpenEXR&lt;/a&gt; spring to mind) and just define
+a single universal vector type instead to keep things simple.  Then it’s up to
+the actual code to interpret the data in the right context.  That’s what I’m
+doing here too; all vectors, normals and points are represented by a single
+vector type:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Vec2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Vec3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;T&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Vec2f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FloatT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Vec2i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec2&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Vec3f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;FloatT&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Vec3i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec3&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;matrix-inverse&quot;&gt;Matrix inverse&lt;/h3&gt;
+
+&lt;p&gt;I have introduced a special fast version of the 4x4 matrix inverse operation
+called &lt;code&gt;rigidInverse&lt;/code&gt; that can be used to quickly invert affine transforms
+that don’t have a scaling component. The optimised version only costs 24 FLOPs
+instead of the 152 FLOPs of the general version (6.3x speedup!). I was able to make good use
+of this in the &lt;code&gt;lookAt&lt;/code&gt; procedure for some internal calculations.&lt;/p&gt;
+
+&lt;h3 id=&quot;ray-box-intersection-tests&quot;&gt;Ray-box intersection tests&lt;/h3&gt;
+
+&lt;p&gt;The book presents a mostly straightforward implementation of the &lt;a href=&quot;http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm&quot;&gt;slab
+method&lt;/a&gt;
+invented by Kay and Kayjia for calculating ray-box intersections (where by box
+we mean axis-aligned bounding boxes, or AABBs). The problem with their
+algorithm is that it contains a lot of conditional statements which hurt
+performance.  AABB tests must be as fast as possible because a large
+percentage of the total run time of the renderer will be spent performing
+these intersection tests. Luckily, there’s an optimised &lt;a href=&quot;https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/&quot;&gt;branchless
+version&lt;/a&gt;
+out there which I ended up adopting. This version reports false hits
+for degenerate cases where any of the ray origin’s coordinates lay exactly on
+the slab boundaries, but this is negligible if the actual ray-object
+intersection routines are correct, and well worth the added 15-20%
+performance boost compared to the 100% correct version.&lt;/p&gt;
+
+&lt;h2 id=&quot;notes-on-nim&quot;&gt;Notes on Nim&lt;/h2&gt;
+
+&lt;p&gt;The best way to learn the intricacies of any programming language is to write
+some non-trivial piece of software in it, and pbrt certainly falls into this
+category. Implementing the code from the first two chapters in Nim has taught
+me several useful lessons which I am going to summarise below.&lt;/p&gt;
+
+&lt;h3 id=&quot;project-structure&quot;&gt;Project structure&lt;/h3&gt;
+
+&lt;p&gt;Nim doesn’t have the concept of access modifiers and packages like Java and
+Scala, or namespaces like C++. The only available organisational unit is the
+module that can export some of its symbols, otherwise they are private and
+unaccessible to the outside world. One file can contain only one module, the
+filename minus the extension being the name of the module (although a module
+can be split up into several files with the use of &lt;code&gt;include&lt;/code&gt;). All module
+names have to be unique within the same compilation unit.&lt;/p&gt;
+
+&lt;p&gt;After much contemplation and experimentation I came up with the following
+project structure that mirrors that of pbrt. For brevity, only two main
+modules are presented here, &lt;code&gt;core&lt;/code&gt; and &lt;code&gt;filter&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;src/
+  core/
+    common.nim
+    geometry.nim
+    shape.nim
+    types.nim
+  filters/
+    box.nim
+    gaussian.nim
+    types.nim
+  main.nim
+
+test/
+  core/
+    allCoreTests.nim
+    commonTests.nim
+    geometryTests.nim
+    shapeTests.nim
+  filters/
+    boxTests.nim
+    gaussianTests.nim
+  allTests.nim
+
+nim.cfg
+README.md
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;As mentioned above, module names must be unique per compilation unit; that’s
+the reason why I had to call the unit test modules &lt;code&gt;&amp;lt;modulename&amp;gt;Test&lt;/code&gt;,
+otherwise I wouldn’t be able to import &lt;code&gt;&amp;lt;modulename&amp;gt;&lt;/code&gt; into them. This also
+means that public submodules that are imported by other modules must have
+unique names, for example &lt;code&gt;core/common&lt;/code&gt; and &lt;code&gt;filters/common&lt;/code&gt; could not be
+imported by the &lt;code&gt;main&lt;/code&gt; module (remember, the filesystem path is &lt;em&gt;not&lt;/em&gt; part of
+the module name, just the filename).&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;nim.cfg&lt;/code&gt; contains the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;path=&quot;src/core&quot;
+path=&quot;src/filters&quot;
+# add a new entry for every module
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This way we can conveniently just import submodules by the name of the
+submodule, as they are all unique. This is much cleaner and easier to
+maintain than using relative paths, especially in the unit tests. For
+instance:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;import geometry     # imports src/core/geometry.nim
+import gaussian     # imports src/filters/gaussian.nim
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;types.nim&lt;/code&gt; file inside each main module is a special thing that I am
+going to explain &lt;a href=&quot;#managing-circular-dependencies&quot;&gt;a bit later&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;inlining&quot;&gt;Inlining&lt;/h3&gt;
+
+&lt;p&gt;The Nim compiler doesn’t do automatic inlining of small functions across
+module boundaries; it is the programmer’s responsibility to annotate such
+functions with the &lt;code&gt;{.inline.}&lt;/code&gt; pragma like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;vec3f&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FloatT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec3f&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inline&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Vec3f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;z&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;assert&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hasNaNs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This is a small thing, but forgetting about it can result in &lt;a href=&quot;/2017/04/22/nim-performance-tuning-for-the-uninitiated/#nim-----vector-module&quot;&gt;severe
+performance
+penalties&lt;/a&gt;
+in numerical code that needs to be as fast as possible.&lt;/p&gt;
+
+&lt;h3 id=&quot;calling-parent-methods&quot;&gt;Calling parent methods&lt;/h3&gt;
+
+&lt;p&gt;Nim doesn’t have a convenient &lt;code&gt;super()&lt;/code&gt; pseudo-method that would allow the
+calling of parent methods in a straightforward manner. This left me scratching
+my head for a while until I found the answer in the &lt;a href=&quot;https://forum.nim-lang.org/&quot;&gt;Nim
+forums&lt;/a&gt;. There are two problems here that require
+slightly different solutions, namely &lt;strong&gt;calling parent constructors&lt;/strong&gt;
+and &lt;strong&gt;calling ordinary parent methods&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h4 id=&quot;calling-parent-constructors&quot;&gt;Calling parent constructors&lt;/h4&gt;
+
+&lt;p&gt;Constructor chaining is most easily accomplished by introducing internal
+&lt;code&gt;init&lt;/code&gt; helper procedures for every subclass which then can be called with the
+subclass type converted to the parent class type. It’s much easier to
+understand this by looking at a concrete example:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RootObj&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Circle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;of&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initShape&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Circle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# this is the trick, call init on a Shape&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;initCircle&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;bool&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Circle&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;radius&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;visible&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Test&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initCircle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;10.2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Prints: (radius: 10.2, x: 5.0, y: 8.0, visible: true)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The trick is happening in the &lt;code&gt;init&lt;/code&gt; procedure of &lt;code&gt;Circle&lt;/code&gt;, where we first
+convert the &lt;code&gt;Circle&lt;/code&gt; to a &lt;code&gt;Shape&lt;/code&gt; and run the parent &lt;code&gt;init&lt;/code&gt; procedure on it.&lt;/p&gt;
+
+&lt;h4 id=&quot;calling-ordinary-parent-methods&quot;&gt;Calling ordinary parent methods&lt;/h4&gt;
+
+&lt;p&gt;For ordinary methods, using
+&lt;a href=&quot;https://nim-lang.org/docs/system.html#procCall,untyped&quot;&gt;&lt;code&gt;procCall&lt;/code&gt;&lt;/a&gt; that
+disables dynamic binding for a given call is the solution:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;draw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;base&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Shape.draw enter&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Shape.draw exit&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;method&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;draw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Circle&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Circle.draw enter&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;procCall&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Shape&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;draw&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# or Shape(self).draw&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;Circle.draw exit&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;draw&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Prints:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Circle.draw enter&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Shape.draw enter&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Shape.draw exit&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Circle.draw exit&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;managing-circular-dependencies&quot;&gt;Managing circular dependencies&lt;/h3&gt;
+
+&lt;p&gt;Nim allows recursive module dependencies, as described &lt;a href=&quot;https://nim-lang.org/docs/manual.html#modules&quot;&gt;in the
+manual&lt;/a&gt;. They are a bit tricky
+to work with in more complex scenarios, and different techniques are involved
+when dealing with &lt;strong&gt;circular procedure calls&lt;/strong&gt; versus &lt;strong&gt;circular type
+dependencies&lt;/strong&gt;.  (Perhaps there are even more cases when dealing with more
+complex language features like macros, but I haven’t got so far yet with my
+use of Nim.)&lt;/p&gt;
+
+&lt;h4 id=&quot;circular-procedure-calls&quot;&gt;Circular procedure calls&lt;/h4&gt;
+
+&lt;p&gt;Not sure if this is the proper name for this pattern, but the example below
+should make it clear what I’m referring to. Let’s try to define two functions
+in two separate modules that call each other co-routine style (blowing up the
+stack, eventually). It turns out that we need to use forward proc declarations
+to be able to accomplish this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;c&quot;&gt;# bar.nim&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;barProc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# (1) forward declaration (there&amp;#39;s no proc body)&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;foo&lt;/span&gt;          &lt;span class=&quot;c&quot;&gt;# (2) stop parsing bar.nim &amp;amp; continue with foo.nim&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;barProc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# (5) parsing foo.nim completed, continue from here&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;bar&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;fooProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;isMainModule&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;barProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;c&quot;&gt;# foo.nim&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;      &lt;span class=&quot;c&quot;&gt;# (3) only the already known symbols in bar.nim are imported,&lt;/span&gt;
+                &lt;span class=&quot;c&quot;&gt;#     which is only the forward declaration of barProc&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;fooProc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;foo&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;barProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# (4) this works because of the forward declaration&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Running the code with &lt;code&gt;nim c -r bar&lt;/code&gt; will print out &lt;code&gt;bar&lt;/code&gt; and &lt;code&gt;foo&lt;/code&gt; on
+alternating lines until we hit a stack overflow. If we wanted to be able to
+compile &lt;code&gt;foo.nim&lt;/code&gt; separately as well, we’d need to put a forward declaration
+at the top of the &lt;code&gt;foo&lt;/code&gt; module too (should be obvious why after following the
+path of execution in the above listings):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;fooProc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bar&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;fooProc&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;foo&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;barProc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h4 id=&quot;circular-type-dependencies&quot;&gt;Circular type dependencies&lt;/h4&gt;
+
+&lt;p&gt;Nim only allows the forward declaration of procedures; for types, we’ll need
+a different approach. Moreover, there’s a further limitation that &lt;a href=&quot;https://nim-lang.org/docs/tut2.html#object-oriented-programming-mutually-recursive-types&quot;&gt;mutually
+recursive
+types&lt;/a&gt;
+need to be declared within a single type section (this is so to keep
+compilation times low).&lt;/p&gt;
+
+&lt;p&gt;Sufficiently complex applications usually have quite complex type graphs where
+certain types reference each other. Initially, I had a number of “submodules”
+inside my &lt;code&gt;core&lt;/code&gt; module, each of them defining a number of types.  Many of
+these types have references to types defined in other submodules. Attempting
+to tackle these type dependencies on a case by case basis is just a lot of
+extra mental overhead and boring work, so the generic solution I ended up with
+was moving all my top-level types into a new &lt;code&gt;core/types.nim&lt;/code&gt; submodule (using
+the &lt;code&gt;core&lt;/code&gt; module as an example) which would then be imported by all &lt;code&gt;core&lt;/code&gt;
+submodules. All the types in &lt;code&gt;core/types.nim&lt;/code&gt; are defined in a single type
+section—this way I don’t even need to think about circular type
+dependencies anymore.&lt;/p&gt;
+
+&lt;p&gt;As a concrete example, &lt;code&gt;core/geometry.nim&lt;/code&gt; would start like this:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;common&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;math&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vec2f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vec2i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vec3f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Vec3i&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Box2f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Box2i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Box3f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Box3i&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Ray&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;types&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RayDifferential&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The &lt;code&gt;export&lt;/code&gt; statements ensure that the public types of this submodule will be
+available to the importing module. Private types that are used only internally
+between the submodules simply don’t get exported anywhere.&lt;/p&gt;
+
+&lt;p&gt;First I was averse to the idea of moving all the types into a single file,
+away from the actual method implementations, but then I grew to like it. It’s
+not a bad thing to see all types from all submodules in one place, especially
+when there are lots of complex interdependencies between them. As an
+interesting note, Haskell, F# and OCaml have the same limitation regarding
+circular type dependencies.&lt;/p&gt;
+
+&lt;p&gt;One drawback with this approach is that all properties defined in &lt;code&gt;types.nim&lt;/code&gt;
+must be public (exported with &lt;code&gt;*&lt;/code&gt;), otherwise the submodules themselves
+wouldn’t be able to access them. This breaks encapsulation and can be
+a problem for bigger projects with many developers working on the
+code. In reality, I don’t think this is a big deal though for people who
+know what they are doing. Even the original pbrt authors made a good point
+about exposing the internal data structures of most of their objects; doing
+“proper encapsulation” by the book would just add lots of extra cruft that is
+kind of unnecessary for small to medium sized projects developed by a single
+person or a handful of people.&lt;sup id=&quot;fnref:small&quot;&gt;&lt;a href=&quot;#fn:small&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;So long for today folks, hope you have enjoyed today’s session. You can check
+out the current state of Ao in the &lt;a href=&quot;https://github.com/johnnovak/ao&quot;&gt;GitHub
+repository&lt;/a&gt;. The takeaway message is that&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Nim is great; if you’re interested in a cute language with C-like performance
+characteristics that is a joy to use, you should definitely check it out, and&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;pbrt is not just one of the best books on computer graphics that I ever
+had the pleasure of reading, but also one of the best technical books
+overall!  If you are interested in computer graphics and don’t have
+it yet, it deserves a place on your bookshelf! It’s a steal for the asking
+price.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+
+&lt;ul class=&quot;compact&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf&quot;&gt;Kenneth E. Hoff III – Deriving 2D and 3D Rotations&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://tutorial.math.lamar.edu/download.aspx&quot;&gt;Paul’s Online Math Notes&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:small&quot;&gt;
+      &lt;p&gt;My personal opinion is that it is actually a good thing that Nim has not been designed for assembly-line style large-scale software development… just look at the macro system and imagine how much havoc a 30+ person VB.NET team could wreak even just by looking at it! &lt;a href=&quot;#fnref:small&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Sun, 18 Jun 2017 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2017/06/18/ao-the-beginning/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2017/06/18/ao-the-beginning/</guid>
+            </item>
+        
+            <item>
                 <title>Nim performance tuning for the uninitiated</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;UPDATE 2017-06-04: Corrected some slight misinformation regarding
 link time optimisations and the {.inline.} pragma, some stylistic
@@ -4631,54 +5094,6 @@ silently waiting to be discovered? We’ll find that out in the next part!&lt;/p
                 <pubDate>Thu, 03 Mar 2016 00:00:00 +1000</pubDate>
                 <link>http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</link>
                 <guid isPermaLink="true">http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</guid>
-            </item>
-        
-            <item>
-                <title>The Beginning</title>
-                <description>&lt;p&gt;Just what the world needs, yet another technical blog!&lt;/p&gt;
-
-&lt;p&gt;My name is &lt;strong&gt;John Novak&lt;/strong&gt; and I’ve been working as a professional programmer
-ever since I left uni in 2003. In those last 12+ years I have worked in
-a variety of industries using lots of different programming languages, most
-notably C, C++, Java, Python, C#, JavaScript and PHP. I’ll spare you from the
-gory details, you can check out my &lt;a href=&quot;https://www.linkedin.com/in/johnnovak1979&quot;&gt;LinkedIn profile&lt;/a&gt; if you’re really
-that interested.&lt;/p&gt;
-
-&lt;p&gt;During my teenager years I was fairly involved with the Amiga and PC
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Demoscene&quot;&gt;demoscene&lt;/a&gt; as a graphician and musician. That was also the time when
-I taught myself coding in Pascal, x86 assembly and C as a hobby (in that exact
-order). I still write &lt;a href=&quot;http://www.johnnovak.net/#music&quot;&gt;music&lt;/a&gt; in my spare time and do
-&lt;a href=&quot;http://photo.johnnovak.net/&quot;&gt;photography&lt;/a&gt;, plus occasionally dabble in design (such as the visuals
-of this blog).&lt;/p&gt;
-
-&lt;p&gt;In the last 5+ years, my programming jobs involved me to focus quite heavily
-on the server-side development side of things, mostly in Java and now recently
-in Scala. While that’s a very interesting and rewarding area to work in with
-a lot of depth to it, I’ve come to realise that it’s just too easy to fall
-into a comfortable routine and become an expert in an area while
-simultaneously missing out on all the exciting new stuff that’s happening in
-the world of programming outside your particular niche.&lt;/p&gt;
-
-&lt;p&gt;And that’s the main motivation for starting this blog—to keep myself up to
-date on new technologies that interest me and document my tinkerings. The idea
-is that using the blog format to report on my experiments will help me focus
-and also make me more diligent in researching my topics.  After all, the goal
-is to write about things that are new to me, so trying to keep the amount of
-misinformation I’m unwillingly (but inevitably) going to spread to a minimum
-is probably a good idea, as I’m sure the experts will be far too eager to
-chime in and correct me… :)&lt;/p&gt;
-
-&lt;p&gt;Having said that, don’t hesitate to point out any of my factual mistakes in
-the comments. In fact, I’d be glad if you did and I encourage you to do so
-because I’m here to learn. That offer stands for correcting my grammar as well
-as English is not my first language.&lt;/p&gt;
-
-&lt;p&gt;Alright, enough of rambling about myself already, see you in the next post!&lt;/p&gt;
-
-</description>
-                <pubDate>Sun, 21 Feb 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/02/21/the-beginning/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/02/21/the-beginning/</guid>
             </item>
         
     </channel>
