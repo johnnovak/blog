@@ -661,8 +661,8 @@ article header h1 {
   .about h2 {
     margin-top: 2.2em; }
   .about .astronaut {
-    margin-top: 10em;
-    display: block; }
+    display: block;
+    margin-top: 10em; }
 
   .footnotes {
     font-size: 15px;

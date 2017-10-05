@@ -8,60 +8,6 @@
         
             <item>
                 <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
-                <description>&lt;p&gt;Noise&lt;/p&gt;
-
-&lt;p&gt;http://openglinsights.com/&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu/webglshadertutorial/shadertutorial.html&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu/simplexnoise/&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu/gpunoise/GPU-proceduralshading.pdf&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu76/&lt;/p&gt;
-
-&lt;p&gt;http://staffwww.itn.liu.se/~stegu76/TNM022-2005/perlinnoiselinks/&lt;/p&gt;
-
-&lt;p&gt;http://eastfarthing.com/blog/2015-04-21-noise/&lt;/p&gt;
-
-&lt;p&gt;Spherical coordinates&lt;/p&gt;
-
-&lt;p&gt;http://mathinsight.org/spherical_coordinates&lt;/p&gt;
-
-&lt;p&gt;OpenGL&lt;/p&gt;
-
-&lt;p&gt;http://www.songho.ca/opengl/index.html&lt;/p&gt;
-
-&lt;p&gt;SIMD&lt;/p&gt;
-
-&lt;p&gt;http://www.songho.ca/misc/sse/sse.html&lt;/p&gt;
-</description>
-                <pubDate>Sun, 18 Jun 2017 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2017/06/18/computer-graphics-links/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2017/06/18/computer-graphics-links/</guid>
-            </item>
-        
-            <item>
-                <title>pbrt Reading Materials</title>
-                <description>&lt;h2 id=&quot;chapter-3----shapes&quot;&gt;Chapter 3 – Shapes&lt;/h2&gt;
-
-&lt;h3 id=&quot;numerical-analysis&quot;&gt;Numerical analysis&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://people.ds.cam.ac.uk/nmm1/arithmetic/na1.pdf&quot;&gt;M.R. O’Donohoe - Numerical Analysis I&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.volkerschatz.com/science/float.html&quot;&gt;What you never wanted to know about floating point but will be forced to find out&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-                <pubDate>Sun, 18 Jun 2017 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2017/06/18/pbrt-reading-materials/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2017/06/18/pbrt-reading-materials/</guid>
-            </item>
-        
-            <item>
-                <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
                 <description>&lt;p&gt;I started reading the awesome &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;Physically Based Rendering: From Theory to
 Implementation&lt;/a&gt; book a few weeks ago, which made me
 realise that it’s probably for the best if I rewrote &lt;a href=&quot;/tag/ray%20tracing&quot;&gt;my ray tracer&lt;/a&gt; from the
@@ -4601,6 +4547,563 @@ Scratch&lt;/a&gt;&lt;/li&gt;
                 <pubDate>Sat, 30 Apr 2016 00:00:00 +1000</pubDate>
                 <link>http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</link>
                 <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</guid>
+            </item>
+        
+            <item>
+                <title>The Nim Ray Tracer Project &amp;ndash; Part 1: Introduction</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to the albums &lt;em&gt;Reverberant Skies&lt;/em&gt; and &lt;em&gt;White Maps&lt;/em&gt; from
+&lt;em&gt;Aglaia&lt;/em&gt; in an infinite loop… A beautifully hypnotic experience! The track
+&lt;em&gt;In the First Spinning Place&lt;/em&gt; from &lt;em&gt;White Maps&lt;/em&gt; is my absolute favourite.]&lt;/p&gt;
+
+&lt;h2 id=&quot;why-a-ray-tracer&quot;&gt;Why a ray tracer?&lt;/h2&gt;
+
+&lt;p&gt;I’ve been fascinated by ray tracing since my childhood. I still remember the
+first time I was playing around with an early 3D modeller/ray tracer program
+on the &lt;a href=&quot;https://en.wikipedia.org/wiki/Amiga_500&quot;&gt;Amiga 500&lt;/a&gt; called
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Imagine_%283D_modeling_software%29&quot;&gt;Imagine&lt;/a&gt;
+when I was about 13, trying to render some extruded letters made of glass
+placed on a classic checker-board patterned surface (don’t laugh, this was
+sort of a novel thing to do at that time, and I was a kid). Well, rendering
+the final 360x576 image (&lt;a href=&quot;https://en.wikipedia.org/wiki/Overscan&amp;gt;&quot;&gt;overscan&lt;/a&gt;!)
+took a bit more than 7 hours, but when I turned on the monitor in the morning
+in great anticipation and saw the final image in its
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Hold-And-Modify&quot;&gt;4096-colour&lt;/a&gt; interlaced glory
+(probably quite primitive looking by today’s standards), I was in awe! What
+made the experience even more interesting for me was that Imagine supported
+the use of so-called procedural textures, which are textures solely generated
+by mathematical functions instead of using bitmap images. I was mesmerised—a
+photorealistic image generated by the computer using nothing else but pure
+maths! &lt;sup id=&quot;fnref:amiga&quot;&gt;&lt;a href=&quot;#fn:amiga&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+
+&lt;p&gt;I have always thought of ray tracing as some kind of black magic—something
+utterly fascinating and very scary at the same time because of the complex
+maths involved (which, as it turns out, is not quite true). This belief was
+also strengthened by my modest excursions into OpenGL programming years later,
+which uses a different method called
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Rasterisation&quot;&gt;rasterization&lt;/a&gt; to generate 3D
+images.&lt;/p&gt;
+
+&lt;h2 id=&quot;ray-tracing-vs-rasterization&quot;&gt;Ray tracing vs rasterization&lt;/h2&gt;
+
+&lt;p&gt;Historically, there have been two main disparate approaches to rendering 3D
+scenes, rasterization and ray tracing (the situation is not so clear-cut
+nowadays, as we’ll see later). While rasterization is by several orders of
+magnitude more efficient at producing 3D animations at smooth frame rates in
+real-time, ray tracing can produce vastly more photorealistic results.  While
+many visual effects that happen in real life, such as non-planar reflections,
+soft shadows, refractions and caustics, are quite simple, albeit
+computationally very costly, to calculate with ray tracing, it requires quite
+a bit of complicated trickery even just to fake them with rasterization.&lt;/p&gt;
+
+&lt;p&gt;At the risk of grossly oversimplifying matters, rasterization is very
+efficient at projecting several hundreds of thousands of three-dimensional
+triangles onto a two-dimensional surface (the screen) and then colouring
+(shading) them according to some rules. In order to obtain reasonable frame
+rates during real-time animation, certain simplifications and optimisations
+have to be made. Photorealistic rendering that accurately portrays how a given
+scene would look in real life is not necessarily of primary importance as long
+as the end result looks pleasing (which is a reasonable assumption for many
+applications such as visualisation and games, where absolute fidelity to
+reality is not a requirement). It’s the 3D artists’ job to arrange those
+coloured triangles so that the resulting image looks good. Most
+graphics-accelerator cards today implement some sort of rasterization pipeline
+in hardware.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Ray_tracing_(graphics)&quot;&gt;Ray tracing&lt;/a&gt;, on the
+other hand, is a pretty much a no-holds-barred approach of generating
+realistic images on a computer by simulating the path of photons emitted by
+light sources bouncing from surface to surface among the objects making
+up the 3D scene, finally landing on the image surface of the virtual camera.
+Photorealism is of primary importance here, which is achieved by calculating
+the image pixel by pixel using algorithms that mimic the laws of physics as
+closely as practically possible (certain simplifications must be made, of
+course, otherwise we would end up writing a Universe Simulator!).&lt;/p&gt;
+
+&lt;p&gt;This begs the question, is ray tracing superior to rasterization then? In some
+way, we can say it is.  As far as photorealistic rendering is concerned, ray
+tracing is hard to beat, however this comes at a very steep computational
+cost. But if we asked whether it was possible to create pleasing imagery using
+rasterization alone, the answer would be a yes again. Just because
+rasterization is not as much rooted in physical reality as ray tracing, it
+would be foolish to think that it’s not capable of producing stellar results
+that can look very convincingly real (just look at any modern game released
+post 2010!). Indeed, there’s nothing preventing skilful artists from arranging
+the triangles making up the scene in such a way that can convey very realistic
+final results—similarly to how a master painter can create astonishingly
+realistic works of art by nothing more than applying differently coloured
+specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 80%;&quot;&gt;Surely, &lt;a href=&quot;https://en.wikipedia.org/wiki/Caravaggio&quot;&gt;Caravaggio&lt;/a&gt; did not know about the &lt;a href=&quot;https://en.wikipedia.org/wiki/Fresnel_equations&quot;&gt;Fresnel equations&lt;/a&gt; or the &lt;a href=&quot;https://en.wikipedia.org/wiki/Metropolis_light_transport&quot;&gt;Metropolis light transport&lt;/a&gt; when he painted &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Calling_of_St_Matthew_(Caravaggio)&quot;&gt;The Calling of Saint Matthew&lt;/a&gt; in 1600. Yet no one would say his paintings are not realistic enough just because he did not know about the physics of light! Interestingly enough, there have been some &lt;a href=&quot;http://www.webexhibits.org/hockneyoptics/post/grundy7.html&quot;&gt;speculations&lt;/a&gt; that he might have used the &lt;a href=&quot;https://en.wikipedia.org/wiki/Camera_obscura&quot;&gt;camera obscura&lt;/a&gt; to aid him in attaining his photorealistic results, the workings of which have strong connections to the basic idea of ray tracing. Here we go!&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;As CPUs and GPUs grew more powerful, previously purely
+rasterization-based game engines have been increasingly incorporating ray
+tracing techniques into their toolbox, such as &lt;a href=&quot;http://blogs.unity3d.com/2014/09/18/global-illumination-in-unity-5/&quot;&gt;global
+illumination&lt;/a&gt;,
+&lt;a href=&quot;http://twiik.net/articles/realtime-reflections-in-unity-5&quot;&gt;real-time
+reflections&lt;/a&gt; and
+&lt;a href=&quot;https://vimeo.com/82659909&quot;&gt;pseudo-refraction&lt;/a&gt; using shaders. These techniques
+are usually quite limited compared to their ray tracing counterparts, for
+example global illumination is usually restricted to static objects,
+reflections are only possible on planar surfaces and refraction is faked with
+shaders.&lt;/p&gt;
+
+&lt;p&gt;Also, more and more game engines have started implementing &lt;a href=&quot;http://blog.wolfire.com/2015/10/Physically-based-rendering&quot;&gt;physically-based
+rendering (PBR)&lt;/a&gt;
+methods recently, the renowned
+&lt;a href=&quot;https://en.wikipedia.org/wiki/CryEngine&quot;&gt;CryEngine&lt;/a&gt; being one notable
+example. The following is the introductory paragraph of the &lt;a href=&quot;http://docs.cryengine.com/display/SDKDOC2/Physically+Based+Shading&quot;&gt;Physically Based
+Shading&lt;/a&gt;
+chapter of the &lt;a href=&quot;http://docs.cryengine.com/display/SDKDOC1/Home&quot;&gt;CryEngine SDK
+documentation&lt;/a&gt;:&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;CRYENGINE 3.6 and beyond uses a shading model that is based on fundamental
+  physical rules. Instead of using a plenty of fudge and tweak factors which
+  don’t have a reasonable meaning in the real world, materials use some physical
+  properties to describe how the incoming light should interact with them.
+  A huge advantage of using a physically based model with certain rules is that
+  material assets will a lot more consistent and look more convincing under
+  different lighting conditions.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;This supports my earlier claim that while it’s certainly possible to create
+realistic visuals with rasterization, photorealism is not inherent in the
+rendering algorithm, but requires manual tweaking and fine-tuning of various
+parameters on the part of the 3D artist.&lt;/p&gt;
+
+&lt;p&gt;To sum up, I personally tend to think of rasterization as a more
+artist-centric and ray tracing as a more scientific approach of image
+generation. Ultimately, both are just tools of solving the problem of mapping
+a 3D scene onto a 2D image surface, but there’s a certain undeniable beauty
+and elegance to ray tracing algorithms in how they generate complex visual and
+optical effects by the application of just a few simplified physical models of
+reality.&lt;/p&gt;
+
+&lt;h3 id=&quot;in-defence-of-rasterization&quot;&gt;In defence of rasterization&lt;/h3&gt;
+
+&lt;p&gt;Just to bring the point home that rasterization is not inferior to ray tracing
+but only different, and to further support my argument that it is a more
+artist-based approach to rendering, let me present two examples from the two
+opposite ends of the spectrum of what rasterization is capable of. As we’ll
+see, it would have been difficult or impractical (or both) to achieve the same
+results with pure ray tracing techniques alone in both cases.&lt;/p&gt;
+
+&lt;p&gt;The magical realist adventure game (whatever that means) &lt;a href=&quot;http://kentuckyroutezero.com/&quot;&gt;Kentucky Road
+Zero&lt;/a&gt; by the aptly titled developer &lt;a href=&quot;http://cardboardcomputer.com/&quot;&gt;Cardboard
+Computer&lt;/a&gt; uses clever rasterization tricks to
+render its highly stylised low-polygon world. While the abstract visuals bear
+similitude to simple 2D paper cut-outs in most scenes, some occasional camera
+angle switches hint at it that there’s more going on under the hood, and
+indeed, this is in fact the 3D engine &lt;a href=&quot;https://unity3d.com/&quot;&gt;Unity&lt;/a&gt; in action,
+as evidenced by this &lt;a href=&quot;https://unity3d.com/showcase/case-stories/cardboardcomputer-kentuckyroutezero&quot;&gt;featured
+article&lt;/a&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;The opening scene of &lt;a href=&quot;http://kentuckyroutezero.com/&quot;&gt;Kentucky Road Zero&lt;/a&gt;, Act I by &lt;a href=&quot;http://cardboardcomputer.com/&quot;&gt;Cardboard Computer&lt;/a&gt;. If David Lynch ever ventured into making a computer game, then this would be it. The unique visual style of the game proves that an unconventional, abstract approach to rendering instead of taking the well-beaten &quot;standard&quot; photorealistic path can yield much more interesting results.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.theastronauts.com/&quot;&gt;The Astronauts&lt;/a&gt;’ first-person mystery game
+&lt;a href=&quot;http://ethancartergame.com/&quot;&gt;The Vanishing of Ethan Carter&lt;/a&gt;, on the other
+hand, employs a breathtakingly beautiful painterly approach to create its
+immersive in-game atmosphere. As it can be clearly seen on the screenshot, the
+results are stunningly realistic, but in a dreamy and artistic kind of way
+which is not dissimilar at all to the Caravaggio painting presented above. The
+developers used a technique called
+&lt;a href=&quot;http://www.theastronauts.com/2014/03/visual-revolution-vanishing-ethan-carter/&quot;&gt;photogrammetery&lt;/a&gt;
+to effectively sample reality in the form of textures and 3D meshes from
+thousands of photographs, but from there on it’s all traditional rasterization
+using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&lt;/a&gt;.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;/a&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;One of the most beautiful games of recent years, &lt;a href=&quot;http://ethancartergame.com/&quot;&gt;The Vanishing of Ethan Carter&lt;/a&gt; pulls the player in into its highly realistic yet painterly world right from the first second of gameplay. No trace (pun intended) of physical based rendering is to be found here, yet the results speak for themselves.&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;I suspect it would have been quite difficult to achieve the same level of
+painterly feel by employing a strict ray tracing approach, even if that was
+possible at fluid frame rates on current hardware at all.  While ray tracing
+would have certainly yielded a more faithful portrayal of reality in terms of
+sheer physical accuracy, it could not have granted the artist as much creative
+freedom to sculpt the games’s almost otherwordly beautiful scenes by freely
+manipulating the shades and colours.  Atmosphere and emotions beat pure
+physics in this example again.&lt;/p&gt;
+
+&lt;h2 id=&quot;why-nim&quot;&gt;Why Nim?&lt;/h2&gt;
+
+&lt;p&gt;You know the old saying, mastering a programming language just by reading
+about it is like trying to learn how to ride the bicycle from a book.  I get
+quickly bored by solving toy textbook exercises too; implementing quicksort in
+yet another language is not quite my idea of having a good time, really.  What
+works for me best is writing a new application from scratch that does some
+cool stuff that I’m excited about and learn the new language along the way. So
+that’s what we’re gonna do here, write a full-featured ray tracer from the
+ground up in pure Nim!&lt;/p&gt;
+
+&lt;p&gt;Oh, and why &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt;? Serious people™ use C++ for
+high-performance graphics stuff, don’t they? Well, this is going to be a ray
+tracer, so speed matters &lt;em&gt;a lot&lt;/em&gt;, indeed—but so does the fun factor and my
+sanity too, as I’m not paid to suffer here, this being a hobby project and all
+(on a related note, don’t be a masochist, &lt;a href=&quot;/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/&quot;&gt;just say No to
+C++!&lt;/a&gt;).
+Nim claims to be “Efficient like C, expressive like Python and flexible like
+Lisp” which sounds pretty good in my book. In fact, C, Python and Lisp are
+probably my three all-time favourite languages, so this actually sounds more
+like a dream come true! So what we’re gonna do here is take this little guy
+for a wild ride and see how it lives up to its lofty goals in the real world!&lt;/p&gt;
+
+&lt;h2 id=&quot;in-the-next-episode&quot;&gt;In the next episode…&lt;/h2&gt;
+
+&lt;p&gt;We will examine the mathematical foundations of writing a simple ray tracer.
+Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
+
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:amiga&quot;&gt;
+      &lt;p&gt;To put things into perspective, my experimentations with ray tracing on the Amiga took place in around 1992. There was virtually no Internet back then, I haven’t even heard the word until several years later. I read it in a &lt;em&gt;paper computer magazine&lt;/em&gt; (yes, those things &lt;em&gt;did&lt;/em&gt; actually exist, can you believe it?) that the CGI effects in the 1991 film &lt;a href=&quot;https://en.wikipedia.org/wiki/Terminator_2:_Judgment_Day&quot;&gt;Terminator 2: Judgement Day&lt;/a&gt; were rendered on a room full of ultra high-end (and ultra-expensive) &lt;a href=&quot;http://www.obsolyte.com/sgi_iris/&quot;&gt;Silicon Graphics IRIS&lt;/a&gt; &lt;a href=&quot;http://www.sgistuff.net/funstuff/hollywood/&quot;&gt;workstations&lt;/a&gt;, but even with that kind of computing power it took &lt;em&gt;several months&lt;/em&gt; to render a few minutes’ worth of scenes. Now, seeing &lt;em&gt;any kind of&lt;/em&gt; semi-photorealistic ray traced image come out of my modest &lt;a href=&quot;https://en.wikipedia.org/wiki/Amiga_500&quot;&gt;Amiga 500&lt;/a&gt; personal computer setup sporting a blazingly fast 7.14 Mhz &lt;a href=&quot;https://en.wikipedia.org/wiki/Motorola_68000&quot;&gt;Motorola 68000 CPU&lt;/a&gt; seemed nothing short of a small miracle to me then! (Actually, that chip is as old as &lt;em&gt;yours truly&lt;/em&gt;, I’ve just checked…) Oh, and I had no such luxuries as a &lt;em&gt;hard disk drive&lt;/em&gt; either—the whole program and the scene to be rendered had to fit into the machine’s whopping 1 MB of RAM (expanded from the 512 KB factory default) and the final image was then slowly written to a blank &lt;a href=&quot;https://en.wikipedia.org/wiki/Floppy_disk_variants#Commodore_Amiga&quot;&gt;880 KB floppy disk&lt;/a&gt; over the course of 7-8 hours! Eh, kids these days with their GPU-accelerated Monte Carlo path tracers… &lt;a href=&quot;#fnref:amiga&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Thu, 28 Apr 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</guid>
+            </item>
+        
+            <item>
+                <title>The Quest for a Programming Language That Doesn't Suck &amp;ndash; Part 1</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to: &lt;em&gt;Aglaia – Three Organic Experiences&lt;/em&gt;. Track #3, &lt;em&gt;Seven
+Ancient Glaciers&lt;/em&gt; is a definite stand-out!]&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;Welcome, stranger! This series is a journal that attempts to document my
+trials and tribulations as I embark on the impossible journey of finding the
+perfect programming language that I can use with great joy on my hobby
+projects. An epic quest of unfathomable difficulty, indeed!&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;In this episode: after a somewhat lacklustre introductory meandering on the
+merits of the multi-language approach in software development, things get
+heated up quite a bit with some good old-fashioned C++ bashing, after which
+the hero calms down and finally sets some GOALs. A rare Greek mythological
+creature also makes an appearance midway.&lt;/p&gt;
+
+&lt;h2 id=&quot;performance-vs-productivity&quot;&gt;Performance vs productivity&lt;/h2&gt;
+
+&lt;p&gt;A good programmer is a good programmer in any language. Yet the choice of
+language has significant effects on both developer productivity and the
+runtime performance of the resulting software. The “universally accepted
+truth” appears to be that these two things form a sort of a dichotomy.
+Low-level languages allow ultimate control over the hardware, thus yielding
+the best possible performance (assuming the programmer knows what he’s doing)
+and traversing up towards the high-level end of the scale languages gain
+progressively more expressive power which results in improved programmer
+productivity (more “impact” per lines of code), albeit at the cost of runtime
+speed. Programmer and program efficiency are widely believed to be mutually
+exclusive goals—you just can’t achieve both within the confines of a single
+language.&lt;/p&gt;
+
+&lt;p&gt;One solution to this problem has traditionally been the two-language approach,
+which boils down to combining a highly expressive but slow high-level language
+with a speedy but relatively primitive low-level one as an attempt to gain the
+best benefits of both worlds. There are generally two ways to go about this:
+by &lt;strong&gt;extending&lt;/strong&gt; or &lt;strong&gt;embedding&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;extending&quot;&gt;Extending&lt;/h3&gt;
+
+&lt;p&gt;When extending, the bulk of the program is written in a high-level language
+(either interpreted or statically compiled) to get the benefit of higher
+programmer productivity, then performance critical parts simply get rewritten
+in a more efficient low-level language. Thus the high-level
+language gets &lt;strong&gt;extended&lt;/strong&gt; with special purpose modules or libraries that
+handle the performance critical duties.&lt;/p&gt;
+
+&lt;p&gt;Certain languages, such as Python, are more suitable for extending than
+embedding. Arguably, one of the best mainstream examples for extending Python
+is the hugely popular sci-fi space MMORPG game &lt;a href=&quot;https://en.wikipedia.org/wiki/Eve_Online&quot;&gt;EVE
+Online&lt;/a&gt;. The EVE client was written
+in &lt;a href=&quot;http://www.grant-olson.net/files/why_stackless.html&quot;&gt;Stackless Python&lt;/a&gt;
+that is extended with custom coded C++ modules to handle platform-specific
+graphics, sound, network I/O and other performance-sensitive tasks.&lt;/p&gt;
+
+&lt;p&gt;This method might work fine from a performance optimization point of view, but
+it’s not without drawbacks. First of all, there is very likely going to be an
+“impedance mismatch” between the two languages, which will necessitate to
+devise some sort of bridging mechanism to allow the interchange of data
+structures and bi-directional control flow between the two layers. This can
+quickly result in lots of glue code and data duplication, especially if the
+two languages were not designed to co-operate with each other. Also, the
+high-level language might have some quite rigid ideas about how the data
+should be laid out in memory that might further complicate the low-level
+performance optimization efforts (e.g. misaligned data, difficulty of
+achieving &lt;a href=&quot;https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/&quot;&gt;SoA
+layouts&lt;/a&gt;
+(&lt;a href=&quot;https://software.intel.com/en-us/articles/memory-layout-transformations&quot;&gt;Struct of
+Arrays&lt;/a&gt;)
+for SIMD optimizations etc.) While it’s certainly possible to speed
+the program up this way, the time gained by using a high-level language can
+easily be amortised by having to build a custom (and potentially suboptimal)
+bridging solution and the increased general complexity of the development
+workflow.&lt;/p&gt;
+
+&lt;h3 id=&quot;embedding&quot;&gt;Embedding&lt;/h3&gt;
+
+&lt;p&gt;The second variant is writing a high-performance core in a low-level language
+(usually a statically compiled one, such as C or C++) and then &lt;strong&gt;embedding&lt;/strong&gt;
+a high-level language into the program (typically an interpreted dynamic
+scripting language). The core functionality would be exposed through an API
+and the application logic would be implemented in the scripting language using
+this API. In this scenario, the high-level scripting language is relegated to
+an orchestrator role. Another related but slightly different usage pattern for
+embedding is to enable the end-user to extend the application via scripts and
+plugins, or in the case of games, to allow modding.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://www.lua.org/&quot;&gt;Lua&lt;/a&gt; is very well suited for embedding; over the years,
+it has almost become the de-facto scripting language of choice for C/C++
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Lua_(programming_language)#Applications&quot;&gt;applications&lt;/a&gt;,
+especially since the advent of &lt;a href=&quot;http://luajit.org/&quot;&gt;LuaJIT&lt;/a&gt;. Due to its very
+small memory footprint and high runtime efficiency, it has gained
+a &lt;a href=&quot;https://en.wikipedia.org/wiki/Category:Lua-scripted_video_games&quot;&gt;widespread
+adoption&lt;/a&gt; in
+the C++ dominated gaming industry over the last two decades, and it has
+found its way into a wide variety of applications and &lt;a href=&quot;http://www.eluaproject.net/&quot;&gt;embedded
+systems&lt;/a&gt; as well, such as high-performance &lt;a href=&quot;http://nginx.org/&quot;&gt;web
+servers&lt;/a&gt;, &lt;a href=&quot;http://redis.io/&quot;&gt;in-memory databases&lt;/a&gt;,
+&lt;a href=&quot;https://openwrt.org/&quot;&gt;routers&lt;/a&gt; and &lt;a href=&quot;https://www.renoise.com/&quot;&gt;audio
+software&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;On the desktop application front, the best high-profile commercial example is
+undeniably &lt;a href=&quot;https://en.wikipedia.org/wiki/Adobe_Photoshop_Lightroom&quot;&gt;Adobe Photoshop
+Lightroom&lt;/a&gt;.  More
+than 60% of the Lightroom code was &lt;a href=&quot;http://www.troygaul.com/LrExposedC4.html&quot;&gt;written in
+Lua&lt;/a&gt; (basically the whole UI logic),
+C++ was only used for the speed-critical image-manipulation routines and some
+platform-specific glue code.&lt;/p&gt;
+
+&lt;p&gt;Of course, the downside of the embedding approach is that a significant part
+of the program still has to be written in C/C++, which leads right into my
+next topic…&lt;/p&gt;
+
+&lt;h2 id=&quot;life-is-too-short-for-c&quot;&gt;Life is too short for C++&lt;/h2&gt;
+
+&lt;p&gt;I can almost hear some people murmuring in the back row at this point: &lt;em&gt;“But
+we already have a language that combines ultimate bare-metal performance
+with high-level productivity: it’s called C++!”&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Um, no. That couldn’t be further from the truth.  For a start, read the
+preceding section again—if C++ was so awesome at everything, why would
+people want to embed high-level scripting languages into their applications?
+(Apart from plugin support and giving gameplay scripters a much simpler
+language to use, which are some very good reasons, but let’s focus on
+developer productivity here.)&lt;/p&gt;
+
+&lt;p&gt;C++ is a &lt;em&gt;total disaster&lt;/em&gt; of a language, a bloated and overcomplicated
+monstrosity. Its only redeeming quality is its (almost) full
+backwards-compatibilty with C. That may sound overly harsh, but look at a few
+successful C++
+&lt;a href=&quot;http://wiki.scummvm.org/index.php/Coding_Conventions&quot;&gt;open&lt;/a&gt;-&lt;a href=&quot;https://github.com/tonioni/WinUAE/&quot;&gt;source&lt;/a&gt;
+&lt;a href=&quot;https://sourceforge.net/projects/dosbox&quot;&gt;projects&lt;/a&gt; and check out some
+&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;blog&lt;/a&gt; &lt;a href=&quot;http://voodoo-slide.blogspot.com/2010/01/amplifying-c.html&quot;&gt;posts&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/ID_AA_Carmack/status/452586892282695680&quot;&gt;rants&lt;/a&gt; written by AAA game developers who are forced to
+use this abomination on a daily basis. You’ll quickly see a common pattern
+emerging: the general best practice is to just stick to a very narrow,
+restricted subset of the language and stay away from its so-called “high-level
+abstractions”—the existence of which should normally be &lt;em&gt;the&lt;/em&gt; main reason
+for choosing it over C in the first place.&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;img src=&quot;/files/2016-03-03/hydra_by_ruth_tay.jpg&quot; alt=&quot;A handsome Greek hydra&quot; style=&quot;width: 100%&quot; /&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Contrary to popular belief, C++ was well-known and feared among the ancient Greeks. The hellish abomination was commonly depicted as a fiendish, many-headed water serpent rising from the dark depths of the sea, each head representing a different programming paradigm totally incompatible with the rest of the language. The actual number of fully functional heads varies greatly and depends on the target platform, the version of the C++ standard being depicted, the compiler vendor, the exact shade of the compiler vendor's CEO's wife's niece's toe polish, and the favourite food of the chief compiler implementor's pet baby wombat. (Illustration by &lt;a href=&quot;http://ruthtaylor.nl&quot;&gt;Ruth Taylor&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;So what happens with C++ on a successful project? The wretched standard
+library flies &lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2271.html&quot;&gt;right out of the
+window&lt;/a&gt;
+(along with other ghoulish aberrations originating from the deepest bowels of
+hell like
+&lt;a href=&quot;https://twitter.com/ID_AA_Carmack/status/81104943490146304&quot;&gt;Boost&lt;/a&gt;), operator
+overloading is basically &lt;em&gt;streng verboten&lt;/em&gt; at the risk of public corporal punishment
+(except for the simplest cases), template metaprogramming is best left untouched
+(but only if you value your sanity and want to get a working build out of
+the miserable compiler on the same day), so in the end what you’re left with
+is pretty much plain old C with some extra bells-and-whistles tacked on its
+back.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;C++: an octopus made by nailing extra legs onto a dog.&lt;/p&gt;
+  &lt;footer&gt;&amp;mdash; &lt;cite&gt;Steve Taylor&lt;/cite&gt;&lt;/footer&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;And don’t even get me started with C++11—it’s a lesser known that what the
+“11” actually signifies in that name is the number of extra tentacles bolted
+to the language in an attempt to make it suck less hard…&lt;/p&gt;
+
+&lt;p&gt;So it’s a fair conclusion to say that using C++ in a sane way is &lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;using it as
+a C&lt;/a&gt;.  Let’s remember that C is
+ultimately nothing more than a clever cross-platform assembler (plus
+a somewhat usable standard library). I do like C, it’s a nice minimal
+system-programming language that’s almost perfect at what it aims to do, and
+I have no problems using it for &lt;em&gt;low-level work&lt;/em&gt;.  But using it as
+a high-level language is just a futile exercise in frustration.&lt;/p&gt;
+
+&lt;p&gt;(Let me also quickly add that I have the &lt;em&gt;utmost respect&lt;/em&gt; for all C++ coders
+out there who are capable of producing useful software with this beast of
+a language, despite all the odds (e.g. most game developers). Just to set the
+record straight, I am criticising the &lt;em&gt;language&lt;/em&gt;, not its &lt;em&gt;users&lt;/em&gt;.)&lt;/p&gt;
+
+&lt;h2 id=&quot;um-is-this-the-best-we-got&quot;&gt;Um, is this the best we got?&lt;/h2&gt;
+
+&lt;p&gt;Ok, back on track after this slight C++ bashing detour. The thing is, as long
+as C++ is still &lt;a href=&quot;http://pypl.github.io/PYPL.html&quot;&gt;alive&lt;/a&gt; and
+&lt;a href=&quot;http://www.tiobe.com/index.php/tiobe_index&quot;&gt;well&lt;/a&gt;, I think it rightfully
+deserves all the bashing it can get. And if you really love it,
+congratulations, you’re one happy programmer, a content user of one of the
+most popular languages in existence on this planet today! That’s awesome,
+I wish you all the best, have fun and fare well!&lt;/p&gt;
+
+&lt;p&gt;Meanwhile, things are not looking exactly spectacular on our side. It seems
+that there’s nothing we can possibly do about this rather unfortunate
+situation if we want both ultimate programmer productivity and the best
+runtime efficiency, right?  This is just the way it is, so we’d better suck it
+up and prepare to mount ourselves onto the back of our strange two-language
+mule. Being the astute reader of this fine piece of publication that you
+certainly are, you must have no doubt figured it out by now that there &lt;em&gt;must
+be a better way…&lt;/em&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;redefining-the-goal&quot;&gt;Redefining the GOAL&lt;/h2&gt;
+
+&lt;p&gt;One day I came across an &lt;a href=&quot;https://news.ycombinator.com/item?id=2090554&quot;&gt;interesting
+post&lt;/a&gt; on HackerNews about a most
+unusual language called
+&lt;a href=&quot;https://en.wikipedia.org/wiki/Game_Oriented_Assembly_Lisp&quot;&gt;GOAL&lt;/a&gt; that the
+game studio &lt;a href=&quot;https://en.wikipedia.org/wiki/Naughty_Dog&quot;&gt;Naughty Dog&lt;/a&gt; created
+for the development of their older PlayStation titles. Now, &lt;strong&gt;GOAL&lt;/strong&gt; stands
+for &lt;strong&gt;Game Oriented Assembly Lisp&lt;/strong&gt;, and as the name implies, it allows the
+programmer to &lt;em&gt;seamlessly intermix&lt;/em&gt; high-level Lisp code with
+down-to-the-metal assembly in the same lexical environment.  Of course, it
+also supported all the killer features commonly associated with Lisp, such as
+inspecting and changing the program while it’s running, macros and all
+that sort of stuff (check out the &lt;a href=&quot;http://web.archive.org/web/20070127022728/http://lists.midnightryder.com/pipermail/sweng-gamedev-midnightryder.com/2005-August/003804.html&quot;&gt;code
+example&lt;/a&gt;
+in this forum post by one of the Naughty Dog devs).&lt;/p&gt;
+
+&lt;p&gt;I found this idea extremely cool! A language that integrates the two opposite
+extremes of the abstraction spectrum into a single coherent form! Assembly
+code would be written as S-expressions, so it could be generated using macros
+or manipulated as data just like Lisp code. No more messing around with
+language bridges, it’s all a single package.&lt;/p&gt;
+
+&lt;p&gt;The concept just got stuck in my head and I sort of got obsessed with the
+topic. I had been trying to seek out all information I could on GOAL, but
+sadly there was not too much to be found on the internet.  The original
+sources are now owned by Sony, so it’s a safe bet that we’ll never get
+a chance to take a peek into them.  Luckily, &lt;a href=&quot;http://all-things-andy-gavin.com/about/&quot;&gt;Andy
+Gavin&lt;/a&gt;, the genius who created GOAL
+had written up a &lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;quite nice
+overview&lt;/a&gt;
+on it which is definitely worth reading (for more interesting reading
+material, check out the reading suggestions at the end of this article).&lt;/p&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;img src=&quot;/files/2016-03-03/goal.jpg&quot; alt=&quot;GOAL source code&quot; style=&quot;width: 100%&quot; /&gt;
+    
+  
+
+  
+    
+    &lt;figcaption style=&quot;&quot;&gt;After the Sony acquisition, Naughty Dog was forced to abandon Lisp in favour of C++.&lt;br /&gt;Question: What will become of Lisp code after Sony has bought your company? Answer: A block comment. (From the video &lt;a href=&quot;https://www.youtube.com/watch?v=LHvUjmlWRAI&quot;&gt;The Making of Jak &amp;amp; Daxter&lt;/a&gt;)&lt;/figcaption&gt;
+  
+&lt;/figure&gt;
+
+&lt;p&gt;It is also important to note that  GOAL was not just simply a language but
+a whole interactive system that allowed rapid prototyping of ideas and
+exploratory programming, as described in &lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;this
+post&lt;/a&gt;
+by a veteran Naughty Dog developer.&lt;/p&gt;
+
+&lt;p&gt;Well, this all sounds very much what I’d like my ideal programming language to
+be: interactive and highly-expressive while not sacrificing runtime
+efficiency. So the question is, does such a language exist somewhere today,
+silently waiting to be discovered? We’ll find that out in the next part!&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;suggested-reading&quot;&gt;Suggested reading&lt;/h2&gt;
+
+  &lt;h3 id=&quot;the-good&quot;&gt;The Good&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;Making Crash Bandicoot – GOOL – part 9&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;The Legacy of GOAL&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/goal-test/&quot;&gt;Goal Test&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/10/25/lispings-ala-john-mccarthy/&quot;&gt;Lispings ala John McCarthy&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://franz.com/success/customer_apps/animation_graphics/naughtydog.lhtml&quot;&gt;Raising the Paradigm of Video Gaming – Again…Thanks to Lisp and Allegro CL&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://www.gamasutra.com/view/feature/131394/postmortem_naughty_dogs_jak_and_.php&quot;&gt;Postmortem: Naughty Dog’s Jak and Daxter: the Precursor Legacy&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;h3 id=&quot;the-bad&quot;&gt;The Bad&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;Surviving C++&lt;/a&gt; (the comments are just as educational as the article)&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2014/06/where-is-my-c-replacement.html&quot;&gt;Where is my C++ replacement?&lt;/a&gt; (ditto)&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://yosefk.com/c++fqa/&quot;&gt;C++ FQA Lite — Defective C++&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+  &lt;h3 id=&quot;the-ugly&quot;&gt;The Ugly&lt;/h3&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;https://gigamonkeys.wordpress.com/2009/10/16/coders-c-plus-plus/&quot;&gt;C++ in Coders at Work&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;Linus Torvalds on C++&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/&quot;&gt;C++ is Good for the Economy, It Creates Jobs!&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/section&gt;
+</description>
+                <pubDate>Thu, 03 Mar 2016 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</guid>
             </item>
         
     </channel>
