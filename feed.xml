@@ -7,6 +7,367 @@
         <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>Creating a Nim wrapper for FMOD</title>
+                <description>&lt;p&gt;One of the many attractive things about Nim is its ability to interface with
+C libraries relatively easily, be they either statically linked or dynamically
+loaded. As all Nim source code is ultimately transformed to C code during
+compilation &lt;sup id=&quot;fnref:javascript&quot;&gt;&lt;a href=&quot;#fn:javascript&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, Nim’s
+C &lt;a href=&quot;https://nim-lang.org/docs/manual.html#foreign-function-interface&quot;&gt;FFI&lt;/a&gt; is
+unsurprisingly quite minimal. We still need to do some work, though, namely
+creating a Nim wrapper that will define our Nim API to the C library.&lt;/p&gt;
+
+&lt;p&gt;Thankfully, we don’t need to do all this by hand; there’s a handy tool aptly
+called &lt;code&gt;c2nim&lt;/code&gt; that can automatically generate such a wrapper from the
+C header files. But, as we’ll shortly see, while the tool is a great help to
+do the bulk of the grunt work, the generated files often need some further
+manual massaging to become usable.&lt;/p&gt;
+
+&lt;p&gt;In this article, we’ll examine the full process of creating a Nim wrapper for
+the well-known &lt;a href=&quot;https://fmod.com&quot;&gt;FMOD audio library&lt;/a&gt;, more specifically, for
+the FMOD Low Level API. Fortunately, FMOD provides both a C++ and C API, so we
+can just use the C headers which usually makes the job a lot easier than
+dealing with all the C++ nonsense…&lt;/p&gt;
+
+&lt;h2 id=&quot;prerequisites&quot;&gt;Prerequisites&lt;/h2&gt;
+
+&lt;p&gt;First, we need to register at the &lt;a href=&quot;https://fmod.com&quot;&gt;FMOD website&lt;/a&gt; to be able
+to &lt;a href=&quot;https://fmod.com/download&quot;&gt;download&lt;/a&gt; the FMOD Studio API.  The naming is
+a bit misleading because it actually contains the header and library files for
+&lt;em&gt;both&lt;/em&gt; the FMOD Studio API and the FMOD Low Level API. There are three
+separate downloads for Windows, Linux and OS X. The C header files are located
+in &lt;code&gt;api/lowlevel/inc&lt;/code&gt; and the shared libraries in &lt;code&gt;api/lowlevel/lib&lt;/code&gt; inside
+the archives.&lt;/p&gt;
+
+&lt;p&gt;We’ll also need to install the &lt;a href=&quot;https://github.com/nim-lang/c2nim&quot;&gt;c2nim&lt;/a&gt; tool
+to convert the C header files into Nim wrappers (it doesn’t come with the
+standard Nim installation). The project’s GitHub page contains the
+installation instructions.&lt;/p&gt;
+
+&lt;h2 id=&quot;auto-generating-the-basic-wrapper&quot;&gt;Auto-generating the basic wrapper&lt;/h2&gt;
+
+&lt;p&gt;The main header file is &lt;code&gt;fmod.h&lt;/code&gt;, but if we just tried to convert it using
+&lt;code&gt;c2nim&lt;/code&gt;, we would get errors. The reasons for this is that &lt;code&gt;c2nim&lt;/code&gt; does not
+perform C preprocessor expansion—we’ll need some help from &lt;code&gt;gcc&lt;/code&gt; to do that
+as the first step:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gcc -E fmod.h -o fmod_prep.h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can run &lt;code&gt;c2nim&lt;/code&gt; on the resulting preprocessed header file without
+errors:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;c2nim fmod_prep.h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Yikes! Let’s try to compile it:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% nim c fmod_prep.nim
+Hint: used config file '/Users/johnnovak/.choosenim/toolchains/nim-0.18.0/config/nim.cfg' [Conf]
+Hint: system [Processing]
+Hint: fmod_prep [Processing]
+fmod_prep.nim(219, 45) Error: undeclared identifier: 'FMOD_SYSTEM'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;[ CUE SAD TROMBONE… ]&lt;/em&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Well, looks like there’s some extra work to be done here!&lt;/p&gt;
+
+&lt;h2 id=&quot;fixing-conversion-errors----part-1&quot;&gt;Fixing conversion errors – Part 1&lt;/h2&gt;
+
+&lt;p&gt;Okay, first comes the easy part, let’s fix the compilation errors!&lt;/p&gt;
+
+&lt;h3 id=&quot;opaqueue-c-structs&quot;&gt;Opaqueue C structs&lt;/h3&gt;
+
+&lt;p&gt;It turns out that the above error was raised because &lt;code&gt;c2nim&lt;/code&gt; just ignores
+opaque C structs. So we’ll need to manually add the Nim equivalents of all
+the opaque structs found in &lt;code&gt;fmod_common.h&lt;/code&gt;:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;          &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELCONTROL&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELCONTROL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;typedef&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;        &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Here’s the corresponding Nim conversion:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELCONTROL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;circular-types&quot;&gt;Circular types&lt;/h3&gt;
+
+&lt;p&gt;Our next compilation attempt is awarded with the following error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;% nim c fmod_prep.nim
+Hint: used config file '/Users/johnnovak/.choosenim/toolchains/nim-0.18.0/config/nim.cfg' [Conf]
+Hint: system [Processing]
+Hint: fmod_prep [Processing]
+fmod_prep.nim(775, 52) Error: undeclared identifier: 'FMOD_DSP_STATE'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This is caused by circular type definitions in the C header and it’s quite
+easy to fix—we just need to collapse all individual type definitions
+into a single &lt;code&gt;type&lt;/code&gt; block (mutually dependent types are only allowed within
+a single &lt;code&gt;type&lt;/code&gt; block in Nim).&lt;/p&gt;
+
+&lt;h3 id=&quot;unsigned-integer-literals&quot;&gt;Unsigned integer literals&lt;/h3&gt;
+
+&lt;p&gt;The C type of the FMOD constants is &lt;code&gt;unsigned int&lt;/code&gt;, which gets mapped to
+unsigned 32-bit integers by most C compilers by tradition. In Nim, however,
+integer literals are interpreted as Nim signed &lt;code&gt;int&lt;/code&gt; types, which are mapped to
+the word-length of the target architecture—signed 64-bit ints, in our case.
+The current Nim implementation (0.18.0) has a quirk that it will convert such
+signed 64-bit int literals only if they fit into the &lt;em&gt;signed&lt;/em&gt; width range of
+the target variable (which is signed 32-bit in this case):&lt;/p&gt;
+
+&lt;p&gt;So the following definition&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_MEMORY_TYPE&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cuint&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_MEMORY_ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_MEMORY_TYPE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xFFFFFFFF&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;will result in the below compilation error:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;fmod.nim(2327, 40) Error: type mismatch: got &amp;lt;int64&amp;gt; but expected 'FMOD_MEMORY_TYPE = uint32'
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This can get a bit confusing, but the workaround is quite simple: just append
+the &lt;code&gt;'u32&lt;/code&gt; suffix to all literals that cannot be represented in the signed
+version of the target width:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;  &lt;span class=&quot;n&quot;&gt;FMOD_MEMORY_ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_MEMORY_TYPE&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mh&quot;&gt;0xFFFFFFFF&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&amp;#39;u32&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;dynamic-linking&quot;&gt;Dynamic linking&lt;/h2&gt;
+
+&lt;p&gt;Alright, we can compile our Nim wrapper now, but we’ll need to make a few
+adjustments to make it work with the FMOD shared libraries.&lt;/p&gt;
+
+&lt;p&gt;This is how the generated Nim function signatures look like:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;FMOD_System_PlaySound&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channelgroup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELGROUP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paused&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The most flexible way to support shared library loading on multiple platforms
+is to add a user-defined &lt;code&gt;fmodImport&lt;/code&gt; pragma to all function signatures and
+of course the &lt;code&gt;cdecl&lt;/code&gt; pragma to use C calling conventions:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;FMOD_System_PlaySound&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channelgroup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELGROUP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paused&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmodImport&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cdecl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;The definition of the  &lt;code&gt;fmodImport&lt;/code&gt; pragma is the following (note that it’s
+possible to link against the logging version of FMOD by specifying the
+&lt;code&gt;-d:fmodDebugLog&lt;/code&gt; compiler option):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;strformat&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmodDebugLog&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compileTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;L&amp;quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;L&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compileTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&amp;quot;&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;windows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;amd64&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodDll&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;fmt&amp;quot;fmod{L}64.dll&amp;quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i386&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodDll&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;fmt&amp;quot;fmod{L}.dll&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;elif&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;macosx&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodDll&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;fmt&amp;quot;libfmod{L}.dylib&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;else&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodDll&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;fmt&amp;quot;libfmod{L}.so&amp;quot;&lt;/span&gt;
+
+&lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pragma&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fmodImport&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;dynlib&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodDll&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;fixing-conversion-errors-----part-2&quot;&gt;Fixing conversion errors — Part 2&lt;/h2&gt;
+
+&lt;p&gt;So far so good, now we can compile the wrapper, we can load the shared library
+and access its exported functions from Nim, but there’s still one critical
+adjustment that needs to be made, otherwise we’d get failures at runtime.
+Apart from that, some useful constant and helper function definitions got lost
+in the conversion process, so we’ll need to add them in manually as well.&lt;/p&gt;
+
+&lt;p&gt;These problems are usually only spotted when one tries to actually use the
+generated wrapper, so it’s recommended to always give the wrappers some testing
+before releasing them to the public and don’t just assume that &lt;code&gt;c2nim&lt;/code&gt; did the
+right thing.&lt;/p&gt;
+
+&lt;h3 id=&quot;fmod-callbacks-and-function-pointers&quot;&gt;FMOD callbacks and function pointers&lt;/h3&gt;
+
+&lt;p&gt;FMOD makes an extensive use of user-defined callback functions in its
+low-level API. Now, as we’ll implement these callbacks in Nim, we need
+to tell the compiler to use C calling conventions for them, otherwise we’d get
+random crashes at runtime&lt;sup id=&quot;fnref:nimproc&quot;&gt;&lt;a href=&quot;#fn:nimproc&quot; class=&quot;footnote&quot;&gt;2&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+
+&lt;p&gt;This is how a such callback definition looks like as output by &lt;code&gt;c2nim&lt;/code&gt;:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;n&quot;&gt;FMOD_SOUND_PCMREAD_CALLBACK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;proc&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pointer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                                     &lt;span class=&quot;n&quot;&gt;datalen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cuint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;All we need to do is add the &lt;code&gt;cdecl&lt;/code&gt; pragma to all &lt;code&gt;FMOD_*_CALLBACK&lt;/code&gt; type
+definitions:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;n&quot;&gt;FMOD_SOUND_PCMREAD_CALLBACK&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;proc&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pointer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                                     &lt;span class=&quot;n&quot;&gt;datalen&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cuint&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cdecl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;FMOD also exposes a large number of its internal C functions through structs
+containing function pointers (all &lt;code&gt;FMOD_*_FUNC&lt;/code&gt; type definitions); we’ll need
+to mark these as C functions as well:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;n&quot;&gt;FMOD_DSP_GETUSERDATA_FUNC&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;proc&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;dsp_state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_DSP_STATE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+                                   &lt;span class=&quot;n&quot;&gt;userdata&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pointer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cdecl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p class=&quot;note&quot;&gt;I just realised at the end that if you supply the &lt;code&gt;--cdecl&lt;/code&gt; option to &lt;code&gt;c2nim&lt;/code&gt;,
+it will correctly annotate all function and function pointer declarations with
+the &lt;code&gt;cdecl&lt;/code&gt; pragma—certainly much more convenient than having to do it
+manually!&lt;/p&gt;
+
+&lt;p class=&quot;warning&quot;&gt;FMOD creates its own threads (at least by default), so these callbacks will be
+most likely invoked from different threads which would wreak havoc on the Nim
+garbage collector (meaning we’ll get random crashes). The solution is to
+compile with thread local storage emulation turned off (&lt;code&gt;-d:tlsEmulation=off&lt;/code&gt;)
+and invoke &lt;code&gt;system.setupForeignThreadGc()&lt;/code&gt; at the start of every callback proc.
+For further details see the &lt;a href=&quot;https://nim-lang.org/docs/backends.html#memory-management-thread-coordination&quot;&gt;Nim Backend Integration Manual&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;missing-constants&quot;&gt;Missing constants&lt;/h3&gt;
+
+&lt;p&gt;It becomes quickly apparent during actual usage that lots of the &lt;code&gt;FMOD_*&lt;/code&gt;
+constants defined as &lt;code&gt;#define&lt;/code&gt; macros in the C headers are missing from our
+wrapper. We can instruct &lt;code&gt;gcc&lt;/code&gt; to include all macro definitions in the
+preprocessed output, but this will include &lt;em&gt;every&lt;/em&gt; single &lt;code&gt;#define&lt;/code&gt; macro,
+including the internal ones used by the compiler, so it’s best to narrow the
+results down the ones we’re actually interested in:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;gcc -E -dD fmod.h | grep &quot;#define FMOD_&quot; &amp;gt; fmod_constants.h
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now it’s just a matter of simply converting them to Nim constants.
+The reverb presets deserve a special mention:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-c&quot; data-lang=&quot;c&quot;&gt;&lt;span class=&quot;cp&quot;&gt;#define FMOD_PRESET_OFF { 1000, 7, 11, 5000, 100, 100, 100, 250, 0, 20, 96, -80.0f }&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;Observer how nicer these look in Nim :)&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;const&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;FMOD_PRESET_OFF&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_REVERB_PROPERTIES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;decayTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;earlyDelay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;lateDelay&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;11&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;hfReference&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5000&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;hfDecayRatio&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;diffusion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;density&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;lowShelfFrequency&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;250&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;lowShelfGain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;highCut&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;20&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;earlyLateMix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;96&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;wetLevel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h3 id=&quot;error-handling-helpers&quot;&gt;Error handling helpers&lt;/h3&gt;
+
+&lt;p&gt;Another thing that’s missing is the &lt;code&gt;FMOD_ErrorString&lt;/code&gt; helper function from
+&lt;code&gt;fmod_error.h&lt;/code&gt; to convert FMOD error codes into human readable messages. It’s
+trivial to convert the function, we’re just mentioning it here for
+completeness.&lt;/p&gt;
+
+&lt;h2 id=&quot;improving-the-wrapper&quot;&gt;Improving the wrapper&lt;/h2&gt;
+
+&lt;p&gt;Now that the wrapper is fully functional, we’ll make a little adjustment to
+make it more Nim-like. Recall how a typical FMOD function looks like:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;FMOD_System_PlaySound&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channelgroup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELGROUP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paused&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmodImport&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cdecl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;This is the de-facto standard “object-oriented C” style, where the functions
+are prefixed with the classname (&lt;code&gt;FMOD_System&lt;/code&gt; in this case) and the first
+argument is the &lt;code&gt;this&lt;/code&gt; instance pointer. We can remove the prefix to make the
+API more Nim like:&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;playSound&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SYSTEM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_SOUND&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channelgroup&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNELGROUP&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;paused&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_BOOL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_CHANNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_RESULT&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fmodImport&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cdecl&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;p&gt;After performing the above adjustment on all functions (with the help of some
+Vim macro magic), we can take advantage of Nim’s &lt;a href=&quot;https://nim-lang.org/docs/manual.html#procedures-method-call-syntax&quot;&gt;method call
+syntax&lt;/a&gt;
+and &lt;a href=&quot;https://nim-lang.org/docs/manual.html#lexical-analysis-identifier-equality&quot;&gt;identifier equality
+rules&lt;/a&gt;
+to use the API in an object-oriented style (error checking is omitted for
+brevity):&lt;/p&gt;
+
+&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-nimrod&quot; data-lang=&quot;nimrod&quot;&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodResult&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodSystem&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodSound&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FmodChannel&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;discard&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;discard&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;init&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;512&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_INIT_NORMAL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;discard&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;createSound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&amp;quot;media/jaguar.wav&amp;quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;FMOD_DEFAULT&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;discard&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;playSound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kp&quot;&gt;nil&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;channel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;addr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sound&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;release&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+
+&lt;h2 id=&quot;conclusion&quot;&gt;Conclusion&lt;/h2&gt;
+
+&lt;p&gt;That’s it folks! It might seem a bit complicated first, but it’s a pretty
+quick process once you are aware of all the gotchas.&lt;/p&gt;
+
+&lt;p&gt;The biggest drawback of this approach, though, is its very manual nature.
+Every time the API changes, the conversion process must be repeated which is
+time consuming and error prone. There exists a helper tool called
+&lt;a href=&quot;https://github.com/genotrance/nimgen&quot;&gt;nimgen&lt;/a&gt; that aims to automate this
+process, so if I was to do this again, I would certainly give that tool a go.
+Still, doing it fully manually at least once is a valuable learning experience
+to understand what should actually be automated.&lt;/p&gt;
+
+&lt;p&gt;The finished version of the &lt;code&gt;nim-fmod&lt;/code&gt; wrapper is available on
+&lt;a href=&quot;https://github.com/johnnovak/nim-fmod&quot;&gt;GitHub&lt;/a&gt; with some examples included
+and as a &lt;a href=&quot;https://github.com/nim-lang/nimble&quot;&gt;Nimble&lt;/a&gt; package.&lt;/p&gt;
+
+&lt;p&gt;Happy Nimming! :)&lt;/p&gt;
+
+&lt;hr class=&quot;noline&quot; /&gt;
+
+&lt;section class=&quot;links&quot;&gt;
+
+  &lt;h2 id=&quot;further-links-of-interest&quot;&gt;Further links of interest&lt;/h2&gt;
+
+  &lt;ul class=&quot;compact&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;https://fmod.com/&quot;&gt;FMOD Homepage&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://fmod.com/resources/documentation-api?page=content/generated/common/lowlevel_introduction.html&quot;&gt;FMOD Low Level API — An Overview&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://fmod.com/resources/documentation-api?page=content/generated/lowlevel_api.html#/&quot;&gt;FMOD Low Level API Reference&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://github.com/johnnovak/nim-fmod&quot;&gt;nim-fmod GitHub repository&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://github.com/nim-lang/c2nim&quot;&gt;c2nim GitHub repository&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://github.com/nim-lang/c2nim/blob/master/doc/c2nim.rst&quot;&gt;c2nim User’s Manual&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://nim-lang.org/docs/manual.html#foreign-function-interface&quot;&gt;Nim Manual — Foreign function interface&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://nim-lang.org/docs/backends.html#memory-management-thread-coordination&quot;&gt;Nim Backend Integration Manual&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/section&gt;
+&lt;div class=&quot;footnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:javascript&quot;&gt;
+      &lt;p&gt;Of course, this is not true in case of the experimental JavaScript backend. &lt;a href=&quot;#fnref:javascript&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+    &lt;li id=&quot;fn:nimproc&quot;&gt;
+      &lt;p&gt;One way to spot Nim proc pointers is that they occupy twice as much memory than C function pointers. So on 64-bit while a C function pointer is 8-bytes, a Nim proc pointer is 16-bytes (as of Nim 0.18.0). One beneficial side-effect of this is that all C structs containing function pointers will end up being the wrong size if the &lt;code&gt;cdecl&lt;/code&gt; pragma is not added to the callback definitions, and because FMOD is strict about checking struct sizes passed in to its functions, we’d get struct size mismatch errors from FMOD instead of just crashing. In fact, this is how I spotted this problem in the first place. &lt;a href=&quot;#fnref:nimproc&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Sat, 07 Jul 2018 00:00:00 +1000</pubDate>
+                <link>http://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</link>
+                <guid isPermaLink="true">http://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</guid>
+            </item>
+        
+            <item>
                 <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
                 <description>&lt;p&gt;I started reading the awesome &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;Physically Based Rendering: From Theory to
 Implementation&lt;/a&gt; book a few weeks ago, which made me
@@ -4801,309 +5162,6 @@ Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
                 <pubDate>Thu, 28 Apr 2016 00:00:00 +1000</pubDate>
                 <link>http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</link>
                 <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</guid>
-            </item>
-        
-            <item>
-                <title>The Quest for a Programming Language That Doesn't Suck &amp;ndash; Part 1</title>
-                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to: &lt;em&gt;Aglaia – Three Organic Experiences&lt;/em&gt;. Track #3, &lt;em&gt;Seven
-Ancient Glaciers&lt;/em&gt; is a definite stand-out!]&lt;/p&gt;
-
-&lt;p class=&quot;intro&quot;&gt;Welcome, stranger! This series is a journal that attempts to document my
-trials and tribulations as I embark on the impossible journey of finding the
-perfect programming language that I can use with great joy on my hobby
-projects. An epic quest of unfathomable difficulty, indeed!&lt;/p&gt;
-
-&lt;p class=&quot;intro&quot;&gt;In this episode: after a somewhat lacklustre introductory meandering on the
-merits of the multi-language approach in software development, things get
-heated up quite a bit with some good old-fashioned C++ bashing, after which
-the hero calms down and finally sets some GOALs. A rare Greek mythological
-creature also makes an appearance midway.&lt;/p&gt;
-
-&lt;h2 id=&quot;performance-vs-productivity&quot;&gt;Performance vs productivity&lt;/h2&gt;
-
-&lt;p&gt;A good programmer is a good programmer in any language. Yet the choice of
-language has significant effects on both developer productivity and the
-runtime performance of the resulting software. The “universally accepted
-truth” appears to be that these two things form a sort of a dichotomy.
-Low-level languages allow ultimate control over the hardware, thus yielding
-the best possible performance (assuming the programmer knows what he’s doing)
-and traversing up towards the high-level end of the scale languages gain
-progressively more expressive power which results in improved programmer
-productivity (more “impact” per lines of code), albeit at the cost of runtime
-speed. Programmer and program efficiency are widely believed to be mutually
-exclusive goals—you just can’t achieve both within the confines of a single
-language.&lt;/p&gt;
-
-&lt;p&gt;One solution to this problem has traditionally been the two-language approach,
-which boils down to combining a highly expressive but slow high-level language
-with a speedy but relatively primitive low-level one as an attempt to gain the
-best benefits of both worlds. There are generally two ways to go about this:
-by &lt;strong&gt;extending&lt;/strong&gt; or &lt;strong&gt;embedding&lt;/strong&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;extending&quot;&gt;Extending&lt;/h3&gt;
-
-&lt;p&gt;When extending, the bulk of the program is written in a high-level language
-(either interpreted or statically compiled) to get the benefit of higher
-programmer productivity, then performance critical parts simply get rewritten
-in a more efficient low-level language. Thus the high-level
-language gets &lt;strong&gt;extended&lt;/strong&gt; with special purpose modules or libraries that
-handle the performance critical duties.&lt;/p&gt;
-
-&lt;p&gt;Certain languages, such as Python, are more suitable for extending than
-embedding. Arguably, one of the best mainstream examples for extending Python
-is the hugely popular sci-fi space MMORPG game &lt;a href=&quot;https://en.wikipedia.org/wiki/Eve_Online&quot;&gt;EVE
-Online&lt;/a&gt;. The EVE client was written
-in &lt;a href=&quot;http://www.grant-olson.net/files/why_stackless.html&quot;&gt;Stackless Python&lt;/a&gt;
-that is extended with custom coded C++ modules to handle platform-specific
-graphics, sound, network I/O and other performance-sensitive tasks.&lt;/p&gt;
-
-&lt;p&gt;This method might work fine from a performance optimization point of view, but
-it’s not without drawbacks. First of all, there is very likely going to be an
-“impedance mismatch” between the two languages, which will necessitate to
-devise some sort of bridging mechanism to allow the interchange of data
-structures and bi-directional control flow between the two layers. This can
-quickly result in lots of glue code and data duplication, especially if the
-two languages were not designed to co-operate with each other. Also, the
-high-level language might have some quite rigid ideas about how the data
-should be laid out in memory that might further complicate the low-level
-performance optimization efforts (e.g. misaligned data, difficulty of
-achieving &lt;a href=&quot;https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/&quot;&gt;SoA
-layouts&lt;/a&gt;
-(&lt;a href=&quot;https://software.intel.com/en-us/articles/memory-layout-transformations&quot;&gt;Struct of
-Arrays&lt;/a&gt;)
-for SIMD optimizations etc.) While it’s certainly possible to speed
-the program up this way, the time gained by using a high-level language can
-easily be amortised by having to build a custom (and potentially suboptimal)
-bridging solution and the increased general complexity of the development
-workflow.&lt;/p&gt;
-
-&lt;h3 id=&quot;embedding&quot;&gt;Embedding&lt;/h3&gt;
-
-&lt;p&gt;The second variant is writing a high-performance core in a low-level language
-(usually a statically compiled one, such as C or C++) and then &lt;strong&gt;embedding&lt;/strong&gt;
-a high-level language into the program (typically an interpreted dynamic
-scripting language). The core functionality would be exposed through an API
-and the application logic would be implemented in the scripting language using
-this API. In this scenario, the high-level scripting language is relegated to
-an orchestrator role. Another related but slightly different usage pattern for
-embedding is to enable the end-user to extend the application via scripts and
-plugins, or in the case of games, to allow modding.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.lua.org/&quot;&gt;Lua&lt;/a&gt; is very well suited for embedding; over the years,
-it has almost become the de-facto scripting language of choice for C/C++
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Lua_(programming_language)#Applications&quot;&gt;applications&lt;/a&gt;,
-especially since the advent of &lt;a href=&quot;http://luajit.org/&quot;&gt;LuaJIT&lt;/a&gt;. Due to its very
-small memory footprint and high runtime efficiency, it has gained
-a &lt;a href=&quot;https://en.wikipedia.org/wiki/Category:Lua-scripted_video_games&quot;&gt;widespread
-adoption&lt;/a&gt; in
-the C++ dominated gaming industry over the last two decades, and it has
-found its way into a wide variety of applications and &lt;a href=&quot;http://www.eluaproject.net/&quot;&gt;embedded
-systems&lt;/a&gt; as well, such as high-performance &lt;a href=&quot;http://nginx.org/&quot;&gt;web
-servers&lt;/a&gt;, &lt;a href=&quot;http://redis.io/&quot;&gt;in-memory databases&lt;/a&gt;,
-&lt;a href=&quot;https://openwrt.org/&quot;&gt;routers&lt;/a&gt; and &lt;a href=&quot;https://www.renoise.com/&quot;&gt;audio
-software&lt;/a&gt;.&lt;/p&gt;
-
-&lt;p&gt;On the desktop application front, the best high-profile commercial example is
-undeniably &lt;a href=&quot;https://en.wikipedia.org/wiki/Adobe_Photoshop_Lightroom&quot;&gt;Adobe Photoshop
-Lightroom&lt;/a&gt;.  More
-than 60% of the Lightroom code was &lt;a href=&quot;http://www.troygaul.com/LrExposedC4.html&quot;&gt;written in
-Lua&lt;/a&gt; (basically the whole UI logic),
-C++ was only used for the speed-critical image-manipulation routines and some
-platform-specific glue code.&lt;/p&gt;
-
-&lt;p&gt;Of course, the downside of the embedding approach is that a significant part
-of the program still has to be written in C/C++, which leads right into my
-next topic…&lt;/p&gt;
-
-&lt;h2 id=&quot;life-is-too-short-for-c&quot;&gt;Life is too short for C++&lt;/h2&gt;
-
-&lt;p&gt;I can almost hear some people murmuring in the back row at this point: &lt;em&gt;“But
-we already have a language that combines ultimate bare-metal performance
-with high-level productivity: it’s called C++!”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;Um, no. That couldn’t be further from the truth.  For a start, read the
-preceding section again—if C++ was so awesome at everything, why would
-people want to embed high-level scripting languages into their applications?
-(Apart from plugin support and giving gameplay scripters a much simpler
-language to use, which are some very good reasons, but let’s focus on
-developer productivity here.)&lt;/p&gt;
-
-&lt;p&gt;C++ is a &lt;em&gt;total disaster&lt;/em&gt; of a language, a bloated and overcomplicated
-monstrosity. Its only redeeming quality is its (almost) full
-backwards-compatibilty with C. That may sound overly harsh, but look at a few
-successful C++
-&lt;a href=&quot;http://wiki.scummvm.org/index.php/Coding_Conventions&quot;&gt;open&lt;/a&gt;-&lt;a href=&quot;https://github.com/tonioni/WinUAE/&quot;&gt;source&lt;/a&gt;
-&lt;a href=&quot;https://sourceforge.net/projects/dosbox&quot;&gt;projects&lt;/a&gt; and check out some
-&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;blog&lt;/a&gt; &lt;a href=&quot;http://voodoo-slide.blogspot.com/2010/01/amplifying-c.html&quot;&gt;posts&lt;/a&gt; and &lt;a href=&quot;https://twitter.com/ID_AA_Carmack/status/452586892282695680&quot;&gt;rants&lt;/a&gt; written by AAA game developers who are forced to
-use this abomination on a daily basis. You’ll quickly see a common pattern
-emerging: the general best practice is to just stick to a very narrow,
-restricted subset of the language and stay away from its so-called “high-level
-abstractions”—the existence of which should normally be &lt;em&gt;the&lt;/em&gt; main reason
-for choosing it over C in the first place.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;img src=&quot;/files/2016-03-03/hydra_by_ruth_tay.jpg&quot; alt=&quot;A handsome Greek hydra&quot; style=&quot;width: 100%&quot; /&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;Contrary to popular belief, C++ was well-known and feared among the ancient Greeks. The hellish abomination was commonly depicted as a fiendish, many-headed water serpent rising from the dark depths of the sea, each head representing a different programming paradigm totally incompatible with the rest of the language. The actual number of fully functional heads varies greatly and depends on the target platform, the version of the C++ standard being depicted, the compiler vendor, the exact shade of the compiler vendor's CEO's wife's niece's toe polish, and the favourite food of the chief compiler implementor's pet baby wombat. (Illustration by &lt;a href=&quot;http://ruthtaylor.nl&quot;&gt;Ruth Taylor&lt;/a&gt;)&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;So what happens with C++ on a successful project? The wretched standard
-library flies &lt;a href=&quot;http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2007/n2271.html&quot;&gt;right out of the
-window&lt;/a&gt;
-(along with other ghoulish aberrations originating from the deepest bowels of
-hell like
-&lt;a href=&quot;https://twitter.com/ID_AA_Carmack/status/81104943490146304&quot;&gt;Boost&lt;/a&gt;), operator
-overloading is basically &lt;em&gt;streng verboten&lt;/em&gt; at the risk of public corporal punishment
-(except for the simplest cases), template metaprogramming is best left untouched
-(but only if you value your sanity and want to get a working build out of
-the miserable compiler on the same day), so in the end what you’re left with
-is pretty much plain old C with some extra bells-and-whistles tacked on its
-back.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;C++: an octopus made by nailing extra legs onto a dog.&lt;/p&gt;
-  &lt;footer&gt;&amp;mdash; &lt;cite&gt;Steve Taylor&lt;/cite&gt;&lt;/footer&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;And don’t even get me started with C++11—it’s a lesser known that what the
-“11” actually signifies in that name is the number of extra tentacles bolted
-to the language in an attempt to make it suck less hard…&lt;/p&gt;
-
-&lt;p&gt;So it’s a fair conclusion to say that using C++ in a sane way is &lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;using it as
-a C&lt;/a&gt;.  Let’s remember that C is
-ultimately nothing more than a clever cross-platform assembler (plus
-a somewhat usable standard library). I do like C, it’s a nice minimal
-system-programming language that’s almost perfect at what it aims to do, and
-I have no problems using it for &lt;em&gt;low-level work&lt;/em&gt;.  But using it as
-a high-level language is just a futile exercise in frustration.&lt;/p&gt;
-
-&lt;p&gt;(Let me also quickly add that I have the &lt;em&gt;utmost respect&lt;/em&gt; for all C++ coders
-out there who are capable of producing useful software with this beast of
-a language, despite all the odds (e.g. most game developers). Just to set the
-record straight, I am criticising the &lt;em&gt;language&lt;/em&gt;, not its &lt;em&gt;users&lt;/em&gt;.)&lt;/p&gt;
-
-&lt;h2 id=&quot;um-is-this-the-best-we-got&quot;&gt;Um, is this the best we got?&lt;/h2&gt;
-
-&lt;p&gt;Ok, back on track after this slight C++ bashing detour. The thing is, as long
-as C++ is still &lt;a href=&quot;http://pypl.github.io/PYPL.html&quot;&gt;alive&lt;/a&gt; and
-&lt;a href=&quot;http://www.tiobe.com/index.php/tiobe_index&quot;&gt;well&lt;/a&gt;, I think it rightfully
-deserves all the bashing it can get. And if you really love it,
-congratulations, you’re one happy programmer, a content user of one of the
-most popular languages in existence on this planet today! That’s awesome,
-I wish you all the best, have fun and fare well!&lt;/p&gt;
-
-&lt;p&gt;Meanwhile, things are not looking exactly spectacular on our side. It seems
-that there’s nothing we can possibly do about this rather unfortunate
-situation if we want both ultimate programmer productivity and the best
-runtime efficiency, right?  This is just the way it is, so we’d better suck it
-up and prepare to mount ourselves onto the back of our strange two-language
-mule. Being the astute reader of this fine piece of publication that you
-certainly are, you must have no doubt figured it out by now that there &lt;em&gt;must
-be a better way…&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;redefining-the-goal&quot;&gt;Redefining the GOAL&lt;/h2&gt;
-
-&lt;p&gt;One day I came across an &lt;a href=&quot;https://news.ycombinator.com/item?id=2090554&quot;&gt;interesting
-post&lt;/a&gt; on HackerNews about a most
-unusual language called
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Game_Oriented_Assembly_Lisp&quot;&gt;GOAL&lt;/a&gt; that the
-game studio &lt;a href=&quot;https://en.wikipedia.org/wiki/Naughty_Dog&quot;&gt;Naughty Dog&lt;/a&gt; created
-for the development of their older PlayStation titles. Now, &lt;strong&gt;GOAL&lt;/strong&gt; stands
-for &lt;strong&gt;Game Oriented Assembly Lisp&lt;/strong&gt;, and as the name implies, it allows the
-programmer to &lt;em&gt;seamlessly intermix&lt;/em&gt; high-level Lisp code with
-down-to-the-metal assembly in the same lexical environment.  Of course, it
-also supported all the killer features commonly associated with Lisp, such as
-inspecting and changing the program while it’s running, macros and all
-that sort of stuff (check out the &lt;a href=&quot;http://web.archive.org/web/20070127022728/http://lists.midnightryder.com/pipermail/sweng-gamedev-midnightryder.com/2005-August/003804.html&quot;&gt;code
-example&lt;/a&gt;
-in this forum post by one of the Naughty Dog devs).&lt;/p&gt;
-
-&lt;p&gt;I found this idea extremely cool! A language that integrates the two opposite
-extremes of the abstraction spectrum into a single coherent form! Assembly
-code would be written as S-expressions, so it could be generated using macros
-or manipulated as data just like Lisp code. No more messing around with
-language bridges, it’s all a single package.&lt;/p&gt;
-
-&lt;p&gt;The concept just got stuck in my head and I sort of got obsessed with the
-topic. I had been trying to seek out all information I could on GOAL, but
-sadly there was not too much to be found on the internet.  The original
-sources are now owned by Sony, so it’s a safe bet that we’ll never get
-a chance to take a peek into them.  Luckily, &lt;a href=&quot;http://all-things-andy-gavin.com/about/&quot;&gt;Andy
-Gavin&lt;/a&gt;, the genius who created GOAL
-had written up a &lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;quite nice
-overview&lt;/a&gt;
-on it which is definitely worth reading (for more interesting reading
-material, check out the reading suggestions at the end of this article).&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;img src=&quot;/files/2016-03-03/goal.jpg&quot; alt=&quot;GOAL source code&quot; style=&quot;width: 100%&quot; /&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot;&quot;&gt;After the Sony acquisition, Naughty Dog was forced to abandon Lisp in favour of C++.&lt;br /&gt;Question: What will become of Lisp code after Sony has bought your company? Answer: A block comment. (From the video &lt;a href=&quot;https://www.youtube.com/watch?v=LHvUjmlWRAI&quot;&gt;The Making of Jak &amp;amp; Daxter&lt;/a&gt;)&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;It is also important to note that  GOAL was not just simply a language but
-a whole interactive system that allowed rapid prototyping of ideas and
-exploratory programming, as described in &lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;this
-post&lt;/a&gt;
-by a veteran Naughty Dog developer.&lt;/p&gt;
-
-&lt;p&gt;Well, this all sounds very much what I’d like my ideal programming language to
-be: interactive and highly-expressive while not sacrificing runtime
-efficiency. So the question is, does such a language exist somewhere today,
-silently waiting to be discovered? We’ll find that out in the next part!&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;section class=&quot;links&quot;&gt;
-
-  &lt;h2 id=&quot;suggested-reading&quot;&gt;Suggested reading&lt;/h2&gt;
-
-  &lt;h3 id=&quot;the-good&quot;&gt;The Good&lt;/h3&gt;
-
-  &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/03/12/making-crash-bandicoot-gool-part-9/&quot;&gt;Making Crash Bandicoot – GOOL – part 9&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://art-of-optimization.blogspot.ca/2014/06/the-legacy-of-goal.html&quot;&gt;The Legacy of GOAL&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/goal-test/&quot;&gt;Goal Test&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://all-things-andy-gavin.com/2011/10/25/lispings-ala-john-mccarthy/&quot;&gt;Lispings ala John McCarthy&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://franz.com/success/customer_apps/animation_graphics/naughtydog.lhtml&quot;&gt;Raising the Paradigm of Video Gaming – Again…Thanks to Lisp and Allegro CL&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://www.gamasutra.com/view/feature/131394/postmortem_naughty_dogs_jak_and_.php&quot;&gt;Postmortem: Naughty Dog’s Jak and Daxter: the Precursor Legacy&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;h3 id=&quot;the-bad&quot;&gt;The Bad&lt;/h3&gt;
-
-  &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2011/02/surviving-c.html&quot;&gt;Surviving C++&lt;/a&gt; (the comments are just as educational as the article)&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://c0de517e.blogspot.com/2014/06/where-is-my-c-replacement.html&quot;&gt;Where is my C++ replacement?&lt;/a&gt; (ditto)&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://yosefk.com/c++fqa/&quot;&gt;C++ FQA Lite — Defective C++&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-  &lt;h3 id=&quot;the-ugly&quot;&gt;The Ugly&lt;/h3&gt;
-
-  &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;https://gigamonkeys.wordpress.com/2009/10/16/coders-c-plus-plus/&quot;&gt;C++ in Coders at Work&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/linus&quot;&gt;Linus Torvalds on C++&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;http://harmful.cat-v.org/software/c++/&quot;&gt;C++ is Good for the Economy, It Creates Jobs!&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/section&gt;
-</description>
-                <pubDate>Thu, 03 Mar 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/</guid>
             </item>
         
     </channel>

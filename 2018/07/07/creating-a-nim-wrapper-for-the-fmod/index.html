@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
+  <meta name="description" content="Personal blog of John Novak">
+  <meta name="author" content="John Novak">
+  <meta name="Generator" content="Jekyll (http://jekyllrb.com/)">
+  <title>Creating a Nim wrapper for FMOD</title>
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=UnifrakturMaguntia">
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic"><!--Source Sans Pro is required for the SVG images only -->
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400,700">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Inconsolata:400,700">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=Astloch">
+  <link rel="stylesheet" type="text/css" href="/css/blog.css">
+  <link rel="stylesheet" type="text/css" href="/css/jqmath-0.4.6.css">
+  <link rel="stylesheet" type="text/css" href="/css/photoswipe.css">
+  <link rel="stylesheet" type="text/css" href="/css/photoswipe-default-skin/default-skin.css">
+  <script src="/js/lib/modernizr.min.js" charset="utf-8">
+  </script>
+  <script src="/js/lib/jquery-1.12.4.min.js" charset="utf-8">
+  </script>
+  <script src="/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8">
+  </script>
+  <script src="/js/lib/photoswipe.min.js" charset="utf-8">
+  </script>
+  <script src="/js/lib/photoswipe-ui-default.min.js" charset="utf-8">
+  </script>
+  <script src="/js/blog.js" charset="utf-8">
+  </script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="/feed.xml">
+</head>
+<body>
+  <script src="/js/lib/respond.min.js">
+  </script>
+  <div id="wrapper">
+    <header id="header">
+      <div id="header-bg"></div><a href="http://blog.johnnovak.net"><img id="jn-logo" src="/img/jn-logo.png" alt="John Novak" data-2x="/img/jn-logo@2x.png"></a>
+      <p class="tagline">Riding on the tail of the<br>
+      Gaussian curve<br>
+      since 1979</p>
+      <nav>
+        <ul>
+          <li>
+            <a href="/about/">About</a>
+          </li>
+          <li>
+            <a href="/archives/">Archives</a>
+          </li>
+          <li>
+            <a href="/tags/">Tags</a>
+          </li>
+          <li class="last">
+            <a href="/feed.xml">Rss</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div role="main">
+      <article class="post">
+        <header>
+          <h1><a href="/2018/07/07/creating-a-nim-wrapper-for-the-fmod/">Creating a Nim wrapper for FMOD</a></h1>
+          <p class="date"><time datetime="2018-07-07">2018 Jul 07</time></p>
+        </header>
+        <nav class="tags">
+          <ul>
+            <li>
+              <a href="/tag/coding/">coding</a>
+            </li>
+            <li>
+              <a href="/tag/nim/">nim</a>
+            </li>
+            <li>
+              <a href="/tag/c/">c</a>
+            </li>
+            <li>
+              <a href="/tag/audio/">audio</a>
+            </li>
+          </ul>
+        </nav>
+        <p>One of the many attractive things about Nim is its ability to interface with C libraries relatively easily, be they either statically linked or dynamically loaded. As all Nim source code is ultimately transformed to C code during compilation <sup id="fnref:javascript"><a href="#fn:javascript" class="footnote">1</a></sup>, Nim’s C <a href="https://nim-lang.org/docs/manual.html#foreign-function-interface">FFI</a> is unsurprisingly quite minimal. We still need to do some work, though, namely creating a Nim wrapper that will define our Nim API to the C library.</p>
+        <p>Thankfully, we don’t need to do all this by hand; there’s a handy tool aptly called <code>c2nim</code> that can automatically generate such a wrapper from the C header files. But, as we’ll shortly see, while the tool is a great help to do the bulk of the grunt work, the generated files often need some further manual massaging to become usable.</p>
+        <p>In this article, we’ll examine the full process of creating a Nim wrapper for the well-known <a href="https://fmod.com">FMOD audio library</a>, more specifically, for the FMOD Low Level API. Fortunately, FMOD provides both a C++ and C API, so we can just use the C headers which usually makes the job a lot easier than dealing with all the C++ nonsense…</p>
+        <h2 id="prerequisites">Prerequisites</h2>
+        <p>First, we need to register at the <a href="https://fmod.com">FMOD website</a> to be able to <a href="https://fmod.com/download">download</a> the FMOD Studio API. The naming is a bit misleading because it actually contains the header and library files for <em>both</em> the FMOD Studio API and the FMOD Low Level API. There are three separate downloads for Windows, Linux and OS X. The C header files are located in <code>api/lowlevel/inc</code> and the shared libraries in <code>api/lowlevel/lib</code> inside the archives.</p>
+        <p>We’ll also need to install the <a href="https://github.com/nim-lang/c2nim">c2nim</a> tool to convert the C header files into Nim wrappers (it doesn’t come with the standard Nim installation). The project’s GitHub page contains the installation instructions.</p>
+        <h2 id="auto-generating-the-basic-wrapper">Auto-generating the basic wrapper</h2>
+        <p>The main header file is <code>fmod.h</code>, but if we just tried to convert it using <code>c2nim</code>, we would get errors. The reasons for this is that <code>c2nim</code> does not perform C preprocessor expansion—we’ll need some help from <code>gcc</code> to do that as the first step:</p>
+        <pre><code>gcc -E fmod.h -o fmod_prep.h
+</code></pre>
+        <p>Now we can run <code>c2nim</code> on the resulting preprocessed header file without errors:</p>
+        <pre><code>c2nim fmod_prep.h
+</code></pre>
+        <p>Yikes! Let’s try to compile it:</p>
+        <pre><code>% nim c fmod_prep.nim
+Hint: used config file '/Users/johnnovak/.choosenim/toolchains/nim-0.18.0/config/nim.cfg' [Conf]
+Hint: system [Processing]
+Hint: fmod_prep [Processing]
+fmod_prep.nim(219, 45) Error: undeclared identifier: 'FMOD_SYSTEM'
+</code></pre>
+        <p><strong><em>[ CUE SAD TROMBONE… ]</em></strong></p>
+        <p>Well, looks like there’s some extra work to be done here!</p>
+        <h2 id="fixing-conversion-errors----part-1">Fixing conversion errors – Part 1</h2>
+        <p>Okay, first comes the easy part, let’s fix the compilation errors!</p>
+        <h3 id="opaqueue-c-structs">Opaqueue C structs</h3>
+        <p>It turns out that the above error was raised because <code>c2nim</code> just ignores opaque C structs. So we’ll need to manually add the Nim equivalents of all the opaque structs found in <code>fmod_common.h</code>:</p>
+        <figure class="highlight">
+          <pre><code class="language-c" data-lang="c"><span class="k">typedef</span> <span class="k">struct</span> <span class="n">FMOD_SYSTEM</span> <span class="n">FMOD_SYSTEM</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">FMOD_SOUND</span>          <span class="n">FMOD_SOUND</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">FMOD_CHANNELCONTROL</span> <span class="n">FMOD_CHANNELCONTROL</span><span class="p">;</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">FMOD_CHANNEL</span>        <span class="n">FMOD_CHANNEL</span><span class="p">;</span>
+<span class="p">...</span></code></pre>
+        </figure>
+        <p>Here’s the corresponding Nim conversion:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">type</span>
+  <span class="n">FMOD_SYSTEM</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
+  <span class="n">FMOD_SOUND</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
+  <span class="n">FMOD_CHANNELCONTROL</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
+  <span class="n">FMOD_CHANNEL</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
+  <span class="p">...</span></code></pre>
+        </figure>
+        <h3 id="circular-types">Circular types</h3>
+        <p>Our next compilation attempt is awarded with the following error:</p>
+        <pre><code>% nim c fmod_prep.nim
+Hint: used config file '/Users/johnnovak/.choosenim/toolchains/nim-0.18.0/config/nim.cfg' [Conf]
+Hint: system [Processing]
+Hint: fmod_prep [Processing]
+fmod_prep.nim(775, 52) Error: undeclared identifier: 'FMOD_DSP_STATE'
+</code></pre>
+        <p>This is caused by circular type definitions in the C header and it’s quite easy to fix—we just need to collapse all individual type definitions into a single <code>type</code> block (mutually dependent types are only allowed within a single <code>type</code> block in Nim).</p>
+        <h3 id="unsigned-integer-literals">Unsigned integer literals</h3>
+        <p>The C type of the FMOD constants is <code>unsigned int</code>, which gets mapped to unsigned 32-bit integers by most C compilers by tradition. In Nim, however, integer literals are interpreted as Nim signed <code>int</code> types, which are mapped to the word-length of the target architecture—signed 64-bit ints, in our case. The current Nim implementation (0.18.0) has a quirk that it will convert such signed 64-bit int literals only if they fit into the <em>signed</em> width range of the target variable (which is signed 32-bit in this case):</p>
+        <p>So the following definition</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">type</span>
+  <span class="n">FMOD_MEMORY_TYPE</span><span class="o">*</span> <span class="o">=</span> <span class="n">cuint</span>
+  <span class="p">...</span>
+  <span class="n">FMOD_MEMORY_ALL</span><span class="o">*</span><span class="p">:</span> <span class="n">FMOD_MEMORY_TYPE</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span></code></pre>
+        </figure>
+        <p>will result in the below compilation error:</p>
+        <pre><code>fmod.nim(2327, 40) Error: type mismatch: got &lt;int64&gt; but expected 'FMOD_MEMORY_TYPE = uint32'
+</code></pre>
+        <p>This can get a bit confusing, but the workaround is quite simple: just append the <code>'u32</code> suffix to all literals that cannot be represented in the signed version of the target width:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod">  <span class="n">FMOD_MEMORY_ALL</span><span class="o">*</span><span class="p">:</span> <span class="n">FMOD_MEMORY_TYPE</span> <span class="o">=</span> <span class="mh">0xFFFFFFFF</span><span class="sc">'u32</span></code></pre>
+        </figure>
+        <h2 id="dynamic-linking">Dynamic linking</h2>
+        <p>Alright, we can compile our Nim wrapper now, but we’ll need to make a few adjustments to make it work with the FMOD shared libraries.</p>
+        <p>This is how the generated Nim function signatures look like:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">FMOD_System_PlaySound</span><span class="o">*</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SYSTEM</span><span class="p">;</span> <span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span>
+    <span class="n">channelgroup</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNELGROUP</span><span class="p">;</span> <span class="n">paused</span><span class="p">:</span> <span class="n">FMOD_BOOL</span><span class="p">;</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="k">ptr</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNEL</span><span class="p">):</span> <span class="n">FMOD_RESULT</span></code></pre>
+        </figure>
+        <p>The most flexible way to support shared library loading on multiple platforms is to add a user-defined <code>fmodImport</code> pragma to all function signatures and of course the <code>cdecl</code> pragma to use C calling conventions:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">FMOD_System_PlaySound</span><span class="o">*</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SYSTEM</span><span class="p">;</span> <span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span>
+    <span class="n">channelgroup</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNELGROUP</span><span class="p">;</span> <span class="n">paused</span><span class="p">:</span> <span class="n">FMOD_BOOL</span><span class="p">;</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="k">ptr</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNEL</span><span class="p">):</span> <span class="n">FMOD_RESULT</span> <span class="p">{.</span><span class="n">fmodImport</span><span class="p">,</span> <span class="n">cdecl</span><span class="p">.}</span></code></pre>
+        </figure>
+        <p>The definition of the <code>fmodImport</code> pragma is the following (note that it’s possible to link against the logging version of FMOD by specifying the <code>-d:fmodDebugLog</code> compiler option):</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="kn">import</span> <span class="n">strformat</span>
+
+<span class="k">when</span> <span class="n">defined</span><span class="p">(</span><span class="n">fmodDebugLog</span><span class="p">):</span>
+  <span class="kd">var</span> <span class="n">L</span> <span class="p">{.</span><span class="n">compileTime</span><span class="p">.}</span> <span class="o">=</span> <span class="s">"L"</span>
+<span class="k">else</span><span class="p">:</span>
+  <span class="kd">var</span> <span class="n">L</span> <span class="p">{.</span><span class="n">compileTime</span><span class="p">.}</span> <span class="o">=</span> <span class="s">""</span>
+
+<span class="k">when</span> <span class="n">defined</span><span class="p">(</span><span class="n">windows</span><span class="p">):</span>
+  <span class="k">when</span> <span class="n">defined</span><span class="p">(</span><span class="n">amd64</span><span class="p">):</span>
+    <span class="k">const</span> <span class="n">FmodDll</span> <span class="o">=</span> <span class="s">fmt"fmod{L}64.dll"</span>
+  <span class="k">when</span> <span class="n">defined</span><span class="p">(</span><span class="n">i386</span><span class="p">):</span>
+    <span class="k">const</span> <span class="n">FmodDll</span> <span class="o">=</span> <span class="s">fmt"fmod{L}.dll"</span>
+
+<span class="k">elif</span> <span class="n">defined</span><span class="p">(</span><span class="n">macosx</span><span class="p">):</span>
+  <span class="k">const</span> <span class="n">FmodDll</span> <span class="o">=</span> <span class="s">fmt"libfmod{L}.dylib"</span>
+
+<span class="k">else</span><span class="p">:</span>
+  <span class="k">const</span> <span class="n">FmodDll</span> <span class="o">=</span> <span class="s">fmt"libfmod{L}.so"</span>
+
+<span class="p">{.</span><span class="n">pragma</span><span class="p">:</span> <span class="n">fmodImport</span><span class="p">,</span> <span class="n">dynlib</span><span class="p">:</span> <span class="n">FmodDll</span><span class="p">.}</span></code></pre>
+        </figure>
+        <h2 id="fixing-conversion-errors-----part-2">Fixing conversion errors — Part 2</h2>
+        <p>So far so good, now we can compile the wrapper, we can load the shared library and access its exported functions from Nim, but there’s still one critical adjustment that needs to be made, otherwise we’d get failures at runtime. Apart from that, some useful constant and helper function definitions got lost in the conversion process, so we’ll need to add them in manually as well.</p>
+        <p>These problems are usually only spotted when one tries to actually use the generated wrapper, so it’s recommended to always give the wrappers some testing before releasing them to the public and don’t just assume that <code>c2nim</code> did the right thing.</p>
+        <h3 id="fmod-callbacks-and-function-pointers">FMOD callbacks and function pointers</h3>
+        <p>FMOD makes an extensive use of user-defined callback functions in its low-level API. Now, as we’ll implement these callbacks in Nim, we need to tell the compiler to use C calling conventions for them, otherwise we’d get random crashes at runtime<sup id="fnref:nimproc"><a href="#fn:nimproc" class="footnote">2</a></sup>.</p>
+        <p>This is how a such callback definition looks like as output by <code>c2nim</code>:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="n">FMOD_SOUND_PCMREAD_CALLBACK</span><span class="o">*</span> <span class="o">=</span> <span class="k">proc</span> <span class="p">(</span><span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span> <span class="n">data</span><span class="p">:</span> <span class="n">pointer</span><span class="p">;</span>
+                                     <span class="n">datalen</span><span class="p">:</span> <span class="n">cuint</span><span class="p">):</span> <span class="n">FMOD_RESULT</span></code></pre>
+        </figure>
+        <p>All we need to do is add the <code>cdecl</code> pragma to all <code>FMOD_*_CALLBACK</code> type definitions:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="n">FMOD_SOUND_PCMREAD_CALLBACK</span><span class="o">*</span> <span class="o">=</span> <span class="k">proc</span> <span class="p">(</span><span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span> <span class="n">data</span><span class="p">:</span> <span class="n">pointer</span><span class="p">;</span>
+                                     <span class="n">datalen</span><span class="p">:</span> <span class="n">cuint</span><span class="p">):</span> <span class="n">FMOD_RESULT</span> <span class="p">{.</span><span class="n">cdecl</span><span class="p">.}</span></code></pre>
+        </figure>
+        <p>FMOD also exposes a large number of its internal C functions through structs containing function pointers (all <code>FMOD_*_FUNC</code> type definitions); we’ll need to mark these as C functions as well:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="n">FMOD_DSP_GETUSERDATA_FUNC</span><span class="o">*</span> <span class="o">=</span> <span class="k">proc</span> <span class="p">(</span><span class="n">dsp_state</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_DSP_STATE</span><span class="p">;</span>
+                                   <span class="n">userdata</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">pointer</span><span class="p">):</span> <span class="n">FMOD_RESULT</span> <span class="p">{.</span><span class="n">cdecl</span><span class="p">.}</span></code></pre>
+        </figure>
+        <p class="note">I just realised at the end that if you supply the <code>--cdecl</code> option to <code>c2nim</code>, it will correctly annotate all function and function pointer declarations with the <code>cdecl</code> pragma—certainly much more convenient than having to do it manually!</p>
+        <p class="warning">FMOD creates its own threads (at least by default), so these callbacks will be most likely invoked from different threads which would wreak havoc on the Nim garbage collector (meaning we’ll get random crashes). The solution is to compile with thread local storage emulation turned off (<code>-d:tlsEmulation=off</code>) and invoke <code>system.setupForeignThreadGc()</code> at the start of every callback proc. For further details see the <a href="https://nim-lang.org/docs/backends.html#memory-management-thread-coordination">Nim Backend Integration Manual</a>.</p>
+        <h3 id="missing-constants">Missing constants</h3>
+        <p>It becomes quickly apparent during actual usage that lots of the <code>FMOD_*</code> constants defined as <code>#define</code> macros in the C headers are missing from our wrapper. We can instruct <code>gcc</code> to include all macro definitions in the preprocessed output, but this will include <em>every</em> single <code>#define</code> macro, including the internal ones used by the compiler, so it’s best to narrow the results down the ones we’re actually interested in:</p>
+        <pre><code>gcc -E -dD fmod.h | grep "#define FMOD_" &gt; fmod_constants.h
+</code></pre>
+        <p>Now it’s just a matter of simply converting them to Nim constants. The reverb presets deserve a special mention:</p>
+        <figure class="highlight">
+          <pre><code class="language-c" data-lang="c"><span class="cp">#define FMOD_PRESET_OFF { 1000, 7, 11, 5000, 100, 100, 100, 250, 0, 20, 96, -80.0f }</span></code></pre>
+        </figure>
+        <p>Observer how nicer these look in Nim :)</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">const</span>
+  <span class="n">FMOD_PRESET_OFF</span><span class="o">*</span> <span class="o">=</span> <span class="n">FMOD_REVERB_PROPERTIES</span><span class="p">(</span>
+    <span class="n">decayTime</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>
+    <span class="n">earlyDelay</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+    <span class="n">lateDelay</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span>
+    <span class="n">hfReference</span><span class="p">:</span> <span class="mi">5000</span><span class="p">,</span>
+    <span class="n">hfDecayRatio</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">diffusion</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">density</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">lowShelfFrequency</span><span class="p">:</span> <span class="mi">250</span><span class="p">,</span>
+    <span class="n">lowShelfGain</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="n">highCut</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+    <span class="n">earlyLateMix</span><span class="p">:</span> <span class="mi">96</span><span class="p">,</span>
+    <span class="n">wetLevel</span><span class="p">:</span> <span class="o">-</span><span class="mi">80</span>
+  <span class="p">)</span></code></pre>
+        </figure>
+        <h3 id="error-handling-helpers">Error handling helpers</h3>
+        <p>Another thing that’s missing is the <code>FMOD_ErrorString</code> helper function from <code>fmod_error.h</code> to convert FMOD error codes into human readable messages. It’s trivial to convert the function, we’re just mentioning it here for completeness.</p>
+        <h2 id="improving-the-wrapper">Improving the wrapper</h2>
+        <p>Now that the wrapper is fully functional, we’ll make a little adjustment to make it more Nim-like. Recall how a typical FMOD function looks like:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">FMOD_System_PlaySound</span><span class="o">*</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SYSTEM</span><span class="p">;</span> <span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span>
+    <span class="n">channelgroup</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNELGROUP</span><span class="p">;</span> <span class="n">paused</span><span class="p">:</span> <span class="n">FMOD_BOOL</span><span class="p">;</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="k">ptr</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNEL</span><span class="p">):</span> <span class="n">FMOD_RESULT</span> <span class="p">{.</span><span class="n">fmodImport</span><span class="p">,</span> <span class="n">cdecl</span><span class="p">.}</span></code></pre>
+        </figure>
+        <p>This is the de-facto standard “object-oriented C” style, where the functions are prefixed with the classname (<code>FMOD_System</code> in this case) and the first argument is the <code>this</code> instance pointer. We can remove the prefix to make the API more Nim like:</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">playSound</span><span class="o">*</span><span class="p">(</span><span class="n">system</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SYSTEM</span><span class="p">;</span> <span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_SOUND</span><span class="p">;</span>
+    <span class="n">channelgroup</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNELGROUP</span><span class="p">;</span> <span class="n">paused</span><span class="p">:</span> <span class="n">FMOD_BOOL</span><span class="p">;</span>
+    <span class="n">channel</span><span class="p">:</span> <span class="k">ptr</span> <span class="k">ptr</span> <span class="n">FMOD_CHANNEL</span><span class="p">):</span> <span class="n">FMOD_RESULT</span> <span class="p">{.</span><span class="n">fmodImport</span><span class="p">,</span> <span class="n">cdecl</span><span class="p">.}</span></code></pre>
+        </figure>
+        <p>After performing the above adjustment on all functions (with the help of some Vim macro magic), we can take advantage of Nim’s <a href="https://nim-lang.org/docs/manual.html#procedures-method-call-syntax">method call syntax</a> and <a href="https://nim-lang.org/docs/manual.html#lexical-analysis-identifier-equality">identifier equality rules</a> to use the API in an object-oriented style (error checking is omitted for brevity):</p>
+        <figure class="highlight">
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="kd">var</span>
+  <span class="n">res</span><span class="p">:</span> <span class="n">FmodResult</span>
+  <span class="n">system</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FmodSystem</span>
+  <span class="n">sound</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FmodSound</span>
+  <span class="n">channel</span><span class="p">:</span> <span class="k">ptr</span> <span class="n">FmodChannel</span>
+
+<span class="k">discard</span> <span class="n">create</span><span class="p">(</span><span class="n">system</span><span class="p">.</span><span class="k">addr</span><span class="p">)</span>
+<span class="k">discard</span> <span class="n">system</span><span class="p">.</span><span class="n">init</span><span class="p">(</span><span class="mi">512</span><span class="p">,</span> <span class="n">FMOD_INIT_NORMAL</span><span class="p">,</span> <span class="kp">nil</span><span class="p">)</span>
+<span class="k">discard</span> <span class="n">system</span><span class="p">.</span><span class="n">createSound</span><span class="p">(</span><span class="s">"media/jaguar.wav"</span><span class="p">,</span> <span class="n">FMOD_DEFAULT</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="n">sound</span><span class="p">.</span><span class="k">addr</span><span class="p">)</span>
+<span class="k">discard</span> <span class="n">system</span><span class="p">.</span><span class="n">playSound</span><span class="p">(</span><span class="n">sound</span><span class="p">,</span> <span class="kp">nil</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">channel</span><span class="p">.</span><span class="k">addr</span><span class="p">)</span>
+<span class="n">sound</span><span class="p">.</span><span class="n">release</span><span class="p">()</span></code></pre>
+        </figure>
+        <h2 id="conclusion">Conclusion</h2>
+        <p>That’s it folks! It might seem a bit complicated first, but it’s a pretty quick process once you are aware of all the gotchas.</p>
+        <p>The biggest drawback of this approach, though, is its very manual nature. Every time the API changes, the conversion process must be repeated which is time consuming and error prone. There exists a helper tool called <a href="https://github.com/genotrance/nimgen">nimgen</a> that aims to automate this process, so if I was to do this again, I would certainly give that tool a go. Still, doing it fully manually at least once is a valuable learning experience to understand what should actually be automated.</p>
+        <p>The finished version of the <code>nim-fmod</code> wrapper is available on <a href="https://github.com/johnnovak/nim-fmod">GitHub</a> with some examples included and as a <a href="https://github.com/nim-lang/nimble">Nimble</a> package.</p>
+        <p>Happy Nimming! :)</p>
+        <hr class="noline">
+        <section class="links">
+          <h2 id="further-links-of-interest">Further links of interest</h2>
+          <ul class="compact">
+            <li>
+              <a href="https://fmod.com/">FMOD Homepage</a>
+            </li>
+            <li>
+              <a href="https://fmod.com/resources/documentation-api?page=content/generated/common/lowlevel_introduction.html">FMOD Low Level API — An Overview</a>
+            </li>
+            <li>
+              <a href="https://fmod.com/resources/documentation-api?page=content/generated/lowlevel_api.html#/">FMOD Low Level API Reference</a>
+            </li>
+            <li>
+              <a href="https://github.com/johnnovak/nim-fmod">nim-fmod GitHub repository</a>
+            </li>
+            <li>
+              <a href="https://github.com/nim-lang/c2nim">c2nim GitHub repository</a>
+            </li>
+            <li>
+              <a href="https://github.com/nim-lang/c2nim/blob/master/doc/c2nim.rst">c2nim User’s Manual</a>
+            </li>
+            <li>
+              <a href="https://nim-lang.org/docs/manual.html#foreign-function-interface">Nim Manual — Foreign function interface</a>
+            </li>
+            <li>
+              <a href="https://nim-lang.org/docs/backends.html#memory-management-thread-coordination">Nim Backend Integration Manual</a>
+            </li>
+          </ul>
+        </section>
+        <div class="footnotes">
+          <ol>
+            <li id="fn:javascript">
+              <p>Of course, this is not true in case of the experimental JavaScript backend. <a href="#fnref:javascript" class="reversefootnote">↩</a></p>
+            </li>
+            <li id="fn:nimproc">
+              <p>One way to spot Nim proc pointers is that they occupy twice as much memory than C function pointers. So on 64-bit while a C function pointer is 8-bytes, a Nim proc pointer is 16-bytes (as of Nim 0.18.0). One beneficial side-effect of this is that all C structs containing function pointers will end up being the wrong size if the <code>cdecl</code> pragma is not added to the callback definitions, and because FMOD is strict about checking struct sizes passed in to its functions, we’d get struct size mismatch errors from FMOD instead of just crashing. In fact, this is how I spotted this problem in the first place. <a href="#fnref:nimproc" class="reversefootnote">↩</a></p>
+            </li>
+          </ol>
+        </div>
+        <section class="comments">
+          <h2>Comments</h2><noscript>
+          <p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = "johnnovak";
+          var disqus_identifier = "/2018/07/07/creating-a-nim-wrapper-for-the-fmod/";
+          var disqus_title = "Creating a Nim wrapper for FMOD";
+          var disqus_url = "http://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/";
+
+          (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+        </section>
+      </article>
+    </div>
+  </div>
+</body>
+</html>
