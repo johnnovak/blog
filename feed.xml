@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<rss version="2.0" xmlns:atom="https://www.w3.org/2005/Atom">
     <channel>
         <title>Personal blog of John Novak</title>
         <description>Personal blog of John Novak</description>
-        <link>http://blog.johnnovak.net</link>
-        <atom:link href="http://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
+        <link>https://blog.johnnovak.net</link>
+        <atom:link href="https://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
                 <title>Creating a Nim wrapper for FMOD</title>
@@ -363,8 +363,8 @@ and as a &lt;a href=&quot;https://github.com/nim-lang/nimble&quot;&gt;Nimble&lt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sat, 07 Jul 2018 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</guid>
+                <link>https://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2018/07/07/creating-a-nim-wrapper-for-the-fmod/</guid>
             </item>
         
             <item>
@@ -831,8 +831,8 @@ price.&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sun, 18 Jun 2017 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2017/06/18/ao-the-beginning/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2017/06/18/ao-the-beginning/</guid>
+                <link>https://blog.johnnovak.net/2017/06/18/ao-the-beginning/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2017/06/18/ao-the-beginning/</guid>
             </item>
         
             <item>
@@ -1597,8 +1597,8 @@ virtually identical.&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sat, 22 Apr 2017 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2017/04/22/nim-performance-tuning-for-the-uninitiated/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2017/04/22/nim-performance-tuning-for-the-uninitiated/</guid>
+                <link>https://blog.johnnovak.net/2017/04/22/nim-performance-tuning-for-the-uninitiated/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2017/04/22/nim-performance-tuning-for-the-uninitiated/</guid>
             </item>
         
             <item>
@@ -1630,9 +1630,9 @@ form—it’s the perfect Openbox based system for a minimalist. Instead of
 reinventing everything, we will just make a few strategic tweaks here and
 there to make it more Vim friendly.&lt;/p&gt;
 
-&lt;p&gt;Why VM? Because I also do &lt;a href=&quot;http://music.johnnovak.net/&quot;&gt;music&lt;/a&gt;, &lt;a href=&quot;http://www.johnnovak.net/&quot;&gt;graphics
+&lt;p&gt;Why VM? Because I also do &lt;a href=&quot;https://music.johnnovak.net/&quot;&gt;music&lt;/a&gt;, &lt;a href=&quot;https://www.johnnovak.net/&quot;&gt;graphics
 design&lt;/a&gt; and
-&lt;a href=&quot;http://photo.johnnovak.net/&quot;&gt;photography&lt;/a&gt;, and most creative apps on Linux
+&lt;a href=&quot;https://photo.johnnovak.net/&quot;&gt;photography&lt;/a&gt;, and most creative apps on Linux
 just suck&lt;sup id=&quot;fnref:linuxsucks&quot;&gt;&lt;a href=&quot;#fn:linuxsucks&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, plus I don’t like dual booting. The performance hit is
 negligible nowadays anyway on these new 4 or 8 core Intel i7 CPUs.  But most
 of the instructions will be applicable to non-VM installs as well as I will
@@ -2262,8 +2262,8 @@ desktop! :)&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sun, 13 Nov 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</guid>
+                <link>https://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/</guid>
             </item>
         
             <item>
@@ -2492,8 +2492,8 @@ interested to hear about it though!&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sat, 22 Oct 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</guid>
+                <link>https://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/</guid>
             </item>
         
             <item>
@@ -2788,8 +2788,8 @@ could probably be improved by using an epsilon for the equality checks):&lt;/p&g
 &lt;/section&gt;
 </description>
                 <pubDate>Sat, 15 Oct 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</guid>
+                <link>https://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/</guid>
             </item>
         
             <item>
@@ -3556,8 +3556,8 @@ documentation.&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Wed, 21 Sep 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</guid>
+                <link>https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/</guid>
             </item>
         
             <item>
@@ -4540,8 +4540,8 @@ the answer to everything.&lt;/figcaption&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Sun, 29 May 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</guid>
+                <link>https://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</guid>
             </item>
         
             <item>
@@ -4906,8 +4906,8 @@ Scratch&lt;/a&gt;&lt;/li&gt;
 &lt;/section&gt;
 </description>
                 <pubDate>Sat, 30 Apr 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</guid>
+                <link>https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</guid>
             </item>
         
             <item>
@@ -5160,8 +5160,8 @@ Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
 &lt;/div&gt;
 </description>
                 <pubDate>Thu, 28 Apr 2016 00:00:00 +1000</pubDate>
-                <link>http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</link>
-                <guid isPermaLink="true">http://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</guid>
+                <link>https://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</guid>
             </item>
         
     </channel>
