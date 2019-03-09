@@ -84,6 +84,69 @@
         <p class="intro">Ok, I’m not too sure in what direction this post will go, an informative article, a rant, or both. Probably a bit of both, with an emphasis on the rant part, given my current not-quite-positive emotional involvement with the topic. Gentlemen (and gentlewomen), please fasten your seatbelts!</p>
         <p class="intro">(UPDATE #1: It turned out to be a quite informative mega-post in the end, just don’t give up reading after the first section…)</p>
         <p class="intro">(UPDATE #2: There’s some very interesting alternative UI framework recommendations in the comments that I haven’t discussed in the article, so you might want to check those out as well…)</p>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#buttons-and-pixels" id="markdown-toc-buttons-and-pixels">Buttons and pixels</a>
+          </li>
+          <li>
+            <a href="#solution-to-a-problem" id="markdown-toc-solution-to-a-problem">Solution to a problem</a>
+            <ul>
+              <li>
+                <a href="#iup" id="markdown-toc-iup">IUP</a>
+              </li>
+              <li>
+                <a href="#gtk2" id="markdown-toc-gtk2">GTK2</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#imgui-to-the-rescue" id="markdown-toc-imgui-to-the-rescue">IMGUI to the rescue</a>
+            <ul>
+              <li>
+                <a href="#enter-nanovg" id="markdown-toc-enter-nanovg">Enter NanoVG</a>
+              </li>
+              <li>
+                <a href="#exit-nanovg" id="markdown-toc-exit-nanovg">Exit NanoVG</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#state-of-the-art" id="markdown-toc-state-of-the-art">State of the art</a>
+            <ul>
+              <li>
+                <a href="#reaper" id="markdown-toc-reaper">REAPER</a>
+              </li>
+              <li>
+                <a href="#renoise" id="markdown-toc-renoise">Renoise</a>
+              </li>
+              <li>
+                <a href="#tracktion" id="markdown-toc-tracktion">Tracktion</a>
+              </li>
+              <li>
+                <a href="#blender" id="markdown-toc-blender">Blender</a>
+              </li>
+              <li>
+                <a href="#cinema-4d" id="markdown-toc-cinema-4d">Cinema 4D</a>
+              </li>
+              <li>
+                <a href="#nodebox3" id="markdown-toc-nodebox3">NodeBox3</a>
+              </li>
+              <li>
+                <a href="#light-table" id="markdown-toc-light-table">Light Table</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#executive-summary" id="markdown-toc-executive-summary">Executive summary</a>
+          </li>
+          <li>
+            <a href="#so-what-the-hell-to-do" id="markdown-toc-so-what-the-hell-to-do">So what the hell to do?</a>
+          </li>
+          <li>
+            <a href="#final-words" id="markdown-toc-final-words">Final words</a>
+          </li>
+        </ul>
         <h2 id="buttons-and-pixels">Buttons and pixels</h2>
         <p>In 2016, developing a program in entirety on one particular platform, for example OS X, and then successfully compiling and running it on another, say Windows, with zero or minimal modifications required is no longer an utopistic dream. In fact, users of dynamic, interpreted or scripting languages (however you like to call them today) have been enjoying the luxuries of easy cross-platform development for many decades now; they won’t even raise an eyebrow on such trivial matters. But even the lowly C and C++ plebs are able to perform this feat with relative ease nowadays—at least, if they stuck to their respective language standards religiously and turned their compiler warnings up to nuclear-strength…</p>
         <p>Being able to use a single codebase for multi-platform applications is of crucial importance. After all, who wants to maintain two or three (or more) codebases that are mostly similar, but <em>not quite</em>? I sure don’t. And then there’s the convenience and flexibility factor too: you can happily develop on your Linux VM on your desktop PC at home, then maybe fix some bugs on your MacBook while sitting on the train, with the confidence that your program will work flawlessly on Windows too. Not having to deal with platform differences and idiosyncrasies takes a huge burden off of the developer’s shoulder that is not to be underestimated.</p>

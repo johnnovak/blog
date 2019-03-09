@@ -370,7 +370,33 @@ some Linux ISOs! :)&lt;/p&gt;
         
             <item>
                 <title>Creating a Nim wrapper for FMOD</title>
-                <description>&lt;p&gt;One of the many attractive things about Nim is its ability to interface with
+                <description>&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#overview&quot; id=&quot;markdown-toc-overview&quot;&gt;Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#prerequisites&quot; id=&quot;markdown-toc-prerequisites&quot;&gt;Prerequisites&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#auto-generating-the-basic-wrapper&quot; id=&quot;markdown-toc-auto-generating-the-basic-wrapper&quot;&gt;Auto-generating the basic wrapper&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fixing-conversion-errors----part-1&quot; id=&quot;markdown-toc-fixing-conversion-errors----part-1&quot;&gt;Fixing conversion errors – Part 1&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#opaqueue-c-structs&quot; id=&quot;markdown-toc-opaqueue-c-structs&quot;&gt;Opaqueue C structs&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#circular-types&quot; id=&quot;markdown-toc-circular-types&quot;&gt;Circular types&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#unsigned-integer-literals&quot; id=&quot;markdown-toc-unsigned-integer-literals&quot;&gt;Unsigned integer literals&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#dynamic-linking&quot; id=&quot;markdown-toc-dynamic-linking&quot;&gt;Dynamic linking&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fixing-conversion-errors-----part-2&quot; id=&quot;markdown-toc-fixing-conversion-errors-----part-2&quot;&gt;Fixing conversion errors — Part 2&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#fmod-callbacks-and-function-pointers&quot; id=&quot;markdown-toc-fmod-callbacks-and-function-pointers&quot;&gt;FMOD callbacks and function pointers&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#missing-constants&quot; id=&quot;markdown-toc-missing-constants&quot;&gt;Missing constants&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#error-handling-helpers&quot; id=&quot;markdown-toc-error-handling-helpers&quot;&gt;Error handling helpers&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#improving-the-wrapper&quot; id=&quot;markdown-toc-improving-the-wrapper&quot;&gt;Improving the wrapper&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conclusion&quot; id=&quot;markdown-toc-conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#further-links-of-interest&quot; id=&quot;markdown-toc-further-links-of-interest&quot;&gt;Further links of interest&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;One of the many attractive things about Nim is its ability to interface with
 C libraries relatively easily, be they either statically linked or dynamically
 loaded. As all Nim source code is ultimately transformed to C code during
 compilation &lt;sup id=&quot;fnref:javascript&quot;&gt;&lt;a href=&quot;#fn:javascript&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;, Nim’s
@@ -731,7 +757,39 @@ and as a &lt;a href=&quot;https://github.com/nim-lang/nimble&quot;&gt;Nimble&lt;
         
             <item>
                 <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
-                <description>&lt;p&gt;I started reading the awesome &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;Physically Based Rendering: From Theory to
+                <description>&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#overview&quot; id=&quot;markdown-toc-overview&quot;&gt;Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#notes-on-the-book&quot; id=&quot;markdown-toc-notes-on-the-book&quot;&gt;Notes on the book&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#coordinate-system&quot; id=&quot;markdown-toc-coordinate-system&quot;&gt;Coordinate system&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#vectors-normals-points&quot; id=&quot;markdown-toc-vectors-normals-points&quot;&gt;Vectors, Normals, Points&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#matrix-inverse&quot; id=&quot;markdown-toc-matrix-inverse&quot;&gt;Matrix inverse&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ray-box-intersection-tests&quot; id=&quot;markdown-toc-ray-box-intersection-tests&quot;&gt;Ray-box intersection tests&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#notes-on-nim&quot; id=&quot;markdown-toc-notes-on-nim&quot;&gt;Notes on Nim&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#project-structure&quot; id=&quot;markdown-toc-project-structure&quot;&gt;Project structure&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#inlining&quot; id=&quot;markdown-toc-inlining&quot;&gt;Inlining&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#calling-parent-methods&quot; id=&quot;markdown-toc-calling-parent-methods&quot;&gt;Calling parent methods&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#calling-parent-constructors&quot; id=&quot;markdown-toc-calling-parent-constructors&quot;&gt;Calling parent constructors&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#calling-ordinary-parent-methods&quot; id=&quot;markdown-toc-calling-ordinary-parent-methods&quot;&gt;Calling ordinary parent methods&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#managing-circular-dependencies&quot; id=&quot;markdown-toc-managing-circular-dependencies&quot;&gt;Managing circular dependencies&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#circular-procedure-calls&quot; id=&quot;markdown-toc-circular-procedure-calls&quot;&gt;Circular procedure calls&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#circular-type-dependencies&quot; id=&quot;markdown-toc-circular-type-dependencies&quot;&gt;Circular type dependencies&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conclusion&quot; id=&quot;markdown-toc-conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#further-links-of-interest&quot; id=&quot;markdown-toc-further-links-of-interest&quot;&gt;Further links of interest&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
+
+&lt;p&gt;I started reading the awesome &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;Physically Based Rendering: From Theory to
 Implementation&lt;/a&gt; book a few weeks ago, which made me
 realise that it’s probably for the best if I rewrote &lt;a href=&quot;/tag/ray%20tracing&quot;&gt;my ray tracer&lt;/a&gt; from the
 ground up based on the ideas presented in the book. After all, good coders
@@ -1202,6 +1260,34 @@ price.&lt;/p&gt;
                 <description>&lt;p class=&quot;intro&quot;&gt;UPDATE 2017-06-04: Corrected some slight misinformation regarding
 link time optimisations and the {.inline.} pragma, some stylistic
 improvements, added more references.&lt;/p&gt;
+
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#overview&quot; id=&quot;markdown-toc-overview&quot;&gt;Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#first-attempts&quot; id=&quot;markdown-toc-first-attempts&quot;&gt;First attempts&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#test-setup&quot; id=&quot;markdown-toc-test-setup&quot;&gt;Test setup&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#round-1-----nim-vs-c&quot; id=&quot;markdown-toc-round-1-----nim-vs-c&quot;&gt;Round 1 — Nim vs C++&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#c&quot; id=&quot;markdown-toc-c&quot;&gt;0. C++&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#memory-layout&quot; id=&quot;markdown-toc-memory-layout&quot;&gt;Memory layout&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#inspecting-the-assembly-output&quot; id=&quot;markdown-toc-inspecting-the-assembly-output&quot;&gt;Inspecting the assembly output&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nim-----using-glm&quot; id=&quot;markdown-toc-nim-----using-glm&quot;&gt;1. Nim — using GLM&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nim-----custom-vector-class-object-refs&quot; id=&quot;markdown-toc-nim-----custom-vector-class-object-refs&quot;&gt;2. Nim — custom vector class (object refs)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nim-----custom-vector-class-objects&quot; id=&quot;markdown-toc-nim-----custom-vector-class-objects&quot;&gt;3. Nim — custom vector class (objects)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nim-----vector-module&quot; id=&quot;markdown-toc-nim-----vector-module&quot;&gt;4. Nim — vector module&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nim-----vector-module-with-inlines&quot; id=&quot;markdown-toc-nim-----vector-module-with-inlines&quot;&gt;5. Nim — vector module (with inlines)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#round-2-----nim-vs-java-javascript--python&quot; id=&quot;markdown-toc-round-2-----nim-vs-java-javascript--python&quot;&gt;Round 2 — Nim vs Java, JavaScript &amp;amp; Python&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#jit-warmup&quot; id=&quot;markdown-toc-jit-warmup&quot;&gt;JIT warmup&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conclusion&quot; id=&quot;markdown-toc-conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#does-it-all-matter&quot; id=&quot;markdown-toc-does-it-all-matter&quot;&gt;Does it all matter?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#further-links-of-interest&quot; id=&quot;markdown-toc-further-links-of-interest&quot;&gt;Further links of interest&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
 
@@ -3194,7 +3280,40 @@ could probably be improved by using an epsilon for the equality checks):&lt;/p&g
         
             <item>
                 <title>What every coder should know about gamma</title>
-                <description>&lt;h2 id=&quot;a-short-quiz&quot;&gt;A short quiz&lt;/h2&gt;
+                <description>&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#a-short-quiz&quot; id=&quot;markdown-toc-a-short-quiz&quot;&gt;A short quiz&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-arcane-art-of-gamma-correctness&quot; id=&quot;markdown-toc-the-arcane-art-of-gamma-correctness&quot;&gt;The arcane art of gamma-correctness&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#what-is-gamma-and-why-do-we-need-it&quot; id=&quot;markdown-toc-what-is-gamma-and-why-do-we-need-it&quot;&gt;What is gamma and why do we need it?&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#light-emission-vs-perceptual-brightness&quot; id=&quot;markdown-toc-light-emission-vs-perceptual-brightness&quot;&gt;Light emission vs perceptual brightness&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#physical-vs-perceptual-linearity&quot; id=&quot;markdown-toc-physical-vs-perceptual-linearity&quot;&gt;Physical vs perceptual linearity&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#efficient-image-encoding&quot; id=&quot;markdown-toc-efficient-image-encoding&quot;&gt;Efficient image encoding&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#the-gamma-transfer-function&quot; id=&quot;markdown-toc-the-gamma-transfer-function&quot;&gt;The gamma transfer function&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#gamma-vs-srgb&quot; id=&quot;markdown-toc-gamma-vs-srgb&quot;&gt;Gamma vs sRGB&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#gamma-calibration&quot; id=&quot;markdown-toc-gamma-calibration&quot;&gt;Gamma calibration&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#processing-gamma-encoded-images&quot; id=&quot;markdown-toc-processing-gamma-encoded-images&quot;&gt;Processing gamma-encoded images&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#effects-of-gamma-incorrectness&quot; id=&quot;markdown-toc-effects-of-gamma-incorrectness&quot;&gt;Effects of gamma-incorrectness&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#gradients&quot; id=&quot;markdown-toc-gradients&quot;&gt;Gradients&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#colour-blending&quot; id=&quot;markdown-toc-colour-blending&quot;&gt;Colour blending&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#alpha-blending--compositing&quot; id=&quot;markdown-toc-alpha-blending--compositing&quot;&gt;Alpha blending / compositing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#image-resizing&quot; id=&quot;markdown-toc-image-resizing&quot;&gt;Image resizing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#antialiasing&quot; id=&quot;markdown-toc-antialiasing&quot;&gt;Antialiasing&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#physically-based-rendering&quot; id=&quot;markdown-toc-physically-based-rendering&quot;&gt;Physically-based rendering&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#conclusion&quot; id=&quot;markdown-toc-conclusion&quot;&gt;Conclusion&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#references--further-reading&quot; id=&quot;markdown-toc-references--further-reading&quot;&gt;References &amp;amp; further reading&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#general-gammasrgb-info&quot; id=&quot;markdown-toc-general-gammasrgb-info&quot;&gt;General gamma/sRGB info&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#linear-lighting--workflow-lwf&quot; id=&quot;markdown-toc-linear-lighting--workflow-lwf&quot;&gt;Linear lighting &amp;amp; workflow (LWF)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#bonus-stuff&quot; id=&quot;markdown-toc-bonus-stuff&quot;&gt;Bonus stuff&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;a-short-quiz&quot;&gt;A short quiz&lt;/h2&gt;
 
 &lt;p&gt;If you have ever written, or are planning to write, &lt;em&gt;any kind of code&lt;/em&gt; that
 deals with image processing, you should complete the below quiz. If you have answered
@@ -3973,6 +4092,35 @@ don’t give up reading after the first section…)&lt;/p&gt;
 &lt;p class=&quot;intro&quot;&gt;(UPDATE #2: There’s some very interesting alternative UI framework
 recommendations in the comments that I haven’t discussed
 in the article, so you might want to check those out as well…)&lt;/p&gt;
+
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#buttons-and-pixels&quot; id=&quot;markdown-toc-buttons-and-pixels&quot;&gt;Buttons and pixels&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#solution-to-a-problem&quot; id=&quot;markdown-toc-solution-to-a-problem&quot;&gt;Solution to a problem&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#iup&quot; id=&quot;markdown-toc-iup&quot;&gt;IUP&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#gtk2&quot; id=&quot;markdown-toc-gtk2&quot;&gt;GTK2&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#imgui-to-the-rescue&quot; id=&quot;markdown-toc-imgui-to-the-rescue&quot;&gt;IMGUI to the rescue&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#enter-nanovg&quot; id=&quot;markdown-toc-enter-nanovg&quot;&gt;Enter NanoVG&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#exit-nanovg&quot; id=&quot;markdown-toc-exit-nanovg&quot;&gt;Exit NanoVG&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#state-of-the-art&quot; id=&quot;markdown-toc-state-of-the-art&quot;&gt;State of the art&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#reaper&quot; id=&quot;markdown-toc-reaper&quot;&gt;REAPER&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#renoise&quot; id=&quot;markdown-toc-renoise&quot;&gt;Renoise&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#tracktion&quot; id=&quot;markdown-toc-tracktion&quot;&gt;Tracktion&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#blender&quot; id=&quot;markdown-toc-blender&quot;&gt;Blender&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#cinema-4d&quot; id=&quot;markdown-toc-cinema-4d&quot;&gt;Cinema 4D&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#nodebox3&quot; id=&quot;markdown-toc-nodebox3&quot;&gt;NodeBox3&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#light-table&quot; id=&quot;markdown-toc-light-table&quot;&gt;Light Table&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#executive-summary&quot; id=&quot;markdown-toc-executive-summary&quot;&gt;Executive summary&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#so-what-the-hell-to-do&quot; id=&quot;markdown-toc-so-what-the-hell-to-do&quot;&gt;So what the hell to do?&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#final-words&quot; id=&quot;markdown-toc-final-words&quot;&gt;Final words&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;buttons-and-pixels&quot;&gt;Buttons and pixels&lt;/h2&gt;
 
@@ -4950,6 +5098,26 @@ the answer to everything.&lt;/figcaption&gt;
 music is still so much better than 99.9999% of all recent electronic releases.
 Listening to &lt;em&gt;Ambient 4: On Land&lt;/em&gt; from 1982; track #2 &lt;em&gt;The Lost Day&lt;/em&gt; has
 a wonderfully creepy atmosphere…]&lt;/p&gt;
+
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#the-basics&quot; id=&quot;markdown-toc-the-basics&quot;&gt;The Basics&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#coordinate-system&quot; id=&quot;markdown-toc-coordinate-system&quot;&gt;Coordinate system&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#notation&quot; id=&quot;markdown-toc-notation&quot;&gt;Notation&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#transform-matrices&quot; id=&quot;markdown-toc-transform-matrices&quot;&gt;Transform matrices&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#translation-and-scaling&quot; id=&quot;markdown-toc-translation-and-scaling&quot;&gt;Translation and scaling&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#rotation-around-a-given-axis&quot; id=&quot;markdown-toc-rotation-around-a-given-axis&quot;&gt;Rotation around a given axis&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#calculating-primary-rays&quot; id=&quot;markdown-toc-calculating-primary-rays&quot;&gt;Calculating primary rays&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ray-sphere-intersection&quot; id=&quot;markdown-toc-ray-sphere-intersection&quot;&gt;Ray-sphere intersection&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#ray-plane-intersection&quot; id=&quot;markdown-toc-ray-plane-intersection&quot;&gt;Ray-plane intersection&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#in-the-next-episode&quot; id=&quot;markdown-toc-in-the-next-episode&quot;&gt;In the next episode…&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#suggested-reading&quot; id=&quot;markdown-toc-suggested-reading&quot;&gt;Suggested reading&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;the-basics&quot;&gt;The Basics&lt;/h2&gt;
 

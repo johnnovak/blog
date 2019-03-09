@@ -82,6 +82,66 @@
           </ul>
         </nav>
         <p class="intro">UPDATE 2017-06-04: Corrected some slight misinformation regarding link time optimisations and the {.inline.} pragma, some stylistic improvements, added more references.</p>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#overview" id="markdown-toc-overview">Overview</a>
+          </li>
+          <li>
+            <a href="#first-attempts" id="markdown-toc-first-attempts">First attempts</a>
+          </li>
+          <li>
+            <a href="#test-setup" id="markdown-toc-test-setup">Test setup</a>
+          </li>
+          <li>
+            <a href="#round-1-----nim-vs-c" id="markdown-toc-round-1-----nim-vs-c">Round 1 — Nim vs C++</a>
+            <ul>
+              <li>
+                <a href="#c" id="markdown-toc-c">0. C++</a>
+                <ul>
+                  <li>
+                    <a href="#memory-layout" id="markdown-toc-memory-layout">Memory layout</a>
+                  </li>
+                  <li>
+                    <a href="#inspecting-the-assembly-output" id="markdown-toc-inspecting-the-assembly-output">Inspecting the assembly output</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#nim-----using-glm" id="markdown-toc-nim-----using-glm">1. Nim — using GLM</a>
+              </li>
+              <li>
+                <a href="#nim-----custom-vector-class-object-refs" id="markdown-toc-nim-----custom-vector-class-object-refs">2. Nim — custom vector class (object refs)</a>
+              </li>
+              <li>
+                <a href="#nim-----custom-vector-class-objects" id="markdown-toc-nim-----custom-vector-class-objects">3. Nim — custom vector class (objects)</a>
+              </li>
+              <li>
+                <a href="#nim-----vector-module" id="markdown-toc-nim-----vector-module">4. Nim — vector module</a>
+              </li>
+              <li>
+                <a href="#nim-----vector-module-with-inlines" id="markdown-toc-nim-----vector-module-with-inlines">5. Nim — vector module (with inlines)</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#round-2-----nim-vs-java-javascript--python" id="markdown-toc-round-2-----nim-vs-java-javascript--python">Round 2 — Nim vs Java, JavaScript & Python</a>
+            <ul>
+              <li>
+                <a href="#jit-warmup" id="markdown-toc-jit-warmup">JIT warmup</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a>
+          </li>
+          <li>
+            <a href="#does-it-all-matter" id="markdown-toc-does-it-all-matter">Does it all matter?</a>
+          </li>
+          <li>
+            <a href="#further-links-of-interest" id="markdown-toc-further-links-of-interest">Further links of interest</a>
+          </li>
+        </ul>
         <h2 id="overview">Overview</h2>
         <p>This post documents the trials and tribulations I encountered during my foray into the wonderful world of low-level performance optimisation. For those intimately familiar with modern optimising compilers and CPU architectures, this will be kindergarten stuff. Although I have done my share of low-level C and assembly coding in my high-spirited teenager years, that was more than 20 years ago on a then-state-of-the-art 486 DX-2/66, so naturally it didn’t prevent me from running into some quite embarrassing mistakes as things are vastly different today, as we’ll shortly see…</p>
         <p>Some of you might know that I’m writing a <a href="/tag/ray%20tracing/">ray tracer</a> (veeeeeery slowly), so it’s no surprise that I’m quite a bit obsessed with raw numerical performance. Don’t bother with what people tell you about Moore’s Law, falling GFLOP prices, programmer productivity and the “evils” of optimisation—anybody who writes or uses ray-tracing software can tell you that <em>nothing</em> is ever fast enough for this task (we’ll come back to this at the end in more detail). The de facto language choice for writing such high-performance applications has always been C++, potentially with some assembly thrown in for good measure. One of the main reasons why I have chosen Nim for this project was that it promises C-level performance without having to resort to any weird tricks (and, of course, it prevents me from having to use C++). I have a very annoying habit that I don’t just believe other people’s statements unless I can verify them myself, so I thought it

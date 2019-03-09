@@ -81,6 +81,59 @@
             </li>
           </ul>
         </nav>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#overview" id="markdown-toc-overview">Overview</a>
+          </li>
+          <li>
+            <a href="#prerequisites" id="markdown-toc-prerequisites">Prerequisites</a>
+          </li>
+          <li>
+            <a href="#auto-generating-the-basic-wrapper" id="markdown-toc-auto-generating-the-basic-wrapper">Auto-generating the basic wrapper</a>
+          </li>
+          <li>
+            <a href="#fixing-conversion-errors----part-1" id="markdown-toc-fixing-conversion-errors----part-1">Fixing conversion errors – Part 1</a>
+            <ul>
+              <li>
+                <a href="#opaqueue-c-structs" id="markdown-toc-opaqueue-c-structs">Opaqueue C structs</a>
+              </li>
+              <li>
+                <a href="#circular-types" id="markdown-toc-circular-types">Circular types</a>
+              </li>
+              <li>
+                <a href="#unsigned-integer-literals" id="markdown-toc-unsigned-integer-literals">Unsigned integer literals</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#dynamic-linking" id="markdown-toc-dynamic-linking">Dynamic linking</a>
+          </li>
+          <li>
+            <a href="#fixing-conversion-errors-----part-2" id="markdown-toc-fixing-conversion-errors-----part-2">Fixing conversion errors — Part 2</a>
+            <ul>
+              <li>
+                <a href="#fmod-callbacks-and-function-pointers" id="markdown-toc-fmod-callbacks-and-function-pointers">FMOD callbacks and function pointers</a>
+              </li>
+              <li>
+                <a href="#missing-constants" id="markdown-toc-missing-constants">Missing constants</a>
+              </li>
+              <li>
+                <a href="#error-handling-helpers" id="markdown-toc-error-handling-helpers">Error handling helpers</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#improving-the-wrapper" id="markdown-toc-improving-the-wrapper">Improving the wrapper</a>
+          </li>
+          <li>
+            <a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a>
+          </li>
+          <li>
+            <a href="#further-links-of-interest" id="markdown-toc-further-links-of-interest">Further links of interest</a>
+          </li>
+        </ul>
+        <h2 id="overview">Overview</h2>
         <p>One of the many attractive things about Nim is its ability to interface with C libraries relatively easily, be they either statically linked or dynamically loaded. As all Nim source code is ultimately transformed to C code during compilation <sup id="fnref:javascript"><a href="#fn:javascript" class="footnote">1</a></sup>, Nim’s C <a href="https://nim-lang.org/docs/manual.html#foreign-function-interface">FFI</a> is unsurprisingly quite minimal. We still need to do some work, though, namely creating a Nim wrapper that will define our Nim API to the C library.</p>
         <p>Thankfully, we don’t need to do all this by hand; there’s a handy tool aptly called <code>c2nim</code> that can automatically generate such a wrapper from the C header files. But, as we’ll shortly see, while the tool is a great help to do the bulk of the grunt work, the generated files often need some further manual massaging to become usable.</p>
         <p>In this article, we’ll examine the full process of creating a Nim wrapper for the well-known <a href="https://fmod.com">FMOD audio library</a>, more specifically, for the FMOD Low Level API. Fortunately, FMOD provides both a C++ and C API, so we can just use the C headers which usually makes the job a lot easier than dealing with all the C++ nonsense…</p>

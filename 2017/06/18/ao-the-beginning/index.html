@@ -84,6 +84,69 @@
             </li>
           </ul>
         </nav>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#overview" id="markdown-toc-overview">Overview</a>
+          </li>
+          <li>
+            <a href="#notes-on-the-book" id="markdown-toc-notes-on-the-book">Notes on the book</a>
+            <ul>
+              <li>
+                <a href="#coordinate-system" id="markdown-toc-coordinate-system">Coordinate system</a>
+              </li>
+              <li>
+                <a href="#vectors-normals-points" id="markdown-toc-vectors-normals-points">Vectors, Normals, Points</a>
+              </li>
+              <li>
+                <a href="#matrix-inverse" id="markdown-toc-matrix-inverse">Matrix inverse</a>
+              </li>
+              <li>
+                <a href="#ray-box-intersection-tests" id="markdown-toc-ray-box-intersection-tests">Ray-box intersection tests</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#notes-on-nim" id="markdown-toc-notes-on-nim">Notes on Nim</a>
+            <ul>
+              <li>
+                <a href="#project-structure" id="markdown-toc-project-structure">Project structure</a>
+              </li>
+              <li>
+                <a href="#inlining" id="markdown-toc-inlining">Inlining</a>
+              </li>
+              <li>
+                <a href="#calling-parent-methods" id="markdown-toc-calling-parent-methods">Calling parent methods</a>
+                <ul>
+                  <li>
+                    <a href="#calling-parent-constructors" id="markdown-toc-calling-parent-constructors">Calling parent constructors</a>
+                  </li>
+                  <li>
+                    <a href="#calling-ordinary-parent-methods" id="markdown-toc-calling-ordinary-parent-methods">Calling ordinary parent methods</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#managing-circular-dependencies" id="markdown-toc-managing-circular-dependencies">Managing circular dependencies</a>
+                <ul>
+                  <li>
+                    <a href="#circular-procedure-calls" id="markdown-toc-circular-procedure-calls">Circular procedure calls</a>
+                  </li>
+                  <li>
+                    <a href="#circular-type-dependencies" id="markdown-toc-circular-type-dependencies">Circular type dependencies</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a>
+          </li>
+          <li>
+            <a href="#further-links-of-interest" id="markdown-toc-further-links-of-interest">Further links of interest</a>
+          </li>
+        </ul>
+        <h2 id="overview">Overview</h2>
         <p>I started reading the awesome <a href="http://www.pbrt.org/">Physically Based Rendering: From Theory to Implementation</a> book a few weeks ago, which made me realise that it’s probably for the best if I rewrote <a href="/tag/ray%20tracing">my ray tracer</a> from the ground up based on the ideas presented in the book. After all, good coders borrow, great coders steal, and at the very least we can say that I’m proficient at stealing—the rest will hopefully follow!</p>
         <p>I also got a bit tired with the long titles of my previous <a href="/tag/ray%20tracing">ray tracing related posts</a>, so from now on I will call the project just <strong>Ao</strong>. Why on Earth <em>that</em> particular name? Well, first I wanted to use the name <strong>Ra</strong> after the <a href="https://en.wikipedia.org/wiki/Ra">ancient Egyptian sun god</a>, but it looks like some French guy <a href="http://cheesechess.free.fr/ra/imgbillard.html">had already beaten me to it</a>. I liked the idea of using the name of some <a href="https://en.wikipedia.org/wiki/List_of_solar_deities">ancient solar deity</a> (it looks like I’m <a href="https://github.com/iat-cener/tonatiuh">not alone</a> with this), but then <a href="https://en.wikipedia.org/wiki/Sol_(mythology)">Sol</a> was <a href="https://www.nrel.gov/csp/soltrace.html">kind of taken</a>, and <a href="https://en.wikipedia.org/wiki/Huitzilopochtli">Huitzilopochtli</a> doesn’t quite roll off the tongue either… So in
         the end, I chose <strong>Ao</strong>, which I think is quite cool and could also stand for <a href="https://en.wikipedia.org/wiki/Ambient_occlusion">ambient occlusion</a> as well. Moreover, I live in Australia, so that’s another good reason for choosing a Polynesian god in this geographical vicinity.</p>

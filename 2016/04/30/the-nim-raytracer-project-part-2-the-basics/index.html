@@ -79,6 +79,46 @@
           </ul>
         </nav>
         <p class="intro">[I have to tell that even after 34 years, <em>Brian Eno</em>’s ambient music is still so much better than 99.9999% of all recent electronic releases. Listening to <em>Ambient 4: On Land</em> from 1982; track #2 <em>The Lost Day</em> has a wonderfully creepy atmosphere…]</p>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#the-basics" id="markdown-toc-the-basics">The Basics</a>
+            <ul>
+              <li>
+                <a href="#coordinate-system" id="markdown-toc-coordinate-system">Coordinate system</a>
+              </li>
+              <li>
+                <a href="#notation" id="markdown-toc-notation">Notation</a>
+              </li>
+              <li>
+                <a href="#transform-matrices" id="markdown-toc-transform-matrices">Transform matrices</a>
+                <ul>
+                  <li>
+                    <a href="#translation-and-scaling" id="markdown-toc-translation-and-scaling">Translation and scaling</a>
+                  </li>
+                  <li>
+                    <a href="#rotation-around-a-given-axis" id="markdown-toc-rotation-around-a-given-axis">Rotation around a given axis</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#calculating-primary-rays" id="markdown-toc-calculating-primary-rays">Calculating primary rays</a>
+              </li>
+              <li>
+                <a href="#ray-sphere-intersection" id="markdown-toc-ray-sphere-intersection">Ray-sphere intersection</a>
+              </li>
+              <li>
+                <a href="#ray-plane-intersection" id="markdown-toc-ray-plane-intersection">Ray-plane intersection</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#in-the-next-episode" id="markdown-toc-in-the-next-episode">In the next episode…</a>
+          </li>
+          <li>
+            <a href="#suggested-reading" id="markdown-toc-suggested-reading">Suggested reading</a>
+          </li>
+        </ul>
         <h2 id="the-basics">The Basics</h2>
         <p>Hello again! In the <a href="/2016/04/28/the-nim-raytracer-project-part-1-introduction/">initial post</a> of this series I talked about ray tracing in general and my reasons for writing my own ray tracing renderer in the most awesome <a href="http://nim-lang.org/">Nim</a> language. Before writing any code though, in this part we’ll examine the basic maths required for such a renderer.</p>
         <p>Most of this stuff is a distilled version of the information contained in the excellent <a href="http://www.scratchapixel.com/">Scratchapixel 2.0 – Learn Computer Graphics Programming from Scratch</a> learning resource, which I highly recommend to all graphics programming enthusiasts. There’s absolutely zero point in recreating the superb explanations from those lessons here, so just go and read the original materials if you’re interested.</p>
