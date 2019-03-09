@@ -82,6 +82,88 @@
           </ul>
         </nav>
         <p class="intro">Are you the sort of person who is looking for a Vim plugin for everything? Does having to reach out for the mouse sideways cause you involuntary facial muscles twitches? Is breaking out the arrow keys with a screwdriver among the first few things you do on a new computer (after swapping Caps Lock with Left Ctrl, of course)? Then welcome, you’re among friends here.</p>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#overview" id="markdown-toc-overview">Overview</a>
+          </li>
+          <li>
+            <a href="#philosophy--main-features" id="markdown-toc-philosophy--main-features">Philosophy & main features</a>
+          </li>
+          <li>
+            <a href="#some-implementation-details" id="markdown-toc-some-implementation-details">Some implementation details</a>
+            <ul>
+              <li>
+                <a href="#navigation" id="markdown-toc-navigation">Navigation</a>
+                <ul>
+                  <li>
+                    <a href="#vim--tmux" id="markdown-toc-vim--tmux">Vim & tmux</a>
+                  </li>
+                  <li>
+                    <a href="#xmodmap" id="markdown-toc-xmodmap">xmodmap</a>
+                  </li>
+                  <li>
+                    <a href="#openbox" id="markdown-toc-openbox">Openbox</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#clipboard-support" id="markdown-toc-clipboard-support">Clipboard support</a>
+                <ul>
+                  <li>
+                    <a href="#vim" id="markdown-toc-vim">Vim</a>
+                  </li>
+                  <li>
+                    <a href="#tmux" id="markdown-toc-tmux">tmux</a>
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a href="#mouse-support" id="markdown-toc-mouse-support">Mouse support</a>
+                <ul>
+                  <li>
+                    <a href="#vim-1" id="markdown-toc-vim-1">Vim</a>
+                  </li>
+                  <li>
+                    <a href="#tmux-1" id="markdown-toc-tmux-1">tmux</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#installation" id="markdown-toc-installation">Installation</a>
+          </li>
+          <li>
+            <a href="#on-first-boot" id="markdown-toc-on-first-boot">On first boot</a>
+            <ul>
+              <li>
+                <a href="#set-zsh-as-the-default-shell" id="markdown-toc-set-zsh-as-the-default-shell">Set zsh as the default shell</a>
+              </li>
+              <li>
+                <a href="#install-virtualbox-guest-additions" id="markdown-toc-install-virtualbox-guest-additions">Install VirtualBox Guest Additions</a>
+              </li>
+              <li>
+                <a href="#perform-system-update" id="markdown-toc-perform-system-update">Perform system update</a>
+              </li>
+              <li>
+                <a href="#fix-compton" id="markdown-toc-fix-compton">Fix Compton</a>
+              </li>
+              <li>
+                <a href="#enable-autologin" id="markdown-toc-enable-autologin">Enable autologin</a>
+              </li>
+              <li>
+                <a href="#installing-powerline-fonts" id="markdown-toc-installing-powerline-fonts">Installing Powerline fonts</a>
+              </li>
+              <li>
+                <a href="#setting-the-right-wallpaper" id="markdown-toc-setting-the-right-wallpaper">Setting the <em>right</em> wallpaper</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#further-reading" id="markdown-toc-further-reading">Further reading</a>
+          </li>
+        </ul>
         <h2 id="overview">Overview</h2>
         <p>Now that we’re done with the formalities and have dissuaded normal computer users and non-fanatical Vim aficionados from reading any further, let’s get to the good stuff! I vastly prefer to use a Linux desktop for development and my trusty 32-bit Crunchbang Waldorf VM has just reached the end of its useful life because of my sudden realisation that I really need 64-bit support. I had spent a considerable time “vimifying” my old setup (more on that later), which, of course, I wanted to carry over to the new installation. This post documents all the hackery I needed to do on the stock install to achieve that.</p>
         <p>We will use <a href="https://crunchbangplusplus.org/">Crunchbang++ 1.0</a> 64-bit as our starting point which is based on <a href="https://www.debian.org/">Debian Jessie</a> stable. Why not use vanilla Debian instead? Because I really like the choices <a href="https://corenominal.org/about/">Philip Newborough</a> had made for the original Crunchbang series and it would be an awful lot of work to replicate them from scratch. Crunchbang is small, fast, stable and prioritises function over form—it’s the perfect Openbox based system for a minimalist. Instead of reinventing everything, we will just make a few strategic tweaks here and there to make it more Vim friendly.</p>

@@ -7,6 +7,368 @@
         <atom:link href="https://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>Raspbian Stretch home server setup</title>
+                <description>&lt;p class=&quot;intro&quot;&gt;Okay, so the Micro SD card in my trusty Raspberry Pi 2 &lt;strike&gt;torrent
+box&lt;/strike&gt; home server finally bit the dust after three years of steady
+service, so I had to get a new one and reinstall everything from scratch (no
+pun intended), which I have documented in this post in detail. What we’ll
+cover here is how to set up the Pi running &lt;strong&gt;Raspbian Scratch&lt;/strong&gt; with SSH, VNC
+and FTP support, an external NTFS hard drive for storage, and the Deluge
+torrent client with remote access enabled—needless to say, strictly for
+downloading Linux ISO images only!&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;I have used a &lt;strong&gt;Raspberry Pi 2 B+&lt;/strong&gt; with a USB WiFi dongle for the purpose of
+this exercise—in theory, the process should be the same for the Pi 3 with
+its built-in WiFi. A word of caution to younger players: buy a proper
+Raspberry-approved power source that’s capable of providing stable 2.5A power;
+this will save you lots of headaches later on.&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;Also, a word of wisdom to my brothers and sisters: my broken 8 GB SanDisk card
+came with a 10-year warranty so I got a new 16 GB one for free! Always keep those
+receipts guys! :)&lt;/p&gt;
+
+&lt;p class=&quot;warning&quot;&gt;These instructions are meant for a home server setup on a home network that’s
+not reachable from the outside internet. In my case, the network the server is
+on is behind a second router, so I’m not concerned with security issues too
+much. &lt;strong&gt;Don’t blame me if you use these instructions to set up a public FTP or
+something and then get hacked!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#installing-raspbian-scratch&quot; id=&quot;markdown-toc-installing-raspbian-scratch&quot;&gt;Installing Raspbian Scratch&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#enabling-ssh-access&quot; id=&quot;markdown-toc-enabling-ssh-access&quot;&gt;Enabling SSH access&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#enabling-vnc-access&quot; id=&quot;markdown-toc-enabling-vnc-access&quot;&gt;Enabling VNC access&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#mounting-an-ntfs-formatted-external-usb-hdd&quot; id=&quot;markdown-toc-mounting-an-ntfs-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS formatted external USB HDD&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#setting-up-an-ftp-server&quot; id=&quot;markdown-toc-setting-up-an-ftp-server&quot;&gt;Setting up an FTP server&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#setting-up-deluge&quot; id=&quot;markdown-toc-setting-up-deluge&quot;&gt;Setting up Deluge&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#installing-the-debian-jessie-version&quot; id=&quot;markdown-toc-installing-the-debian-jessie-version&quot;&gt;Installing the Debian Jessie version&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#configuring-the-deluge-daemon-for-remote-access&quot; id=&quot;markdown-toc-configuring-the-deluge-daemon-for-remote-access&quot;&gt;Configuring the Deluge daemon for remote access&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#configuring-the-remote-thin-client&quot; id=&quot;markdown-toc-configuring-the-remote-thin-client&quot;&gt;Configuring the remote thin client&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#configuring-the-webui&quot; id=&quot;markdown-toc-configuring-the-webui&quot;&gt;Configuring the WebUI&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot&quot; id=&quot;markdown-toc-setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot&quot;&gt;Setting up Deluge daemon and WebUI to start automatically on boot&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#in-closing&quot; id=&quot;markdown-toc-in-closing&quot;&gt;In closing&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;installing-raspbian-scratch&quot;&gt;Installing Raspbian Scratch&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Download the offline NOOBS installation zip file from
+&lt;a href=&quot;https://www.raspberrypi.org/downloads/noobs/&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Format a Micro SD card to FAT32 (I used the cheapest available SanDisk
+Ultra 16 GB, but my previous 8 GB SanDisk also worked fine. Some people
+reported problems with 32+ GB cards so going larger is not worth the
+trouble (and the price) if you’re gonna use an external HDD for storage
+anyway).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Unzip the contents of the zip file to the root directory of the SD card.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Insert card into the Pi, hook up monitor &amp;amp; keyboard and turn it on to start
+the installation process. Choose Raspbian when prompted and follow the
+instructions.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;On the first boot you’ll be prompted to configure the WiFi access (if you
+have a Pi 2 with an USB WiFi adapter like me, or if you have a Pi 3), so
+have the WiFi password handy.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;enabling-ssh-access&quot;&gt;Enabling SSH access&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Run &lt;code&gt;sudo raspi-config&lt;/code&gt; and enable SSH access under &lt;strong&gt;5 Interface Options
+/ P2 SSH&lt;/strong&gt;.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;After this you can SSH into the Pi with &lt;code&gt;ssh pi@&amp;lt;IP_ADDRESS&amp;gt;&lt;/code&gt; and entering
+the root password.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;enabling-vnc-access&quot;&gt;Enabling VNC access&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;Follow &lt;a href=&quot;https://www.raspberrypi.org/documentation/remote-access/vnc/&quot;&gt;these
+instructions&lt;/a&gt;
+under the &lt;strong&gt;Enabling VNC server&lt;/strong&gt; section.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Now you can use the &lt;a href=&quot;https://www.realvnc.com/en/connect/download/viewer/&quot;&gt;RealVNC
+Viewer&lt;/a&gt; to connect to
+the Pi from another computer by entering its IP address (don’t need the
+&lt;code&gt;:1&lt;/code&gt; at the end).&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;em&gt;(Optional)&lt;/em&gt; If the Pi is not hooked up to a monitor, the VNC session will
+use the default resolution of 720x480. To change this, run &lt;code&gt;sudo
+raspi-config&lt;/code&gt; and go to &lt;strong&gt;7 Advanced Options / A5 Resolution&lt;/strong&gt; to set
+a higher screen resolution. You’ll need to reboot with &lt;code&gt;sudo reboot&lt;/code&gt; for
+the change to take effect.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Alternative instructions about the whole setup can be found
+&lt;a href=&quot;https://www.realvnc.com/en/connect/docs/raspberry-pi.html&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h2 id=&quot;mounting-an-ntfs-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS formatted external USB HDD&lt;/h2&gt;
+
+&lt;p&gt;When connecting the external USB drive, Raspbian will automatically mount it.
+Unfortunately, the default NTFS driver that comes with the OS can only mount
+NTFS partitions in read-only mode, so we’ll need to install &lt;strong&gt;ntfs-3g&lt;/strong&gt; to get
+full read-write access (but we’ll unmount the partition first):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo umount /media/pi/&amp;lt;PARTITION_NAME&amp;gt;
+sudo apt-get install ntfs-3g
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s check the list of available partitions; the disk we’re looking for will
+be most likely &lt;code&gt;/dev/sda&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo fdisk -l
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now we can test the new driver by mounting the partition manually under
+&lt;code&gt;/media/USBHDD1&lt;/code&gt; (assuming the whole disk only contains a single NTFS
+partition):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo mkdir /media/USBHDD1
+sudo mount -t auto /dev/sda1 /media/USBHDD1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Copy some files to &lt;code&gt;/media/USBHDD1&lt;/code&gt; to test that the write access works.&lt;/p&gt;
+
+&lt;p&gt;If everything went fine, we can mount the partition permanently by adding the
+following line to &lt;code&gt;/etc/fstab&lt;/code&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;/dev/sda1       /media/USBHDD1  auto    noatime           0       0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reboot with &lt;code&gt;sudo reboot&lt;/code&gt; to confirm that the partition gets mounted
+automatically.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-up-an-ftp-server&quot;&gt;Setting up an FTP server&lt;/h2&gt;
+
+&lt;p&gt;For FTP access, we’ll use &lt;strong&gt;vsFTPd&lt;/strong&gt; instead of the Raspbian default
+&lt;strong&gt;PureFTPd&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install vsftpd
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We’ll be really unsophisticated here (another term for “simple &amp;amp; easy”) and
+just grant the root &lt;code&gt;pi&lt;/code&gt; user read-write access to the whole external HDD.
+Edit &lt;code&gt;/etc/vsftpd.conf&lt;/code&gt; and uncomment/add the following parameters:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+chroot_local_user=YES
+user_sub_token=$USER
+local_root=/media/USBHDD1
+allow_writeable_chroot=YES
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;(Arguably, this is not as bad as it first seems because we’re restricting
+access to &lt;code&gt;/media/USBHDD1&lt;/code&gt; only with &lt;code&gt;chroot_local_user=YES&lt;/code&gt;.)&lt;/p&gt;
+
+&lt;p&gt;Restart the FTP server for the changes to take effect:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo service vsftpd restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you should be able to connect to the box with an FTP client using the &lt;code&gt;pi&lt;/code&gt;
+user and the root password, and have full read-write access to the whole
+contents of USB HDD.&lt;/p&gt;
+
+&lt;h2 id=&quot;setting-up-deluge&quot;&gt;Setting up Deluge&lt;/h2&gt;
+
+&lt;p&gt;Apparently, &lt;a href=&quot;https://forum.deluge-torrent.org/viewtopic.php?f=7&amp;amp;t=54869&amp;amp;p=227887&quot;&gt;there are some
+issues&lt;/a&gt;
+with the Deluge package that comes with Stretch. The reason is that it pulls
+down &lt;strong&gt;libtorrent 1.1.1.0&lt;/strong&gt; as a dependency instead of the previously used
+&lt;strong&gt;1.0.11&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;
+  As many I moved to Stretch from a Debian Jessie with Deluged 1.3.15 and
+  libtorrent 1.0.11 installed, RPI3 is the hardware. I found a couple of
+  issues and report them here if useful for any of you.
+
+  Issue:
+  -Deluged CPU usage really higher than before
+  -Multi-tiers tracker torrents report &quot;connection time out&quot;. A few are
+  working but the large majority stay in this state. This is identified for
+  trackers giving multiple tier 0 tracker addresses, e.g. IPTxxxxx
+  - Error in log
+&lt;/pre&gt;
+
+&lt;p&gt;Although I’m on a different hardware (&lt;a href=&quot;https://www.raspberrypi.org/products/raspberry-pi-2-model-b/&quot;&gt;Raspberry
+2 B&lt;/a&gt;), this
+seems like a software issue so I had decided not to experiment with the new
+package but use &lt;a href=&quot;https://forum.deluge-torrent.org/viewtopic.php?f=7&amp;amp;t=54869&amp;amp;p=227887&quot;&gt;this
+method&lt;/a&gt;
+to revert to &lt;strong&gt;libtorrent 1.0.11&lt;/strong&gt;.&lt;/p&gt;
+
+&lt;h3 id=&quot;installing-the-debian-jessie-version&quot;&gt;Installing the Debian Jessie version&lt;/h3&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/apt/sources.list&lt;/code&gt; and add the below PPA and Jessie backports repos:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deb http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb-src http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb http://deb.debian.org/debian jessie-backports main contrib non-free
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Add PPA key:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 249AD24C
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Update package lists:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get update
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Install Jessie version of &lt;strong&gt;libssl&lt;/strong&gt;:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get -t jessie-backports install libssl1.0.0
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Install &lt;strong&gt;Deluge&lt;/strong&gt;, including the &lt;strong&gt;web&lt;/strong&gt; and &lt;strong&gt;console&lt;/strong&gt; modules:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install -t zesty libtorrent-rasterbar8 python-libtorrent
+sudo apt-get install -t zesty deluged deluge-web deluge-console
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Prevent &lt;strong&gt;libtorrent&lt;/strong&gt; upgrade during the next OS upgrade:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-mark hold libtorrent-rasterbar8 python-libtorrent
+sudo apt-mark showhold
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;configuring-the-deluge-daemon-for-remote-access&quot;&gt;Configuring the Deluge daemon for remote access&lt;/h3&gt;
+
+&lt;p&gt;Start the Deluge daemon then kill it immediately (we’re just doing this so it
+creates the default configuration files on the first startup):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deluged
+pkill deluged
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Edit &lt;code&gt;~/.config/deluge/auth&lt;/code&gt; to set up the remote Deluge user. Delete the
+existing contents of the file and add a new line in the following format:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;username:password:level
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We’ll use level 10, which gives full administrative acccess, so the new line
+will look something like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;pi:&amp;lt;PASSWORD&amp;gt;:10
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Let’s start up the daemon again and enter the console:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deluged
+deluge-console
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We’ll make a configuration change to allow remote connetions to the Deluge
+daemon and then we’ll exit the console:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;config -s allow_remote True
+exit
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Restart the daemon so the changes will take effect:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deluged
+pkill deluged
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;configuring-the-remote-thin-client&quot;&gt;Configuring the remote thin client&lt;/h3&gt;
+
+&lt;p&gt;Create the following download locations on the USB HDD:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /media/USBHDD1/downloads/completed
+mkdir /media/USBHDD1/downloads/downloading
+mkdir /media/USBHDD1/downloads/torrents
+mkdir /media/USBHDD1/downloads/watch
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://dev.deluge-torrent.org/wiki/Download&quot;&gt;Download&lt;/a&gt; and install the thin
+client, start it up and perform the following steps:&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Disable “Classic Mode” in &lt;strong&gt;Preferences / Interface&lt;/strong&gt; then restart the client.&lt;/li&gt;
+  &lt;li&gt;Add a new remote connection at startup (use the IP address of the Pi, the
+default port, and the username and password we set in the &lt;code&gt;auth&lt;/code&gt; file). If
+all went well, the icon next to the connection should turn green.&lt;/li&gt;
+  &lt;li&gt;Set the download locations in &lt;strong&gt;Preferences / Downloads&lt;/strong&gt; to the directories
+we created:&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;figure class=&quot;image&quot;&gt;
+  
+    
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2019-03-09/deluge-downloads-config.png&quot; alt=&quot;Deluge thin
+      client downloads configuration&quot; style=&quot;width: 100%&quot; /&gt;
+    
+  
+
+  
+&lt;/figure&gt;
+
+&lt;h3 id=&quot;configuring-the-webui&quot;&gt;Configuring the WebUI&lt;/h3&gt;
+
+&lt;p&gt;Start the WebUI:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;deluge-web
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open the WebUI in a browser:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http://&amp;lt;PI_IP_ADDRESS&amp;gt;:8112/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The default password is &lt;code&gt;deluge&lt;/code&gt;. You’ll be asked to change the password on
+the first login, so it’s a good idea to just do that.&lt;/p&gt;
+
+&lt;h3 id=&quot;setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot&quot;&gt;Setting up Deluge daemon and WebUI to start automatically on boot&lt;/h3&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/rc.local&lt;/code&gt; and add the following two lines before the &lt;code&gt;exit 0&lt;/code&gt;
+command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo -u pi /usr/bin/python /usr/bin/deluged &amp;amp;
+sudo -u pi /usr/bin/python /usr/bin/deluge-web &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Reboot and test that you can still connect using both the thin client and the
+WebUI.&lt;/p&gt;
+
+&lt;h2 id=&quot;in-closing&quot;&gt;In closing&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;[This last section isn’t really warranted, but just finishing the
+post with some configuration steps didn’t seem quite right…]&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;That’s it folks, enjoy your shiny new 24/7 torrent box! Now go and download
+some Linux ISOs! :)&lt;/p&gt;
+</description>
+                <pubDate>Sat, 09 Mar 2019 00:00:00 +1000</pubDate>
+                <link>https://blog.johnnovak.net/2019/03/09/raspbian-stretch-home-server-setup/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2019/03/09/raspbian-stretch-home-server-setup/</guid>
+            </item>
+        
+            <item>
                 <title>Creating a Nim wrapper for FMOD</title>
                 <description>&lt;p&gt;One of the many attractive things about Nim is its ability to interface with
 C libraries relatively easily, be they either statically linked or dynamically
@@ -1608,6 +1970,44 @@ Does having to reach out for the mouse sideways cause you involuntary facial
 muscles twitches? Is breaking out the arrow keys with a screwdriver among the
 first few things you do on a new computer (after swapping Caps Lock with
 Left Ctrl, of course)? Then welcome, you’re among friends here.&lt;/p&gt;
+
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#overview&quot; id=&quot;markdown-toc-overview&quot;&gt;Overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#philosophy--main-features&quot; id=&quot;markdown-toc-philosophy--main-features&quot;&gt;Philosophy &amp;amp; main features&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#some-implementation-details&quot; id=&quot;markdown-toc-some-implementation-details&quot;&gt;Some implementation details&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#navigation&quot; id=&quot;markdown-toc-navigation&quot;&gt;Navigation&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#vim--tmux&quot; id=&quot;markdown-toc-vim--tmux&quot;&gt;Vim &amp;amp; tmux&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#xmodmap&quot; id=&quot;markdown-toc-xmodmap&quot;&gt;xmodmap&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#openbox&quot; id=&quot;markdown-toc-openbox&quot;&gt;Openbox&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#clipboard-support&quot; id=&quot;markdown-toc-clipboard-support&quot;&gt;Clipboard support&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#vim&quot; id=&quot;markdown-toc-vim&quot;&gt;Vim&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#tmux&quot; id=&quot;markdown-toc-tmux&quot;&gt;tmux&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#mouse-support&quot; id=&quot;markdown-toc-mouse-support&quot;&gt;Mouse support&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#vim-1&quot; id=&quot;markdown-toc-vim-1&quot;&gt;Vim&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#tmux-1&quot; id=&quot;markdown-toc-tmux-1&quot;&gt;tmux&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#installation&quot; id=&quot;markdown-toc-installation&quot;&gt;Installation&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#on-first-boot&quot; id=&quot;markdown-toc-on-first-boot&quot;&gt;On first boot&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#set-zsh-as-the-default-shell&quot; id=&quot;markdown-toc-set-zsh-as-the-default-shell&quot;&gt;Set zsh as the default shell&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#install-virtualbox-guest-additions&quot; id=&quot;markdown-toc-install-virtualbox-guest-additions&quot;&gt;Install VirtualBox Guest Additions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#perform-system-update&quot; id=&quot;markdown-toc-perform-system-update&quot;&gt;Perform system update&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#fix-compton&quot; id=&quot;markdown-toc-fix-compton&quot;&gt;Fix Compton&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#enable-autologin&quot; id=&quot;markdown-toc-enable-autologin&quot;&gt;Enable autologin&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#installing-powerline-fonts&quot; id=&quot;markdown-toc-installing-powerline-fonts&quot;&gt;Installing Powerline fonts&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#setting-the-right-wallpaper&quot; id=&quot;markdown-toc-setting-the-right-wallpaper&quot;&gt;Setting the &lt;em&gt;right&lt;/em&gt; wallpaper&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#further-reading&quot; id=&quot;markdown-toc-further-reading&quot;&gt;Further reading&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;overview&quot;&gt;Overview&lt;/h2&gt;
 
@@ -4908,260 +5308,6 @@ Scratch&lt;/a&gt;&lt;/li&gt;
                 <pubDate>Sat, 30 Apr 2016 00:00:00 +1000</pubDate>
                 <link>https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</link>
                 <guid isPermaLink="true">https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</guid>
-            </item>
-        
-            <item>
-                <title>The Nim Ray Tracer Project &amp;ndash; Part 1: Introduction</title>
-                <description>&lt;p class=&quot;intro&quot;&gt;[Listening to the albums &lt;em&gt;Reverberant Skies&lt;/em&gt; and &lt;em&gt;White Maps&lt;/em&gt; from
-&lt;em&gt;Aglaia&lt;/em&gt; in an infinite loop… A beautifully hypnotic experience! The track
-&lt;em&gt;In the First Spinning Place&lt;/em&gt; from &lt;em&gt;White Maps&lt;/em&gt; is my absolute favourite.]&lt;/p&gt;
-
-&lt;h2 id=&quot;why-a-ray-tracer&quot;&gt;Why a ray tracer?&lt;/h2&gt;
-
-&lt;p&gt;I’ve been fascinated by ray tracing since my childhood. I still remember the
-first time I was playing around with an early 3D modeller/ray tracer program
-on the &lt;a href=&quot;https://en.wikipedia.org/wiki/Amiga_500&quot;&gt;Amiga 500&lt;/a&gt; called
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Imagine_%283D_modeling_software%29&quot;&gt;Imagine&lt;/a&gt;
-when I was about 13, trying to render some extruded letters made of glass
-placed on a classic checker-board patterned surface (don’t laugh, this was
-sort of a novel thing to do at that time, and I was a kid). Well, rendering
-the final 360x576 image (&lt;a href=&quot;https://en.wikipedia.org/wiki/Overscan&amp;gt;&quot;&gt;overscan&lt;/a&gt;!)
-took a bit more than 7 hours, but when I turned on the monitor in the morning
-in great anticipation and saw the final image in its
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Hold-And-Modify&quot;&gt;4096-colour&lt;/a&gt; interlaced glory
-(probably quite primitive looking by today’s standards), I was in awe! What
-made the experience even more interesting for me was that Imagine supported
-the use of so-called procedural textures, which are textures solely generated
-by mathematical functions instead of using bitmap images. I was mesmerised—a
-photorealistic image generated by the computer using nothing else but pure
-maths! &lt;sup id=&quot;fnref:amiga&quot;&gt;&lt;a href=&quot;#fn:amiga&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
-
-&lt;p&gt;I have always thought of ray tracing as some kind of black magic—something
-utterly fascinating and very scary at the same time because of the complex
-maths involved (which, as it turns out, is not quite true). This belief was
-also strengthened by my modest excursions into OpenGL programming years later,
-which uses a different method called
-&lt;a href=&quot;https://en.wikipedia.org/wiki/Rasterisation&quot;&gt;rasterization&lt;/a&gt; to generate 3D
-images.&lt;/p&gt;
-
-&lt;h2 id=&quot;ray-tracing-vs-rasterization&quot;&gt;Ray tracing vs rasterization&lt;/h2&gt;
-
-&lt;p&gt;Historically, there have been two main disparate approaches to rendering 3D
-scenes, rasterization and ray tracing (the situation is not so clear-cut
-nowadays, as we’ll see later). While rasterization is by several orders of
-magnitude more efficient at producing 3D animations at smooth frame rates in
-real-time, ray tracing can produce vastly more photorealistic results.  While
-many visual effects that happen in real life, such as non-planar reflections,
-soft shadows, refractions and caustics, are quite simple, albeit
-computationally very costly, to calculate with ray tracing, it requires quite
-a bit of complicated trickery even just to fake them with rasterization.&lt;/p&gt;
-
-&lt;p&gt;At the risk of grossly oversimplifying matters, rasterization is very
-efficient at projecting several hundreds of thousands of three-dimensional
-triangles onto a two-dimensional surface (the screen) and then colouring
-(shading) them according to some rules. In order to obtain reasonable frame
-rates during real-time animation, certain simplifications and optimisations
-have to be made. Photorealistic rendering that accurately portrays how a given
-scene would look in real life is not necessarily of primary importance as long
-as the end result looks pleasing (which is a reasonable assumption for many
-applications such as visualisation and games, where absolute fidelity to
-reality is not a requirement). It’s the 3D artists’ job to arrange those
-coloured triangles so that the resulting image looks good. Most
-graphics-accelerator cards today implement some sort of rasterization pipeline
-in hardware.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Ray_tracing_(graphics)&quot;&gt;Ray tracing&lt;/a&gt;, on the
-other hand, is a pretty much a no-holds-barred approach of generating
-realistic images on a computer by simulating the path of photons emitted by
-light sources bouncing from surface to surface among the objects making
-up the 3D scene, finally landing on the image surface of the virtual camera.
-Photorealism is of primary importance here, which is achieved by calculating
-the image pixel by pixel using algorithms that mimic the laws of physics as
-closely as practically possible (certain simplifications must be made, of
-course, otherwise we would end up writing a Universe Simulator!).&lt;/p&gt;
-
-&lt;p&gt;This begs the question, is ray tracing superior to rasterization then? In some
-way, we can say it is.  As far as photorealistic rendering is concerned, ray
-tracing is hard to beat, however this comes at a very steep computational
-cost. But if we asked whether it was possible to create pleasing imagery using
-rasterization alone, the answer would be a yes again. Just because
-rasterization is not as much rooted in physical reality as ray tracing, it
-would be foolish to think that it’s not capable of producing stellar results
-that can look very convincingly real (just look at any modern game released
-post 2010!). Indeed, there’s nothing preventing skilful artists from arranging
-the triangles making up the scene in such a way that can convey very realistic
-final results—similarly to how a master painter can create astonishingly
-realistic works of art by nothing more than applying differently coloured
-specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
-        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
-      &lt;/a&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 80%;&quot;&gt;Surely, &lt;a href=&quot;https://en.wikipedia.org/wiki/Caravaggio&quot;&gt;Caravaggio&lt;/a&gt; did not know about the &lt;a href=&quot;https://en.wikipedia.org/wiki/Fresnel_equations&quot;&gt;Fresnel equations&lt;/a&gt; or the &lt;a href=&quot;https://en.wikipedia.org/wiki/Metropolis_light_transport&quot;&gt;Metropolis light transport&lt;/a&gt; when he painted &lt;a href=&quot;https://en.wikipedia.org/wiki/The_Calling_of_St_Matthew_(Caravaggio)&quot;&gt;The Calling of Saint Matthew&lt;/a&gt; in 1600. Yet no one would say his paintings are not realistic enough just because he did not know about the physics of light! Interestingly enough, there have been some &lt;a href=&quot;http://www.webexhibits.org/hockneyoptics/post/grundy7.html&quot;&gt;speculations&lt;/a&gt; that he might have used the &lt;a href=&quot;https://en.wikipedia.org/wiki/Camera_obscura&quot;&gt;camera obscura&lt;/a&gt; to aid him in attaining his photorealistic results, the workings of which have strong connections to the basic idea of ray tracing. Here we go!&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;As CPUs and GPUs grew more powerful, previously purely
-rasterization-based game engines have been increasingly incorporating ray
-tracing techniques into their toolbox, such as &lt;a href=&quot;http://blogs.unity3d.com/2014/09/18/global-illumination-in-unity-5/&quot;&gt;global
-illumination&lt;/a&gt;,
-&lt;a href=&quot;http://twiik.net/articles/realtime-reflections-in-unity-5&quot;&gt;real-time
-reflections&lt;/a&gt; and
-&lt;a href=&quot;https://vimeo.com/82659909&quot;&gt;pseudo-refraction&lt;/a&gt; using shaders. These techniques
-are usually quite limited compared to their ray tracing counterparts, for
-example global illumination is usually restricted to static objects,
-reflections are only possible on planar surfaces and refraction is faked with
-shaders.&lt;/p&gt;
-
-&lt;p&gt;Also, more and more game engines have started implementing &lt;a href=&quot;http://blog.wolfire.com/2015/10/Physically-based-rendering&quot;&gt;physically-based
-rendering (PBR)&lt;/a&gt;
-methods recently, the renowned
-&lt;a href=&quot;https://en.wikipedia.org/wiki/CryEngine&quot;&gt;CryEngine&lt;/a&gt; being one notable
-example. The following is the introductory paragraph of the &lt;a href=&quot;http://docs.cryengine.com/display/SDKDOC2/Physically+Based+Shading&quot;&gt;Physically Based
-Shading&lt;/a&gt;
-chapter of the &lt;a href=&quot;http://docs.cryengine.com/display/SDKDOC1/Home&quot;&gt;CryEngine SDK
-documentation&lt;/a&gt;:&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;CRYENGINE 3.6 and beyond uses a shading model that is based on fundamental
-  physical rules. Instead of using a plenty of fudge and tweak factors which
-  don’t have a reasonable meaning in the real world, materials use some physical
-  properties to describe how the incoming light should interact with them.
-  A huge advantage of using a physically based model with certain rules is that
-  material assets will a lot more consistent and look more convincing under
-  different lighting conditions.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;This supports my earlier claim that while it’s certainly possible to create
-realistic visuals with rasterization, photorealism is not inherent in the
-rendering algorithm, but requires manual tweaking and fine-tuning of various
-parameters on the part of the 3D artist.&lt;/p&gt;
-
-&lt;p&gt;To sum up, I personally tend to think of rasterization as a more
-artist-centric and ray tracing as a more scientific approach of image
-generation. Ultimately, both are just tools of solving the problem of mapping
-a 3D scene onto a 2D image surface, but there’s a certain undeniable beauty
-and elegance to ray tracing algorithms in how they generate complex visual and
-optical effects by the application of just a few simplified physical models of
-reality.&lt;/p&gt;
-
-&lt;h3 id=&quot;in-defence-of-rasterization&quot;&gt;In defence of rasterization&lt;/h3&gt;
-
-&lt;p&gt;Just to bring the point home that rasterization is not inferior to ray tracing
-but only different, and to further support my argument that it is a more
-artist-based approach to rendering, let me present two examples from the two
-opposite ends of the spectrum of what rasterization is capable of. As we’ll
-see, it would have been difficult or impractical (or both) to achieve the same
-results with pure ray tracing techniques alone in both cases.&lt;/p&gt;
-
-&lt;p&gt;The magical realist adventure game (whatever that means) &lt;a href=&quot;http://kentuckyroutezero.com/&quot;&gt;Kentucky Road
-Zero&lt;/a&gt; by the aptly titled developer &lt;a href=&quot;http://cardboardcomputer.com/&quot;&gt;Cardboard
-Computer&lt;/a&gt; uses clever rasterization tricks to
-render its highly stylised low-polygon world. While the abstract visuals bear
-similitude to simple 2D paper cut-outs in most scenes, some occasional camera
-angle switches hint at it that there’s more going on under the hood, and
-indeed, this is in fact the 3D engine &lt;a href=&quot;https://unity3d.com/&quot;&gt;Unity&lt;/a&gt; in action,
-as evidenced by this &lt;a href=&quot;https://unity3d.com/showcase/case-stories/cardboardcomputer-kentuckyroutezero&quot;&gt;featured
-article&lt;/a&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-      &lt;/a&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;The opening scene of &lt;a href=&quot;http://kentuckyroutezero.com/&quot;&gt;Kentucky Road Zero&lt;/a&gt;, Act I by &lt;a href=&quot;http://cardboardcomputer.com/&quot;&gt;Cardboard Computer&lt;/a&gt;. If David Lynch ever ventured into making a computer game, then this would be it. The unique visual style of the game proves that an unconventional, abstract approach to rendering instead of taking the well-beaten &quot;standard&quot; photorealistic path can yield much more interesting results.&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;&lt;a href=&quot;http://www.theastronauts.com/&quot;&gt;The Astronauts&lt;/a&gt;’ first-person mystery game
-&lt;a href=&quot;http://ethancartergame.com/&quot;&gt;The Vanishing of Ethan Carter&lt;/a&gt;, on the other
-hand, employs a breathtakingly beautiful painterly approach to create its
-immersive in-game atmosphere. As it can be clearly seen on the screenshot, the
-results are stunningly realistic, but in a dreamy and artistic kind of way
-which is not dissimilar at all to the Caravaggio painting presented above. The
-developers used a technique called
-&lt;a href=&quot;http://www.theastronauts.com/2014/03/visual-revolution-vanishing-ethan-carter/&quot;&gt;photogrammetery&lt;/a&gt;
-to effectively sample reality in the form of textures and 3D meshes from
-thousands of photographs, but from there on it’s all traditional rasterization
-using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&lt;/a&gt;.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
-      &lt;/a&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 100%;&quot;&gt;One of the most beautiful games of recent years, &lt;a href=&quot;http://ethancartergame.com/&quot;&gt;The Vanishing of Ethan Carter&lt;/a&gt; pulls the player in into its highly realistic yet painterly world right from the first second of gameplay. No trace (pun intended) of physical based rendering is to be found here, yet the results speak for themselves.&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;I suspect it would have been quite difficult to achieve the same level of
-painterly feel by employing a strict ray tracing approach, even if that was
-possible at fluid frame rates on current hardware at all.  While ray tracing
-would have certainly yielded a more faithful portrayal of reality in terms of
-sheer physical accuracy, it could not have granted the artist as much creative
-freedom to sculpt the games’s almost otherwordly beautiful scenes by freely
-manipulating the shades and colours.  Atmosphere and emotions beat pure
-physics in this example again.&lt;/p&gt;
-
-&lt;h2 id=&quot;why-nim&quot;&gt;Why Nim?&lt;/h2&gt;
-
-&lt;p&gt;You know the old saying, mastering a programming language just by reading
-about it is like trying to learn how to ride the bicycle from a book.  I get
-quickly bored by solving toy textbook exercises too; implementing quicksort in
-yet another language is not quite my idea of having a good time, really.  What
-works for me best is writing a new application from scratch that does some
-cool stuff that I’m excited about and learn the new language along the way. So
-that’s what we’re gonna do here, write a full-featured ray tracer from the
-ground up in pure Nim!&lt;/p&gt;
-
-&lt;p&gt;Oh, and why &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt;? Serious people™ use C++ for
-high-performance graphics stuff, don’t they? Well, this is going to be a ray
-tracer, so speed matters &lt;em&gt;a lot&lt;/em&gt;, indeed—but so does the fun factor and my
-sanity too, as I’m not paid to suffer here, this being a hobby project and all
-(on a related note, don’t be a masochist, &lt;a href=&quot;/2016/03/03/the-quest-for-a-programming-language-that-doesnt-suck-part1/&quot;&gt;just say No to
-C++!&lt;/a&gt;).
-Nim claims to be “Efficient like C, expressive like Python and flexible like
-Lisp” which sounds pretty good in my book. In fact, C, Python and Lisp are
-probably my three all-time favourite languages, so this actually sounds more
-like a dream come true! So what we’re gonna do here is take this little guy
-for a wild ride and see how it lives up to its lofty goals in the real world!&lt;/p&gt;
-
-&lt;h2 id=&quot;in-the-next-episode&quot;&gt;In the next episode…&lt;/h2&gt;
-
-&lt;p&gt;We will examine the mathematical foundations of writing a simple ray tracer.
-Time to brush up those high-school trigonometry skills! Stay tuned!&lt;/p&gt;
-
-&lt;div class=&quot;footnotes&quot;&gt;
-  &lt;ol&gt;
-    &lt;li id=&quot;fn:amiga&quot;&gt;
-      &lt;p&gt;To put things into perspective, my experimentations with ray tracing on the Amiga took place in around 1992. There was virtually no Internet back then, I haven’t even heard the word until several years later. I read it in a &lt;em&gt;paper computer magazine&lt;/em&gt; (yes, those things &lt;em&gt;did&lt;/em&gt; actually exist, can you believe it?) that the CGI effects in the 1991 film &lt;a href=&quot;https://en.wikipedia.org/wiki/Terminator_2:_Judgment_Day&quot;&gt;Terminator 2: Judgement Day&lt;/a&gt; were rendered on a room full of ultra high-end (and ultra-expensive) &lt;a href=&quot;http://www.obsolyte.com/sgi_iris/&quot;&gt;Silicon Graphics IRIS&lt;/a&gt; &lt;a href=&quot;http://www.sgistuff.net/funstuff/hollywood/&quot;&gt;workstations&lt;/a&gt;, but even with that kind of computing power it took &lt;em&gt;several months&lt;/em&gt; to render a few minutes’ worth of scenes. Now, seeing &lt;em&gt;any kind of&lt;/em&gt; semi-photorealistic ray traced image come out of my modest &lt;a href=&quot;https://en.wikipedia.org/wiki/Amiga_500&quot;&gt;Amiga 500&lt;/a&gt; personal computer setup sporting a blazingly fast 7.14 Mhz &lt;a href=&quot;https://en.wikipedia.org/wiki/Motorola_68000&quot;&gt;Motorola 68000 CPU&lt;/a&gt; seemed nothing short of a small miracle to me then! (Actually, that chip is as old as &lt;em&gt;yours truly&lt;/em&gt;, I’ve just checked…) Oh, and I had no such luxuries as a &lt;em&gt;hard disk drive&lt;/em&gt; either—the whole program and the scene to be rendered had to fit into the machine’s whopping 1 MB of RAM (expanded from the 512 KB factory default) and the final image was then slowly written to a blank &lt;a href=&quot;https://en.wikipedia.org/wiki/Floppy_disk_variants#Commodore_Amiga&quot;&gt;880 KB floppy disk&lt;/a&gt; over the course of 7-8 hours! Eh, kids these days with their GPU-accelerated Monte Carlo path tracers… &lt;a href=&quot;#fnref:amiga&quot; class=&quot;reversefootnote&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ol&gt;
-&lt;/div&gt;
-</description>
-                <pubDate>Thu, 28 Apr 2016 00:00:00 +1000</pubDate>
-                <link>https://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</link>
-                <guid isPermaLink="true">https://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/</guid>
             </item>
         
     </channel>

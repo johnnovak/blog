@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
+  <meta name="description" content="Personal blog of John Novak">
+  <meta name="author" content="John Novak">
+  <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
+  <title>Raspbian Stretch home server setup</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia">
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic"><!--Source Sans Pro is required for the SVG images only -->
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Astloch">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.6.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
+  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8">
+  </script>
+  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8">
+  </script>
+  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8">
+  </script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8">
+  </script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8">
+  </script>
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8">
+  </script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
+</head>
+<body>
+  <script src="https://blog.johnnovak.net/js/lib/respond.min.js">
+  </script>
+  <div id="wrapper">
+    <header id="header">
+      <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
+      <p class="tagline">Riding on the tail of the<br>
+      Gaussian curve<br>
+      since 1979</p>
+      <nav>
+        <ul>
+          <li>
+            <a href="https://blog.johnnovak.net/about/">About</a>
+          </li>
+          <li>
+            <a href="https://blog.johnnovak.net/archives/">Archives</a>
+          </li>
+          <li>
+            <a href="https://blog.johnnovak.net/tags/">Tags</a>
+          </li>
+          <li class="last">
+            <a href="https://blog.johnnovak.net/feed.xml">Rss</a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+    <div role="main">
+      <article class="post">
+        <header>
+          <h1><a href="https://blog.johnnovak.net/2019/03/09/raspbian-stretch-home-server-setup/">Raspbian Stretch home server setup</a></h1>
+          <p class="date"><time datetime="2019-03-09">2019 Mar 09</time></p>
+        </header>
+        <nav class="tags">
+          <ul>
+            <li>
+              <a href="https://blog.johnnovak.net/tag/linux/">linux</a>
+            </li>
+            <li>
+              <a href="https://blog.johnnovak.net/tag/raspberry%20pi/">raspberry pi</a>
+            </li>
+            <li>
+              <a href="https://blog.johnnovak.net/tag/raspbian/">raspbian</a>
+            </li>
+          </ul>
+        </nav>
+        <p class="intro">Okay, so the Micro SD card in my trusty Raspberry Pi 2 <strike>torrent box</strike> home server finally bit the dust after three years of steady service, so I had to get a new one and reinstall everything from scratch (no pun intended), which I have documented in this post in detail. What we’ll cover here is how to set up the Pi running <strong>Raspbian Scratch</strong> with SSH, VNC and FTP support, an external NTFS hard drive for storage, and the Deluge torrent client with remote access enabled—needless to say, strictly for downloading Linux ISO images only!</p>
+        <p class="intro">I have used a <strong>Raspberry Pi 2 B+</strong> with a USB WiFi dongle for the purpose of this exercise—in theory, the process should be the same for the Pi 3 with its built-in WiFi. A word of caution to younger players: buy a proper Raspberry-approved power source that’s capable of providing stable 2.5A power; this will save you lots of headaches later on.</p>
+        <p class="intro">Also, a word of wisdom to my brothers and sisters: my broken 8 GB SanDisk card came with a 10-year warranty so I got a new 16 GB one for free! Always keep those receipts guys! :)</p>
+        <p class="warning">These instructions are meant for a home server setup on a home network that’s not reachable from the outside internet. In my case, the network the server is on is behind a second router, so I’m not concerned with security issues too much. <strong>Don’t blame me if you use these instructions to set up a public FTP or something and then get hacked!</strong></p>
+        <p id="toc-header">Table of contents</p>
+        <ul id="markdown-toc">
+          <li>
+            <a href="#installing-raspbian-scratch" id="markdown-toc-installing-raspbian-scratch">Installing Raspbian Scratch</a>
+          </li>
+          <li>
+            <a href="#enabling-ssh-access" id="markdown-toc-enabling-ssh-access">Enabling SSH access</a>
+          </li>
+          <li>
+            <a href="#enabling-vnc-access" id="markdown-toc-enabling-vnc-access">Enabling VNC access</a>
+          </li>
+          <li>
+            <a href="#mounting-an-ntfs-formatted-external-usb-hdd" id="markdown-toc-mounting-an-ntfs-formatted-external-usb-hdd">Mounting an NTFS formatted external USB HDD</a>
+          </li>
+          <li>
+            <a href="#setting-up-an-ftp-server" id="markdown-toc-setting-up-an-ftp-server">Setting up an FTP server</a>
+          </li>
+          <li>
+            <a href="#setting-up-deluge" id="markdown-toc-setting-up-deluge">Setting up Deluge</a>
+            <ul>
+              <li>
+                <a href="#installing-the-debian-jessie-version" id="markdown-toc-installing-the-debian-jessie-version">Installing the Debian Jessie version</a>
+              </li>
+              <li>
+                <a href="#configuring-the-deluge-daemon-for-remote-access" id="markdown-toc-configuring-the-deluge-daemon-for-remote-access">Configuring the Deluge daemon for remote access</a>
+              </li>
+              <li>
+                <a href="#configuring-the-remote-thin-client" id="markdown-toc-configuring-the-remote-thin-client">Configuring the remote thin client</a>
+              </li>
+              <li>
+                <a href="#configuring-the-webui" id="markdown-toc-configuring-the-webui">Configuring the WebUI</a>
+              </li>
+              <li>
+                <a href="#setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot" id="markdown-toc-setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot">Setting up Deluge daemon and WebUI to start automatically on boot</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#in-closing" id="markdown-toc-in-closing">In closing</a>
+          </li>
+        </ul>
+        <h2 id="installing-raspbian-scratch">Installing Raspbian Scratch</h2>
+        <ol>
+          <li>
+            <p>Download the offline NOOBS installation zip file from <a href="https://www.raspberrypi.org/downloads/noobs/">here</a>.</p>
+          </li>
+          <li>
+            <p>Format a Micro SD card to FAT32 (I used the cheapest available SanDisk Ultra 16 GB, but my previous 8 GB SanDisk also worked fine. Some people reported problems with 32+ GB cards so going larger is not worth the trouble (and the price) if you’re gonna use an external HDD for storage anyway).</p>
+          </li>
+          <li>
+            <p>Unzip the contents of the zip file to the root directory of the SD card.</p>
+          </li>
+          <li>
+            <p>Insert card into the Pi, hook up monitor & keyboard and turn it on to start the installation process. Choose Raspbian when prompted and follow the instructions.</p>
+          </li>
+          <li>
+            <p>On the first boot you’ll be prompted to configure the WiFi access (if you have a Pi 2 with an USB WiFi adapter like me, or if you have a Pi 3), so have the WiFi password handy.</p>
+          </li>
+        </ol>
+        <h2 id="enabling-ssh-access">Enabling SSH access</h2>
+        <ol>
+          <li>
+            <p>Run <code>sudo raspi-config</code> and enable SSH access under <strong>5 Interface Options / P2 SSH</strong>.</p>
+          </li>
+          <li>
+            <p>After this you can SSH into the Pi with <code>ssh pi@&lt;IP_ADDRESS&gt;</code> and entering the root password.</p>
+          </li>
+        </ol>
+        <h2 id="enabling-vnc-access">Enabling VNC access</h2>
+        <ol>
+          <li>
+            <p>Follow <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">these instructions</a> under the <strong>Enabling VNC server</strong> section.</p>
+          </li>
+          <li>
+            <p>Now you can use the <a href="https://www.realvnc.com/en/connect/download/viewer/">RealVNC Viewer</a> to connect to the Pi from another computer by entering its IP address (don’t need the <code>:1</code> at the end).</p>
+          </li>
+          <li>
+            <p><em>(Optional)</em> If the Pi is not hooked up to a monitor, the VNC session will use the default resolution of 720x480. To change this, run <code>sudo raspi-config</code> and go to <strong>7 Advanced Options / A5 Resolution</strong> to set a higher screen resolution. You’ll need to reboot with <code>sudo reboot</code> for the change to take effect.</p>
+          </li>
+        </ol>
+        <p>Alternative instructions about the whole setup can be found <a href="https://www.realvnc.com/en/connect/docs/raspberry-pi.html">here</a>.</p>
+        <h2 id="mounting-an-ntfs-formatted-external-usb-hdd">Mounting an NTFS formatted external USB HDD</h2>
+        <p>When connecting the external USB drive, Raspbian will automatically mount it. Unfortunately, the default NTFS driver that comes with the OS can only mount NTFS partitions in read-only mode, so we’ll need to install <strong>ntfs-3g</strong> to get full read-write access (but we’ll unmount the partition first):</p>
+        <pre><code>sudo umount /media/pi/&lt;PARTITION_NAME&gt;
+sudo apt-get install ntfs-3g
+</code></pre>
+        <p>Let’s check the list of available partitions; the disk we’re looking for will be most likely <code>/dev/sda</code>:</p>
+        <pre><code>sudo fdisk -l
+</code></pre>
+        <p>Now we can test the new driver by mounting the partition manually under <code>/media/USBHDD1</code> (assuming the whole disk only contains a single NTFS partition):</p>
+        <pre><code>sudo mkdir /media/USBHDD1
+sudo mount -t auto /dev/sda1 /media/USBHDD1
+</code></pre>
+        <p>Copy some files to <code>/media/USBHDD1</code> to test that the write access works.</p>
+        <p>If everything went fine, we can mount the partition permanently by adding the following line to <code>/etc/fstab</code>:</p>
+        <pre><code>/dev/sda1       /media/USBHDD1  auto    noatime           0       0
+</code></pre>
+        <p>Reboot with <code>sudo reboot</code> to confirm that the partition gets mounted automatically.</p>
+        <h2 id="setting-up-an-ftp-server">Setting up an FTP server</h2>
+        <p>For FTP access, we’ll use <strong>vsFTPd</strong> instead of the Raspbian default <strong>PureFTPd</strong>:</p>
+        <pre><code>sudo apt-get install vsftpd
+</code></pre>
+        <p>We’ll be really unsophisticated here (another term for “simple & easy”) and just grant the root <code>pi</code> user read-write access to the whole external HDD. Edit <code>/etc/vsftpd.conf</code> and uncomment/add the following parameters:</p>
+        <pre><code>anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+chroot_local_user=YES
+user_sub_token=$USER
+local_root=/media/USBHDD1
+allow_writeable_chroot=YES
+</code></pre>
+        <p>(Arguably, this is not as bad as it first seems because we’re restricting access to <code>/media/USBHDD1</code> only with <code>chroot_local_user=YES</code>.)</p>
+        <p>Restart the FTP server for the changes to take effect:</p>
+        <pre><code>sudo service vsftpd restart
+</code></pre>
+        <p>Now you should be able to connect to the box with an FTP client using the <code>pi</code> user and the root password, and have full read-write access to the whole contents of USB HDD.</p>
+        <h2 id="setting-up-deluge">Setting up Deluge</h2>
+        <p>Apparently, <a href="https://forum.deluge-torrent.org/viewtopic.php?f=7&amp;t=54869&amp;p=227887">there are some issues</a> with the Deluge package that comes with Stretch. The reason is that it pulls down <strong>libtorrent 1.1.1.0</strong> as a dependency instead of the previously used <strong>1.0.11</strong>:</p>
+        <pre>
+  As many I moved to Stretch from a Debian Jessie with Deluged 1.3.15 and
+  libtorrent 1.0.11 installed, RPI3 is the hardware. I found a couple of
+  issues and report them here if useful for any of you.
+
+  Issue:
+  -Deluged CPU usage really higher than before
+  -Multi-tiers tracker torrents report "connection time out". A few are
+  working but the large majority stay in this state. This is identified for
+  trackers giving multiple tier 0 tracker addresses, e.g. IPTxxxxx
+  - Error in log
+</pre>
+        <p>Although I’m on a different hardware (<a href="https://www.raspberrypi.org/products/raspberry-pi-2-model-b/">Raspberry 2 B</a>), this seems like a software issue so I had decided not to experiment with the new package but use <a href="https://forum.deluge-torrent.org/viewtopic.php?f=7&amp;t=54869&amp;p=227887">this method</a> to revert to <strong>libtorrent 1.0.11</strong>.</p>
+        <h3 id="installing-the-debian-jessie-version">Installing the Debian Jessie version</h3>
+        <p>Edit <code>/etc/apt/sources.list</code> and add the below PPA and Jessie backports repos:</p>
+        <pre><code>deb http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb-src http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb http://deb.debian.org/debian jessie-backports main contrib non-free
+</code></pre>
+        <p>Add PPA key:</p>
+        <pre><code>sudo apt-get install dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 249AD24C
+</code></pre>
+        <p>Update package lists:</p>
+        <pre><code>sudo apt-get update
+</code></pre>
+        <p>Install Jessie version of <strong>libssl</strong>:</p>
+        <pre><code>sudo apt-get -t jessie-backports install libssl1.0.0
+</code></pre>
+        <p>Install <strong>Deluge</strong>, including the <strong>web</strong> and <strong>console</strong> modules:</p>
+        <pre><code>sudo apt-get install -t zesty libtorrent-rasterbar8 python-libtorrent
+sudo apt-get install -t zesty deluged deluge-web deluge-console
+</code></pre>
+        <p>Prevent <strong>libtorrent</strong> upgrade during the next OS upgrade:</p>
+        <pre><code>sudo apt-mark hold libtorrent-rasterbar8 python-libtorrent
+sudo apt-mark showhold
+</code></pre>
+        <h3 id="configuring-the-deluge-daemon-for-remote-access">Configuring the Deluge daemon for remote access</h3>
+        <p>Start the Deluge daemon then kill it immediately (we’re just doing this so it creates the default configuration files on the first startup):</p>
+        <pre><code>deluged
+pkill deluged
+</code></pre>
+        <p>Edit <code>~/.config/deluge/auth</code> to set up the remote Deluge user. Delete the existing contents of the file and add a new line in the following format:</p>
+        <pre><code>username:password:level
+</code></pre>
+        <p>We’ll use level 10, which gives full administrative acccess, so the new line will look something like this:</p>
+        <pre><code>pi:&lt;PASSWORD&gt;:10
+</code></pre>
+        <p>Let’s start up the daemon again and enter the console:</p>
+        <pre><code>deluged
+deluge-console
+</code></pre>
+        <p>We’ll make a configuration change to allow remote connetions to the Deluge daemon and then we’ll exit the console:</p>
+        <pre><code>config -s allow_remote True
+exit
+</code></pre>
+        <p>Restart the daemon so the changes will take effect:</p>
+        <pre><code>deluged
+pkill deluged
+</code></pre>
+        <h3 id="configuring-the-remote-thin-client">Configuring the remote thin client</h3>
+        <p>Create the following download locations on the USB HDD:</p>
+        <pre><code>mkdir /media/USBHDD1/downloads/completed
+mkdir /media/USBHDD1/downloads/downloading
+mkdir /media/USBHDD1/downloads/torrents
+mkdir /media/USBHDD1/downloads/watch
+</code></pre>
+        <p><a href="https://dev.deluge-torrent.org/wiki/Download">Download</a> and install the thin client, start it up and perform the following steps:</p>
+        <ol>
+          <li>Disable “Classic Mode” in <strong>Preferences / Interface</strong> then restart the client.</li>
+          <li>Add a new remote connection at startup (use the IP address of the Pi, the default port, and the username and password we set in the <code>auth</code> file). If all went well, the icon next to the connection should turn green.</li>
+          <li>Set the download locations in <strong>Preferences / Downloads</strong> to the directories we created:</li>
+        </ol>
+        <figure class="image">
+          <img src="https://blog.johnnovak.net/files/2019-03-09/deluge-downloads-config.png" alt="Deluge thin client downloads configuration" style="width: 100%">
+        </figure>
+        <h3 id="configuring-the-webui">Configuring the WebUI</h3>
+        <p>Start the WebUI:</p>
+        <pre><code>deluge-web
+</code></pre>
+        <p>Open the WebUI in a browser:</p>
+        <pre><code>http://&lt;PI_IP_ADDRESS&gt;:8112/
+</code></pre>
+        <p>The default password is <code>deluge</code>. You’ll be asked to change the password on the first login, so it’s a good idea to just do that.</p>
+        <h3 id="setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot">Setting up Deluge daemon and WebUI to start automatically on boot</h3>
+        <p>Edit <code>/etc/rc.local</code> and add the following two lines before the <code>exit 0</code> command:</p>
+        <pre><code>sudo -u pi /usr/bin/python /usr/bin/deluged &
+sudo -u pi /usr/bin/python /usr/bin/deluge-web &
+</code></pre>
+        <p>Reboot and test that you can still connect using both the thin client and the WebUI.</p>
+        <h2 id="in-closing">In closing</h2>
+        <p><em>[This last section isn’t really warranted, but just finishing the post with some configuration steps didn’t seem quite right…]</em></p>
+        <p>That’s it folks, enjoy your shiny new 24/7 torrent box! Now go and download some Linux ISOs! :)</p>
+        <section class="comments">
+          <h2>Comments</h2><noscript>
+          <p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
+          <div id="disqus_thread"></div>
+          <script type="text/javascript">
+          var disqus_shortname = "johnnovak";
+          var disqus_identifier = "/2019/03/09/raspbian-stretch-home-server-setup/";
+          var disqus_title = "Raspbian Stretch home server setup";
+          var disqus_url = "https://blog.johnnovak.net//2019/03/09/raspbian-stretch-home-server-setup/";
+
+          (function() {
+          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+          })();
+          </script>
+        </section>
+      </article>
+    </div>
+  </div>
+</body>
+</html>
