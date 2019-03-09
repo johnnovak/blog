@@ -282,7 +282,7 @@ will look something like this:&lt;/p&gt;
 deluge-console
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;p&gt;We’ll make a configuration change to allow remote connetions to the Deluge
+&lt;p&gt;We’ll make a configuration change to allow remote connections to the Deluge
 daemon and then we’ll exit the console:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;config -s allow_remote True
