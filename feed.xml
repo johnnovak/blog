@@ -1692,8 +1692,8 @@ dark colours consistently.&lt;/dd&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop1.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-11-13/desktop1-small.jpg&quot; alt=&quot;Figure 1 &amp;mdash; urxvt + tmux + Vim. That's how I'm spending way too much of my waking time inside a darkened room. The x86 assembly listing in the top right pane serves an important dual purpose: firstly, it is an attempt to make my programmer peers believe that I &amp;lt;em&amp;gt;really know a lot&amp;lt;/em&amp;gt; about computers, and secondly, it distances me from JavaScript wielding hipsters.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop1.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop1-small.jpg&quot; alt=&quot;Figure 1 &amp;mdash; urxvt + tmux + Vim. That's how I'm spending way too much of my waking time inside a darkened room. The x86 assembly listing in the top right pane serves an important dual purpose: firstly, it is an attempt to make my programmer peers believe that I &amp;lt;em&amp;gt;really know a lot&amp;lt;/em&amp;gt; about computers, and secondly, it distances me from JavaScript wielding hipsters.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -1707,8 +1707,8 @@ dark colours consistently.&lt;/dd&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop2.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-11-13/desktop2-small.jpg&quot; alt=&quot;Figure 2 &amp;mdash; Another common use-case showcasing the window tiling functionality. Yes, the browser window shows the post you are reading right now (plus a Vimperator window, signalling my technical expertise to those in the know). Life is a big recursion, is it not? Also note the common staple of wannabe l33t Linux haxxorz, the ubiquitous tmux clock.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop2.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop2-small.jpg&quot; alt=&quot;Figure 2 &amp;mdash; Another common use-case showcasing the window tiling functionality. Yes, the browser window shows the post you are reading right now (plus a Vimperator window, signalling my technical expertise to those in the know). Life is a big recursion, is it not? Also note the common staple of wannabe l33t Linux haxxorz, the ubiquitous tmux clock.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -1722,8 +1722,8 @@ dark colours consistently.&lt;/dd&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-11-13/desktop3.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-11-13/desktop3-small.jpg&quot; alt=&quot;Figure 3 &amp;mdash; The obligatory 'just showing off' screenshot because I like the number three. Thunar makes an appearance here.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop3.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-11-13/desktop3-small.jpg&quot; alt=&quot;Figure 3 &amp;mdash; The obligatory 'just showing off' screenshot because I like the number three. Thunar makes an appearance here.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2418,8 +2418,8 @@ purposes only, this is what we would get if we left it off:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/boxes-bad.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-22/boxes-bad.png&quot; alt=&quot;Figure 2 &amp;mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png&quot; alt=&quot;Figure 2 &amp;mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2443,8 +2443,8 @@ correct results:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/boxes-ok.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-22/boxes-ok.png&quot; alt=&quot;Figure 3 &amp;mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png&quot; alt=&quot;Figure 3 &amp;mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2471,8 +2471,8 @@ interested to hear about it though!&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-22/cube.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-22/cube.png&quot; alt=&quot;&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-22/cube.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-22/cube.png&quot; alt=&quot;&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2541,8 +2541,8 @@ directional lights:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/spheres-distantlights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-15/spheres-distantlights.png&quot; alt=&quot;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&amp;lt;br&amp;gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting&amp;trade;).&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-15/spheres-distantlights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-15/spheres-distantlights.png&quot; alt=&quot;Figure 1 &amp;mdash; Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979&amp;ndash;?).&amp;lt;br&amp;gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting&amp;trade;).&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2567,8 +2567,8 @@ looks like when illuminated by a single point light:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/spheres-pointlight.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-15/spheres-pointlight.png&quot; alt=&quot;Figure 2 &amp;mdash; The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-15/spheres-pointlight.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-15/spheres-pointlight.png&quot; alt=&quot;Figure 2 &amp;mdash; The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2645,8 +2645,8 @@ hasn’t completely eliminated the black shadows.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/complex-scene-3lights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-15/complex-scene-3lights.png&quot; alt=&quot;Figure 3 &amp;mdash; Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-15/complex-scene-3lights.png&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-15/complex-scene-3lights.png&quot; alt=&quot;Figure 3 &amp;mdash; Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2660,8 +2660,8 @@ hasn’t completely eliminated the black shadows.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-10-15/complex-scene-layers.png&quot; data-width=&quot;1860&quot; data-height=&quot;400&quot;&gt;
-        &lt;img src=&quot;/files/2016-10-15/complex-scene-layers.png&quot; alt=&quot;Figure 4 &amp;mdash; The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-10-15/complex-scene-layers.png&quot; data-width=&quot;1860&quot; data-height=&quot;400&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-10-15/complex-scene-layers.png&quot; alt=&quot;Figure 4 &amp;mdash; The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows.&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -2881,7 +2881,7 @@ amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/linear-ramp32.png&quot; alt=&quot;Figure 1 &amp;mdash; Evenly-spaced greyscale bars in terms of emitted light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/linear-ramp32.png&quot; alt=&quot;Figure 1 &amp;mdash; Evenly-spaced greyscale bars in terms of emitted light intensity&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -2896,7 +2896,7 @@ amount&lt;/em&gt; from bar to bar, left to right.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 2 &amp;mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 2 &amp;mdash; Evenly-spaced greyscale bars in terms of perceptual light intensity&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -2939,7 +2939,7 @@ the “real world object” looks like:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/linear-ramp.png&quot; alt=&quot;Figure 3 &amp;mdash; Ideal smooth greyscale ramp&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/linear-ramp.png&quot; alt=&quot;Figure 3 &amp;mdash; Ideal smooth greyscale ramp&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -2963,7 +2963,7 @@ something like this (let’s just ignore dither for now to keep things simple):&
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/linear-ramp32-perceptual.png&quot; alt=&quot;Figure 4 &amp;mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/linear-ramp32-perceptual.png&quot; alt=&quot;Figure 4 &amp;mdash; Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -2998,7 +2998,7 @@ greyscale image we have already seen in Figure 2:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 5 &amp;mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png&quot; alt=&quot;Figure 5 &amp;mdash; Ideal smooth greyscale represented with 32 perceptually-linear greyscale values&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -3207,7 +3207,7 @@ wall; the colours would mix as in the linear-space case).&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/gradient.png&quot; alt=&quot;Figure 7 &amp;mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/gradient.png&quot; alt=&quot;Figure 7 &amp;mdash; For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)&quot; style=&quot;width: 80%&quot; /&gt;
     
   
 
@@ -3246,7 +3246,7 @@ legacy behaviour.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/color-blending.jpg&quot; alt=&quot;Figure 8 &amp;mdash; Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode).&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -3267,7 +3267,7 @@ brightness shifts.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/opacity.png&quot; alt=&quot;Figure 9 &amp;mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/opacity.png&quot; alt=&quot;Figure 9 &amp;mdash; Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -3287,8 +3287,8 @@ compositing should work.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/blending.jpg&quot; data-width=&quot;1260&quot; data-height=&quot;862&quot;&gt;
-        &lt;img src=&quot;/files/2016-09-21/blending.jpg&quot; alt=&quot;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-09-21/blending.jpg&quot; data-width=&quot;1260&quot; data-height=&quot;862&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/blending.jpg&quot; alt=&quot;Figure 10 &amp;mdash; Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -3317,7 +3317,7 @@ black and white (therefore it’s referred to as &lt;strong&gt;50% grey&lt;/stro
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/resize-large.png&quot; alt=&quot;Figure 11 &amp;mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.&quot; style=&quot;width: 220px&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/resize-large.png&quot; alt=&quot;Figure 11 &amp;mdash; Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.&quot; style=&quot;width: 220px&quot; /&gt;
     
   
 
@@ -3340,7 +3340,7 @@ sRGB.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/resize.png&quot; alt=&quot;Figure 12 &amp;mdash; Effects of gamma-incorrect image resizing. &amp;lt;em&amp;gt;A&amp;lt;/em&amp;gt; is the pixel checkerboard pattern, &amp;lt;em&amp;gt;B &amp;lt;/em&amp;gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &amp;lt;em&amp;gt;C&amp;lt;/em&amp;gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).&quot; style=&quot;width: 316px&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/resize.png&quot; alt=&quot;Figure 12 &amp;mdash; Effects of gamma-incorrect image resizing. &amp;lt;em&amp;gt;A&amp;lt;/em&amp;gt; is the pixel checkerboard pattern, &amp;lt;em&amp;gt;B &amp;lt;/em&amp;gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &amp;lt;em&amp;gt;C&amp;lt;/em&amp;gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).&quot; style=&quot;width: 316px&quot; /&gt;
     
   
 
@@ -3383,7 +3383,7 @@ look thinner than they should.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/antialias.png&quot; alt=&quot;Figure 13 &amp;mdash; Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.&quot; style=&quot;width: 623px&quot; /&gt;
     
   
 
@@ -3438,8 +3438,8 @@ conditions. It’s a lot of wasted energy to work like that.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-09-21/badgamma.png&quot; data-width=&quot;1237&quot; data-height=&quot;400&quot;&gt;
-        &lt;img src=&quot;/files/2016-09-21/badgamma.png&quot; alt=&quot;TODO&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-09-21/badgamma.png&quot; data-width=&quot;1237&quot; data-height=&quot;400&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/badgamma.png&quot; alt=&quot;TODO&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -3462,7 +3462,7 @@ problem right at the source…&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-09-21/lineargammahead.png&quot; alt=&quot;TODO&quot; style=&quot;width: 90%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-09-21/lineargammahead.png&quot; alt=&quot;TODO&quot; style=&quot;width: 90%&quot; /&gt;
     
   
 
@@ -3669,7 +3669,7 @@ a solution to a problem too:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-05-29/headphones.jpg&quot; alt=&quot;Solution to a problem...&quot; style=&quot;width: 70%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/headphones.jpg&quot; alt=&quot;Solution to a problem...&quot; style=&quot;width: 70%&quot; /&gt;
     
   
 
@@ -3788,7 +3788,7 @@ visualised pretty much spot on as follows:&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-05-29/fail.jpg&quot; alt=&quot;FAIL&quot; style=&quot;width: auto&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/fail.jpg&quot; alt=&quot;FAIL&quot; style=&quot;width: auto&quot; /&gt;
     
   
 
@@ -3882,8 +3882,8 @@ rendering, software bitmap rendering, or any combination of the above…&lt;/p&g
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/reaper-small.jpg&quot; alt=&quot;REAPER 5 screenshot showing the Funktion 1.0 skin&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/reaper.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/reaper-small.jpg&quot; alt=&quot;REAPER 5 screenshot showing the Funktion 1.0 skin&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -3943,8 +3943,8 @@ and graphics wrappers to maintain a single codebase for all three platforms.&lt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/renoise-small.jpg&quot; alt=&quot;Renoise 3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/renoise.png&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/renoise-small.jpg&quot; alt=&quot;Renoise 3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4002,8 +4002,8 @@ developers exactly $999 lighter.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/tracktion7-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, big screen&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/tracktion7.jpg&quot; data-width=&quot;1800&quot; data-height=&quot;1013&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/tracktion7-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, big screen&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4017,8 +4017,8 @@ developers exactly $999 lighter.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/tracktion7-lowres-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, small screen&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres.jpg&quot; data-width=&quot;950&quot; data-height=&quot;722&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres-small.jpg&quot; alt=&quot;Tracktion 7 screenshot, small screen&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4093,8 +4093,8 @@ Blender’s internals, no one has been able to do so yet in practice.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/blender-small.jpg&quot; alt=&quot;Blender screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/blender.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1200&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/blender-small.jpg&quot; alt=&quot;Blender screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4132,8 +4132,8 @@ rendering to draw its UI, probably via some custom wrapper libraries.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/cinema4d-small.jpg&quot; alt=&quot;Cinema 4D screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/cinema4d.png&quot; data-width=&quot;2880&quot; data-height=&quot;1714&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/cinema4d-small.jpg&quot; alt=&quot;Cinema 4D screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4208,8 +4208,8 @@ of performance counts.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-05-29/nodebox-small.jpg&quot; alt=&quot;NodeBox3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-05-29/nodebox.png&quot; data-width=&quot;1100&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/nodebox-small.jpg&quot; alt=&quot;NodeBox3 screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4516,7 +4516,7 @@ but fuck all that, let’s  write a whole cross-platform GUI library in Nim!&lt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;img src=&quot;/files/2016-05-29/fuck-everything.jpg&quot; alt=&quot;Fuck everything&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;img src=&quot;https://blog.johnnovak.net/files/2016-05-29/fuck-everything.jpg&quot; alt=&quot;Fuck everything&quot; style=&quot;width: 100%&quot; /&gt;
     
   
 
@@ -4553,12 +4553,12 @@ a wonderfully creepy atmosphere…]&lt;/p&gt;
 
 &lt;h2 id=&quot;the-basics&quot;&gt;The Basics&lt;/h2&gt;
 
-&lt;p&gt;Hello again! In the &lt;a href=&quot;2016/04/28/the-nim-raytracer-project-part1/&quot;&gt;initial
-post&lt;/a&gt; of this series I talked
-about ray tracing in general and my reasons for writing my own ray tracing
-renderer in the most awesome &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt; language. Before
-writing any code though, in this part we’ll examine the basic maths required
-for such a renderer.&lt;/p&gt;
+&lt;p&gt;Hello again! In the &lt;a href=&quot;/2016/04/28/the-nim-raytracer-project-part-1-introduction/&quot;&gt;initial
+post&lt;/a&gt; of this
+series I talked about ray tracing in general and my reasons for writing my own
+ray tracing renderer in the most awesome &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt; language.
+Before writing any code though, in this part we’ll examine the basic maths
+required for such a renderer.&lt;/p&gt;
 
 &lt;p&gt;Most of this stuff is a distilled version of the information contained in the
 excellent &lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel 2.0 – Learn Computer Graphics Programming from
@@ -4880,8 +4880,8 @@ CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -4997,8 +4997,8 @@ specks of paint onto a canvas with a mere paintbrush.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
-        &lt;img src=&quot;/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg&quot; data-width=&quot;800&quot; data-height=&quot;822&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg&quot; alt=&quot;Caravaggio, The Calling of St Matthew&quot; style=&quot;width: 80%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -5075,8 +5075,8 @@ article&lt;/a&gt;.&lt;/p&gt;
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/krz.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/krz.jpg&quot; alt=&quot;Kentucky Road Zero, Act I in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   
@@ -5102,8 +5102,8 @@ using the &lt;a href=&quot;https://www.unrealengine.com/&quot;&gt;Unreal Engine&
 &lt;figure class=&quot;image&quot;&gt;
   
     
-      &lt;a class=&quot;largeimg&quot; href=&quot;/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
-        &lt;img src=&quot;/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
+      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg&quot; data-width=&quot;1920&quot; data-height=&quot;1080&quot;&gt;
+        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg&quot; alt=&quot;The Vanishing of Ethan Carter in-game screenshot&quot; style=&quot;width: 100%&quot; /&gt;
       &lt;/a&gt;
     
   

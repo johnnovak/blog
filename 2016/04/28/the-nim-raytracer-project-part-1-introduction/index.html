@@ -62,19 +62,19 @@
     <div role="main">
       <article class="post">
         <header>
-          <h1><a href="/2016/04/28/the-nim-raytracer-project-part-1-introduction/">The Nim Ray Tracer Project – Part 1: Introduction</a></h1>
+          <h1><a href="https://blog.johnnovak.net/2016/04/28/the-nim-raytracer-project-part-1-introduction/">The Nim Ray Tracer Project – Part 1: Introduction</a></h1>
           <p class="date"><time datetime="2016-04-28">2016 Apr 28</time></p>
         </header>
         <nav class="tags">
           <ul>
             <li>
-              <a href="/tag/graphics/">graphics</a>
+              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
             </li>
             <li>
-              <a href="/tag/ray%20tracing/">ray tracing</a>
+              <a href="https://blog.johnnovak.net/tag/ray%20tracing/">ray tracing</a>
             </li>
             <li>
-              <a href="/tag/nim/">nim</a>
+              <a href="https://blog.johnnovak.net/tag/nim/">nim</a>
             </li>
           </ul>
         </nav>
@@ -89,7 +89,7 @@
         <p><a href="https://en.wikipedia.org/wiki/Ray_tracing_(graphics)">Ray tracing</a>, on the other hand, is a pretty much a no-holds-barred approach of generating realistic images on a computer by simulating the path of photons emitted by light sources bouncing from surface to surface among the objects making up the 3D scene, finally landing on the image surface of the virtual camera. Photorealism is of primary importance here, which is achieved by calculating the image pixel by pixel using algorithms that mimic the laws of physics as closely as practically possible (certain simplifications must be made, of course, otherwise we would end up writing a Universe Simulator!).</p>
         <p>This begs the question, is ray tracing superior to rasterization then? In some way, we can say it is. As far as photorealistic rendering is concerned, ray tracing is hard to beat, however this comes at a very steep computational cost. But if we asked whether it was possible to create pleasing imagery using rasterization alone, the answer would be a yes again. Just because rasterization is not as much rooted in physical reality as ray tracing, it would be foolish to think that it’s not capable of producing stellar results that can look very convincingly real (just look at any modern game released post 2010!). Indeed, there’s nothing preventing skilful artists from arranging the triangles making up the scene in such a way that can convey very realistic final results—similarly to how a master painter can create astonishingly realistic works of art by nothing more than applying differently coloured specks of paint onto a canvas with a mere paintbrush.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-04-28/caravaggio.jpg" data-width="800" data-height="822"><img src="/files/2016-04-28/caravaggio.jpg" alt="Caravaggio, The Calling of St Matthew" style="width: 80%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg" data-width="800" data-height="822"><img src="https://blog.johnnovak.net/files/2016-04-28/caravaggio.jpg" alt="Caravaggio, The Calling of St Matthew" style="width: 80%"></a>
           <figcaption style=" width: 80%;">
             Surely, <a href="https://en.wikipedia.org/wiki/Caravaggio">Caravaggio</a> did not know about the <a href="https://en.wikipedia.org/wiki/Fresnel_equations">Fresnel equations</a> or the <a href="https://en.wikipedia.org/wiki/Metropolis_light_transport">Metropolis light transport</a> when he painted <a href="https://en.wikipedia.org/wiki/The_Calling_of_St_Matthew_(Caravaggio)">The Calling of Saint Matthew</a> in 1600. Yet no one would say his paintings are not realistic enough just because he did not know about the physics of light! Interestingly enough, there have been some <a href="http://www.webexhibits.org/hockneyoptics/post/grundy7.html">speculations</a> that he might have used the <a href="https://en.wikipedia.org/wiki/Camera_obscura">camera obscura</a> to aid him in attaining his photorealistic results, the workings of which have strong connections to the basic idea of ray tracing. Here we go!
           </figcaption>
@@ -105,14 +105,14 @@
         <p>Just to bring the point home that rasterization is not inferior to ray tracing but only different, and to further support my argument that it is a more artist-based approach to rendering, let me present two examples from the two opposite ends of the spectrum of what rasterization is capable of. As we’ll see, it would have been difficult or impractical (or both) to achieve the same results with pure ray tracing techniques alone in both cases.</p>
         <p>The magical realist adventure game (whatever that means) <a href="http://kentuckyroutezero.com/">Kentucky Road Zero</a> by the aptly titled developer <a href="http://cardboardcomputer.com/">Cardboard Computer</a> uses clever rasterization tricks to render its highly stylised low-polygon world. While the abstract visuals bear similitude to simple 2D paper cut-outs in most scenes, some occasional camera angle switches hint at it that there’s more going on under the hood, and indeed, this is in fact the 3D engine <a href="https://unity3d.com/">Unity</a> in action, as evidenced by this <a href="https://unity3d.com/showcase/case-stories/cardboardcomputer-kentuckyroutezero">featured article</a>.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-04-28/krz.jpg" data-width="1920" data-height="1080"><img src="/files/2016-04-28/krz.jpg" alt="Kentucky Road Zero, Act I in-game screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-04-28/krz.jpg" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-04-28/krz.jpg" alt="Kentucky Road Zero, Act I in-game screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             The opening scene of <a href="http://kentuckyroutezero.com/">Kentucky Road Zero</a>, Act I by <a href="http://cardboardcomputer.com/">Cardboard Computer</a>. If David Lynch ever ventured into making a computer game, then this would be it. The unique visual style of the game proves that an unconventional, abstract approach to rendering instead of taking the well-beaten "standard" photorealistic path can yield much more interesting results.
           </figcaption>
         </figure>
         <p><a href="http://www.theastronauts.com/">The Astronauts</a>’ first-person mystery game <a href="http://ethancartergame.com/">The Vanishing of Ethan Carter</a>, on the other hand, employs a breathtakingly beautiful painterly approach to create its immersive in-game atmosphere. As it can be clearly seen on the screenshot, the results are stunningly realistic, but in a dreamy and artistic kind of way which is not dissimilar at all to the Caravaggio painting presented above. The developers used a technique called <a href="http://www.theastronauts.com/2014/03/visual-revolution-vanishing-ethan-carter/">photogrammetery</a> to effectively sample reality in the form of textures and 3D meshes from thousands of photographs, but from there on it’s all traditional rasterization using the <a href="https://www.unrealengine.com/">Unreal Engine</a>.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-04-28/ethan-carter.jpg" data-width="1920" data-height="1080"><img src="/files/2016-04-28/ethan-carter.jpg" alt="The Vanishing of Ethan Carter in-game screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-04-28/ethan-carter.jpg" alt="The Vanishing of Ethan Carter in-game screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             One of the most beautiful games of recent years, <a href="http://ethancartergame.com/">The Vanishing of Ethan Carter</a> pulls the player in into its highly realistic yet painterly world right from the first second of gameplay. No trace (pun intended) of physical based rendering is to be found here, yet the results speak for themselves.
           </figcaption>

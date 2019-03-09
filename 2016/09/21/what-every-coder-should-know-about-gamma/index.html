@@ -62,19 +62,19 @@
     <div role="main">
       <article class="post">
         <header>
-          <h1><a href="/2016/09/21/what-every-coder-should-know-about-gamma/">What every coder should know about gamma</a></h1>
+          <h1><a href="https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-about-gamma/">What every coder should know about gamma</a></h1>
           <p class="date"><time datetime="2016-09-21">2016 Sep 21</time></p>
         </header>
         <nav class="tags">
           <ul>
             <li>
-              <a href="/tag/graphics/">graphics</a>
+              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
             </li>
             <li>
-              <a href="/tag/gamma/">gamma</a>
+              <a href="https://blog.johnnovak.net/tag/gamma/">gamma</a>
             </li>
             <li>
-              <a href="/tag/linear%20workflow/">linear workflow</a>
+              <a href="https://blog.johnnovak.net/tag/linear%20workflow/">linear workflow</a>
             </li>
           </ul>
         </nav>
@@ -102,14 +102,14 @@
         <h3 id="light-emission-vs-perceptual-brightness">Light emission vs perceptual brightness</h3>
         <p>Believe it or not, the difference of <strong>light energy emission</strong> between any two neighbouring vertical bars in the below image is a <em>constant</em>. In other words, the amount of light energy emitted by your screen increases by a <em>constant amount</em> from bar to bar, left to right.</p>
         <figure class="image">
-          <img src="/files/2016-09-21/linear-ramp32.png" alt="Figure 1 — Evenly-spaced greyscale bars in terms of emitted light intensity" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp32.png" alt="Figure 1 — Evenly-spaced greyscale bars in terms of emitted light intensity" style="width: 100%">
           <figcaption style=" width: 100%; text-align: center;">
             Figure 1 — Evenly-spaced greyscale bars in terms of emitted light intensity (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
         <p>Now consider the following image:</p>
         <figure class="image">
-          <img src="/files/2016-09-21/gamma-ramp32.png" alt="Figure 2 — Evenly-spaced greyscale bars in terms of perceptual light intensity" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png" alt="Figure 2 — Evenly-spaced greyscale bars in terms of perceptual light intensity" style="width: 100%">
           <figcaption style=" width: 100%; text-align: center;">
             Figure 2 — Evenly-spaced greyscale bars in terms of perceptual light intensity (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
@@ -122,7 +122,7 @@
         <h3 id="physical-vs-perceptual-linearity">Physical vs perceptual linearity</h3>
         <p>Let’s say we wanted to store a representation of the following real-world object as an image file on the computer (let’s pretend for a moment that perfect greyscale gradients exist in the real world, okay?) Here’s how the “real world object” looks like:</p>
         <figure class="image">
-          <img src="/files/2016-09-21/linear-ramp.png" alt="Figure 3 — Ideal smooth greyscale ramp" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp.png" alt="Figure 3 — Ideal smooth greyscale ramp" style="width: 100%">
           <figcaption style=" width: 100%; text-align: center;">
             Figure 3 — Ideal smooth greyscale ramp (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
@@ -130,7 +130,7 @@
         <p>Now, let’s pretend that we can only store 5-bit greyscale images on this particular computer system, which gives us 32 distinct shades of grey ranging from absolute black to absolute white. Also, on this computer, greyscale values are <em>proportional</em> with their corresponding physical light intensities, which will result in a 32-element greyscale as shown on Figure 1. We can say that this greyscale is <em>linear</em> in terms of <em>light emission</em> between successive values.</p>
         <p>If we encoded our smooth gradient using only these 32 grey values, we would get something like this (let’s just ignore dither for now to keep things simple):</p>
         <figure class="image">
-          <img src="/files/2016-09-21/linear-ramp32-perceptual.png" alt="Figure 4 — Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp32-perceptual.png" alt="Figure 4 — Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values" style="width: 100%">
           <figcaption style=" width: 100%; text-align: center;">
             Figure 4 — Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
@@ -138,7 +138,7 @@
         <p>Well, the transitions are rather abrupt, especially on the left side, because we only had 32 grey values to work with. If we squint a little, it’s easy to convince ourselves that this is a more or less “accurate” representation of the smooth gradient, as far as our limited bit-depth allows it. But note how the steps are much larger on the left side than on the right—this is because we are using a greyscale that is <em>linear</em> in terms of <em>emitted light intensity</em>, but as we have mentioned before, our eyes don’t perceive light intensity in a linear way!</p>
         <p>This observation has some interesting implications. The error between the original and the 5-bit encoded version is uneven across the image; it’s much larger for dark values than for light ones. In other words, we are losing representational precision for dark values and are using relatively too much precision for lighter shades. Clearly, we’d be better off choosing a different set of 32 greys for our limited palette of shades that would make this error evenly distributed across the whole range, so both dark and light shades would be represented with the same precision. If we encoded our original image with such a greyscale that is <em>perceptually linear</em>, but consequently <em>non-linear</em> in terms of emitted light intensity, and that non-linearity would match that of the human vision, we’d get the exact same greyscale image we have already seen in Figure 2:</p>
         <figure class="image">
-          <img src="/files/2016-09-21/gamma-ramp32.png" alt="Figure 5 — Ideal smooth greyscale represented with 32 perceptually-linear greyscale values" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png" alt="Figure 5 — Ideal smooth greyscale represented with 32 perceptually-linear greyscale values" style="width: 100%">
           <figcaption style=" width: 100%;">
             Figure 5 — Ideal smooth greyscale represented with 32 perceptually-linear greyscale values (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
@@ -187,7 +187,7 @@
         <p>The image below shows the difference between gradients calculated in linear (top gradient) and sRGB space (bottom gradient). Note how direct interpolation on the sRGB values yields much darker and sometimes more saturated looking images.</p>
         <p>Just going by the looks, one might prefer the look of the sRGB-space versions, especially for the last two. However, that’s not how light would behave in the real world (imagine two coloured light sources illuminating a white wall; the colours would mix as in the linear-space case).</p>
         <figure class="image">
-          <img src="/files/2016-09-21/gradient.png" alt="Figure 7 — For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)" style="width: 80%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/gradient.png" alt="Figure 7 — For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)" style="width: 80%">
           <figcaption style=" width: 80%; text-align: center;">
             Figure 7 — For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)<br>
             (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gradient.nim">Nim source code</a>).
@@ -199,7 +199,7 @@
         <p>Drawing with soft brushes in gamma-incorrect drawing programs can result in weird darkish transition bands with certain vivid colour combinations. This is really a variation of the gradient problem if you think about it (the transition band of a soft brush is nothing else than a small gradient).</p>
         <p>Some random people claimed on the Adobe forums that by doing this Photoshop is really mimicking how mixing paints would work in real life. Well, no, it has nothing to do with that. It’s just the result of naive programming to work directly on the sRGB pixel data and now we’re stuck with that as the default legacy behaviour.</p>
         <figure class="image">
-          <img src="/files/2016-09-21/color-blending.jpg" alt="Figure 8 — Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode)." style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/color-blending.jpg" alt="Figure 8 — Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode)." style="width: 100%">
           <figcaption style="">
             Figure 8 — Effects of gamma-incorrect colour blending. On the left gamma-correct image, the option 'Blend RGB Colors Using Gamma 1.0' was enabled in Photoshop CS6, on the right it was disabled (that's the default gamma-incorrect legacy mode).
           </figcaption>
@@ -207,14 +207,14 @@
         <h3 id="alpha-blending--compositing">Alpha blending / compositing</h3>
         <p>As another variation on colour blending, let’s see how alpha blending holds up. We’ll examine some coloured rectangles first. As expected, the gamma-correct image on the left mimics how light would behave in real life, while the sRGB space blending on the right exhibits some weird hue and brightness shifts.</p>
         <figure class="image">
-          <img src="/files/2016-09-21/opacity.png" alt="Figure 9 — Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8." style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/opacity.png" alt="Figure 9 — Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8." style="width: 100%">
           <figcaption style="">
             Figure 9 — Effects of gamma-incorrect alpha blending. For each vertical bar pair, the top one is drawn with 100% opacity and bottom one with 50%. The left image is the gamma-correct one. The test was done in Photoshop CS6, similarly to Figure 8.
           </figcaption>
         </figure>
         <p>The appearance of false colours is also noticeable when blending two photos together. On the gamma-correct image on the left, the skin tones and the reds and yellows are preserved but faded into the bluish image in a natural way, while on the right image there’s a noticeable overall greenish cast. Again, this might be an effect you like, but it’s not how accurate alpha compositing should work.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-09-21/blending.jpg" data-width="1260" data-height="862"><img src="/files/2016-09-21/blending.jpg" alt="Figure 10 — Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-09-21/blending.jpg" data-width="1260" data-height="862"><img src="https://blog.johnnovak.net/files/2016-09-21/blending.jpg" alt="Figure 10 — Effects of gamma-incorrectness when compositing photographic images (by yours truly). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)" style="width: 100%"></a>
           <figcaption style="">
             Figure 10 — Effects of gamma-incorrectness when compositing photographic images (by <a href="http://photo.johnnovak.net/">yours truly</a>). The two original images from the top row are laid on top of each other in the bottom row, with the blueish image on top having 60% opacity. The left image is the gamma-correct one. Tested with Photoshop CS6. (Click on the image to enlarge it to see the details better.)
           </figcaption>
@@ -223,7 +223,7 @@
         <p>These examples will only work if your browser doesn’t do any rescaling on the images below. Also, note that screens of mobile devices are more inaccurate with regards to gamma than regular monitors, so for best results try to view this on a desktop computer.</p>
         <p>The image below contains a simple black and white checkerboard pixel pattern (100% zoom on the left, 400% zoom on the right). The black pixels are RGB(0,0,0), the minimum light intensity your monitor is capable of producing, and the white ones RGB(255,255,255), which is the maximum intensity. Now, if you squint a little, your eyes will blur (average) the light coming from the image, so you will see a grey that’s halfway in intensity between absolute black and white (therefore it’s referred to as <strong>50% grey</strong>).</p>
         <figure class="image">
-          <img src="/files/2016-09-21/resize-large.png" alt="Figure 11 — Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification." style="width: 220px">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/resize-large.png" alt="Figure 11 — Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification." style="width: 220px">
           <figcaption style=" width: 80%; text-align: center;">
             Figure 11 — Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.
           </figcaption>
@@ -231,7 +231,7 @@
         <p>From this follows that if we resized the image by 50%, a similar averaging process should happen, but now algorithmically on the pixel data. We expect to get a solid rectangle filled with the same 50% grey that we saw when we squinted.</p>
         <p>Let’s try it out! On the image below, <em>A</em> is the checkerboard pattern, <em>B</em> the result of resizing the pattern by 50% directly in sRGB-space (using bicubic interpolation), and <em>C</em> the resizing it in linear space, then converted to sRGB.</p>
         <figure class="image">
-          <img src="/files/2016-09-21/resize.png" alt="Figure 12 — Effects of gamma-incorrect image resizing. &lt;em&gt;A&lt;/em&gt; is the pixel checkerboard pattern, &lt;em&gt;B &lt;/em&gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &lt;em&gt;C&lt;/em&gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode)." style="width: 316px">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/resize.png" alt="Figure 12 — Effects of gamma-incorrect image resizing. &lt;em&gt;A&lt;/em&gt; is the pixel checkerboard pattern, &lt;em&gt;B &lt;/em&gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &lt;em&gt;C&lt;/em&gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode)." style="width: 316px">
           <figcaption style=" width: 80%; text-align: center;">
             Figure 12 — Effects of gamma-incorrect image resizing. <em>A</em> is the pixel checkerboard pattern, <em>B</em> the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and <em>C</em> the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).
           </figcaption>
@@ -243,7 +243,7 @@
         <h3 id="antialiasing">Antialiasing</h3>
         <p>I guess it’s no surprise at this point that antialiasing is no exception when it comes to gamma-correctness. Antialiasing in γ=2.2 space results in overly dark “smoothing pixels” (right image); the text appears too heavy, almost as if it was bold. Running the algorithm in linear space produces much better results (left image), although in this case the font looks a bit too thin. Interestingly, Photoshop antialiases text using γ=1.42 by default, and this indeed seems to yield the best looking results (middle image). The reason for this is that most fonts have been designed for gamma-incorrect font rasterizers, hence if you use linear space (correctly), then the fonts will look thinner than they should.</p>
         <figure class="image">
-          <img src="/files/2016-09-21/antialias.png" alt="Figure 13 — Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2." style="width: 623px">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/antialias.png" alt="Figure 13 — Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2." style="width: 623px">
           <figcaption style=" width: 623px;">
             Figure 13 — Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.
           </figcaption>
@@ -259,14 +259,14 @@
         <p>On the right image, however, this last conversion step was omitted and I tried to tweak the light intensities in an attempt to match the overall brightness of the gamma-correct image. Well, it’s quite apparent that this is not going to work. Everything appears too contrasty and oversaturated, so we’d probably need to desaturate all material colours a bit maybe use some more fill lights to come closer to the look of the left image. But this is a losing battle; no amount of tweaking will make the image correct in the physical sense, and even if we got it to an acceptable level for one particular scene with a particular lighting setup, any further changes to the scene would potentially necessitate another round of tweaks to make the result look realistic again. Even more importantly, the material and lighting parameters we would need to choose would be completely devoid of any physical meaning whatsoever; they’ll be just a random set of numbers that happen to produce an OK
         looking image <em>for that particular scene</em>, and thus not transferable to other scenes or lighting conditions. It’s a lot of wasted energy to work like that.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-09-21/badgamma.png" data-width="1237" data-height="400"><img src="/files/2016-09-21/badgamma.png" alt="TODO" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-09-21/badgamma.png" data-width="1237" data-height="400"><img src="https://blog.johnnovak.net/files/2016-09-21/badgamma.png" alt="TODO" style="width: 100%"></a>
           <figcaption style=" width: 95%; text-align: center;">
             Figure 14 — Effects of gamma-incorrect rendering on diffuse spheres. The gamma-incorrect image on the right shows an unsuccesful attempt at matching the look of the gamma-correct one on the left by tweaking the light intensities alone.
           </figcaption>
         </figure>
         <p>It’s also important to point out that incorrect gamma handling in 3D rendering is one of the main culprits behind the “fake plasticky CGI look” in some (mostly older) games. As illustrated on the image below, rendering realistic looking human skin is almost impossible with a gamma-incorrect workflow; the highlights will just never look right. This gave birth to questionable practices such as compensating for the wrong highlights in the specular maps with inverted hues and all sorts of other nastiness instead of fixing the problem right at the source…</p>
         <figure class="image">
-          <img src="/files/2016-09-21/lineargammahead.png" alt="TODO" style="width: 90%">
+          <img src="https://blog.johnnovak.net/files/2016-09-21/lineargammahead.png" alt="TODO" style="width: 90%">
           <figcaption style=" width: 90%; text-align: center;">
             Figure 15 — Effects of gamma-incorrect rendering on a human head. On the top, a real looking human head; on the bottom, a wax figure approximation.<br>
             (Image from the <a href="https://docs.unity3d.com/Manual/LinearLighting.html">Unity3D manual</a>.)

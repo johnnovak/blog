@@ -62,19 +62,19 @@
     <div role="main">
       <article class="post">
         <header>
-          <h1><a href="/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/">The Nim Ray Tracer Project – Part 4: Calculating Box Normals</a></h1>
+          <h1><a href="https://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/">The Nim Ray Tracer Project – Part 4: Calculating Box Normals</a></h1>
           <p class="date"><time datetime="2016-10-22">2016 Oct 22</time></p>
         </header>
         <nav class="tags">
           <ul>
             <li>
-              <a href="/tag/graphics/">graphics</a>
+              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
             </li>
             <li>
-              <a href="/tag/ray%20tracing/">ray tracing</a>
+              <a href="https://blog.johnnovak.net/tag/ray%20tracing/">ray tracing</a>
             </li>
             <li>
-              <a href="/tag/nim/">nim</a>
+              <a href="https://blog.johnnovak.net/tag/nim/">nim</a>
             </li>
           </ul>
         </nav>
@@ -142,14 +142,14 @@
         </figure>
         <p>Wait a minute, what’s that multiplier <code>bias</code> doing there? That, my friend, is <strong>the amount of difference between theory of practice</strong>. For educational purposes only, this is what we would get if we left it off:</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-22/boxes-bad.png" data-width="1200" data-height="800"><img src="/files/2016-10-22/boxes-bad.png" alt="Figure 2 — Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" alt="Figure 2 — Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows." style="width: 100%"></a>
           <figcaption style=" text-align: center;">
             Figure 2 — Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.
           </figcaption>
         </figure>
         <p>Ooops, not exactly the result we were hoping for! What’s going on here? The problem is that because of floating point inaccuracies, our final coordinates that are supposed to be 1.0 will sometimes end up being a bit less than that, say 0.999999994, and in the final casting to int step they will become 0 instead of 1. To fix this, we’ll need to nudge the points a tiny bit outwards by scaling them up by a multiplicative epsilon value. The good news is that this bias value doesn’t have to be terribly accurate; we’re going to truncate the decimals away anyway. With this fix in place, we’ll get the correct results:</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-22/boxes-ok.png" data-width="1200" data-height="800"><img src="/files/2016-10-22/boxes-ok.png" alt="Figure 3 — Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" alt="Figure 3 — Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good." style="width: 100%"></a>
           <figcaption style=" text-align: center;">
             Figure 3 — Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.
           </figcaption>
@@ -158,7 +158,7 @@
         <p>As I explained above, although this fast normal calculation method can be considered incorrect by the mathematician types (and perhaps it is, I don’t know for sure), it seems to work perfectly fine for practical purposes. At least, I couldn’t spot any unwanted artefacts on my test renders, and theoretically, there’s very little chance to run into those diagonal normals, and even then, their contribution to the final image would be minimal.</p>
         <p>In parting, here is a more complex scene to prove my point. If anyone is aware of a situation where this algorithm could cause problems, I am interested to hear about it though!</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-22/cube.png" data-width="1200" data-height="800"><img src="/files/2016-10-22/cube.png" alt="" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/cube.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/cube.png" alt="" style="width: 100%"></a>
           <figcaption style=" text-align: center;">
             Figure 4 — A cube made up of 64 smaller cubes. Even with our slightly “incorrect” normal calculation method, no weird artifacts can be observed whatsoever.
           </figcaption>

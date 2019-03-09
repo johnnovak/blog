@@ -62,19 +62,19 @@
     <div role="main">
       <article class="post">
         <header>
-          <h1><a href="/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/">The Nim Ray Tracer Project – Part 3: Lighting & Vector Maths</a></h1>
+          <h1><a href="https://blog.johnnovak.net/2016/10/15/the-nim-raytracer-project-part-3-lighting-and-vector-maths/">The Nim Ray Tracer Project – Part 3: Lighting & Vector Maths</a></h1>
           <p class="date"><time datetime="2016-10-15">2016 Oct 15</time></p>
         </header>
         <nav class="tags">
           <ul>
             <li>
-              <a href="/tag/graphics/">graphics</a>
+              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
             </li>
             <li>
-              <a href="/tag/ray%20tracing/">ray tracing</a>
+              <a href="https://blog.johnnovak.net/tag/ray%20tracing/">ray tracing</a>
             </li>
             <li>
-              <a href="/tag/nim/">nim</a>
+              <a href="https://blog.johnnovak.net/tag/nim/">nim</a>
             </li>
           </ul>
         </nav>
@@ -86,7 +86,7 @@
         <p>A more useful shading method is the so called <strong>diffuse</strong> or <a href="https://en.wikipedia.org/wiki/Lambertian_reflectance">Lambertian shading</a> that simulates how diffusely reflecting, or matte surfaces behave in real life. Realistic shaders require light sources though, so the next thing to implement is some sort of lighting. We’re doing ray tracing kindergarten here, so the first light types to implement will be idealised <strong>directional</strong> and <strong>point lights</strong>.</p>
         <p><strong>Directional lights</strong> (or <strong>distant lights</strong>) are light sources that are infinitely far away, hence they only have direction but no position, and most importantly, no falloff. Light sources of this kind are therefore ideal for simulating the sun or other celestial light emitting objects that are “very far away”. Shadows cast by directional lights are always parallel. This is how the example scene from the previous post looks like when illuminated by two directional lights:</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-15/spheres-distantlights.png" data-width="1200" data-height="800"><img src="/files/2016-10-15/spheres-distantlights.png" alt="Figure 1 — Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979–?).&lt;br&gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting™)." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-15/spheres-distantlights.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-15/spheres-distantlights.png" alt="Figure 1 — Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979–?).&lt;br&gt;Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting™)." style="width: 100%"></a>
           <figcaption style="">
             Figure 1 — Implicit diffuse spheres, pixels on screen, 1200 x 800, John Novak (1979–?).<br>
             Two distant lights have been used: a slightly warm coloured key light from the right and an even warmer but much fainter fill light from the left. The purpose of the fill light is to soften the shadows, just as in photography (also known as The Poor Man's Indirect Lighting™).
@@ -94,7 +94,7 @@
         </figure>
         <p><strong>Point lights</strong> are idealised versions of light sources that are relatively small in size and emit light in all directions, therefore they only have position but no direction. From this follows that point lights cast radial shadows. In contrast with directional lights, point lights do exhibit falloff (light attenuation), which follows the well-known <a href="https://en.wikipedia.org/wiki/Inverse-square_law">inverse-square law</a>. Good examples of point lights are light bulbs, LEDs or the candlelight. Of course, in real life these light sources do have an actual measurable area, but we’re not simulating that (yet). Note how drastically different the exact same scene looks like when illuminated by a single point light:</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-15/spheres-pointlight.png" data-width="1200" data-height="800"><img src="/files/2016-10-15/spheres-pointlight.png" alt="Figure 2 — The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-15/spheres-pointlight.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-15/spheres-pointlight.png" alt="Figure 2 — The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1." style="width: 100%"></a>
           <figcaption style="">
             Figure 2 — The exact same scene from Figure 1 illuminated by a single point light positioned roughly above the cyan coloured sphere. The light falloff is clearly visible; further away objects appear darker and the infinite ground plane fades to black in the distance. Because there are no other light sources present, shadowed areas are completely black. Also note that the shadow are radial, not parallel like in Figure 1.
           </figcaption>
@@ -117,13 +117,13 @@
         <p>The astute reader may have observed that there’s lots of simplification going on here. For a start, real world cameras and light sources are not just simple idealised points in 3D space, and objects are not just illuminated by the light sources alone (<strong>direct illumination</strong>), but also by light bounced off of other objects in the scene (<strong>indirect illumination</strong>). With our current model of reality, we can only render hard edged shadows and no indirect lighting. Additionally, partly because of the lack of indirect illumination in our renderer, these shadows would appear completely black. This can be more or less mitigated by some fill light tricks that harken back to the old days of ray tracing when global illumination methods weren’t computationally practical yet. For example, if there’s a green coloured wall to the left of an object, then put some lights on the wall that emit a faint green light to the right to approximate the indirect light rays
         reflected by the wall. This is far from perfect for many reasons; on the example image below I used two directional lights and a single point light as an attempt to produce a somewhat even lighting in the shadow areas, but, as it can be seen, this hasn’t completely eliminated the black shadows.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-15/complex-scene-3lights.png" data-width="1200" data-height="800"><img src="/files/2016-10-15/complex-scene-3lights.png" alt="Figure 3 — Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-15/complex-scene-3lights.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-15/complex-scene-3lights.png" alt="Figure 3 — Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used." style="width: 100%"></a>
           <figcaption style="">
             Figure 3 — Gray objects illuminated by two distant lights and one point light. Two lights have an orangeish cast to them, hence the yellowish appearance of the final image. Note how just three idealised lights are not enough to evenly illuminate more complex geometries if only direct illumination is used.
           </figcaption>
         </figure>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-10-15/complex-scene-layers.png" data-width="1860" data-height="400"><img src="/files/2016-10-15/complex-scene-layers.png" alt="Figure 4 — The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows." style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-15/complex-scene-layers.png" data-width="1860" data-height="400"><img src="https://blog.johnnovak.net/files/2016-10-15/complex-scene-layers.png" alt="Figure 4 — The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows." style="width: 100%"></a>
           <figcaption style="">
             Figure 4 — The contribution of each individual light to the final image (click to enlarge). From left to right: the main distant light, a secondary distant light used as a fill light, and a point light to give the image a more interesting look. Note that a single idealised light is not enough to evenly illuminate the scene and multiple lights are needed to lighten the black shadows.
           </figcaption>

@@ -62,22 +62,22 @@
     <div role="main">
       <article class="post">
         <header>
-          <h1><a href="/2016/05/29/cross-platform-gui-trainwreck-2016-edition/">Cross-platform GUI Toolkit Trainwreck, 2016 Edition</a></h1>
+          <h1><a href="https://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/">Cross-platform GUI Toolkit Trainwreck, 2016 Edition</a></h1>
           <p class="date"><time datetime="2016-05-29">2016 May 29</time></p>
         </header>
         <nav class="tags">
           <ul>
             <li>
-              <a href="/tag/coding/">coding</a>
+              <a href="https://blog.johnnovak.net/tag/coding/">coding</a>
             </li>
             <li>
-              <a href="/tag/gui/">gui</a>
+              <a href="https://blog.johnnovak.net/tag/gui/">gui</a>
             </li>
             <li>
-              <a href="/tag/imgui/">imgui</a>
+              <a href="https://blog.johnnovak.net/tag/imgui/">imgui</a>
             </li>
             <li>
-              <a href="/tag/rant/">rant</a>
+              <a href="https://blog.johnnovak.net/tag/rant/">rant</a>
             </li>
           </ul>
         </nav>
@@ -100,7 +100,7 @@
         <p>Executive summary: GTK2 + non-Linux platform = AVOID</p>
         <p>Some people might feel the urge to point out now that I’m way too picky, this is merely a solution to a problem, it works, so I should just suck it up and live with the <strong>over 60-fold increase of my total binary size!</strong> Well, this is a solution to a problem too:</p>
         <figure class="image">
-          <img src="/files/2016-05-29/headphones.jpg" alt="Solution to a problem..." style="width: 70%">
+          <img src="https://blog.johnnovak.net/files/2016-05-29/headphones.jpg" alt="Solution to a problem..." style="width: 70%">
           <figcaption style=" width: 70%;">
             Warning: putting up with lots external dependency crap just to make things work somehow is a straight road to this to happen to you!
           </figcaption>
@@ -129,7 +129,7 @@
         that has already been solved on the OS graphics library level in a perfectly satisfactory manner. I just want to call <code>drawText()</code> and be done with it!</p>
         <p>Alright, so OpenGL—and thus NanoVG—is not the way to go because of this whole text rendering fiasco… At this point, the progress of my adventures in the wonderful realm of cross-platform graphical user interfaces could be visualised pretty much spot on as follows:</p>
         <figure class="image">
-          <img src="/files/2016-05-29/fail.jpg" alt="FAIL" style="width: auto">
+          <img src="https://blog.johnnovak.net/files/2016-05-29/fail.jpg" alt="FAIL" style="width: auto">
           <figcaption style=" width: auto; text-align: center;">
             FAIL
           </figcaption>
@@ -175,7 +175,7 @@
         </blockquote>
         <p>I certainly don’t disagree with that! (so, in short, no thanks…)</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/reaper.png" data-width="1920" data-height="1080"><img src="/files/2016-05-29/reaper-small.jpg" alt="REAPER 5 screenshot showing the Funktion 1.0 skin" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/reaper.png" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-05-29/reaper-small.jpg" alt="REAPER 5 screenshot showing the Funktion 1.0 skin" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             This is REAPER 5 in fullscreen mode, featuring the <a href="http://stash.reaper.fm/theme/1792/Funktion%201.0">Funktion 1.0</a> skin (designed by <em>yours truly</em>). Note the standard Windows menu bar on top.
           </figcaption>
@@ -212,7 +212,7 @@
         <p><a href="https://www.renoise.com/">Renoise</a> is probably the best cross-platform modern music tracker in existence today. It runs on Windows, OS X and Linux and it has a completely custom single-window UI. Everything is custom drawn, including the menus, dialogs, the file browser and so on. The graphics backend uses DirectX on Windows, OpenGL on OS X and presumably X directly on Linux. The UI is non-scalable and non-skinnable, the fonts are bitmap based (I think) and most of the drawing seems to be simple blitting. They also must have developed some custom graphics routines for the anti-aliased cross-platform drawing of dynamic UI elements (e.g. the waveform and envelope displays). The UI seems to be pixel-identical across platforms.</p>
         <p>Renoise is closed source, so unfortunately I could not inspect how they accomplished all this, but very likely they had to come up with their own UI and graphics wrappers to maintain a single codebase for all three platforms.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/renoise.png" data-width="1920" data-height="1080"><img src="/files/2016-05-29/renoise-small.jpg" alt="Renoise 3 screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/renoise.png" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-05-29/renoise-small.jpg" alt="Renoise 3 screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             Renoise 3 in fullscreen. Everything is custom drawn, such as the menu bar and the preferences dialog in the middle of the screen. Again, the nice looking theme is yet another project of mine.
           </figcaption>
@@ -242,13 +242,13 @@
         <p>Tracktion is written in C++ and uses the <a href="https://github.com/julianstorer/JUCE">JUCE</a> library for all cross-platform duties (again, written by the same single person responsible for all Tracktion development). JUCE supports anti-aliased vector graphics and text output through a number of wrapper classes that can use either JUCE’s internal software rasterizer or one of the supported platform specific graphics APIs as their backend (e.g. Direct2D and DirectWrite on Windows, CoreGraphics on OS X). All platform-specific event and window handling is abstracted away in a similar fashion.</p>
         <p>The JUCE library is available for free for non-commercial open-source projects, but a commercial license will make the wallets of enterprising developers exactly $999 lighter.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/tracktion7.jpg" data-width="1800" data-height="1013"><img src="/files/2016-05-29/tracktion7-small.jpg" alt="Tracktion 7 screenshot, big screen" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/tracktion7.jpg" data-width="1800" data-height="1013"><img src="https://blog.johnnovak.net/files/2016-05-29/tracktion7-small.jpg" alt="Tracktion 7 screenshot, big screen" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             Tracktion 7 in it's fully anti-aliased single-window glory. Previous versions might have looked somewhat less sleek, but the UI was designed to be highly scalable right from the very first release.
           </figcaption>
         </figure>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/tracktion7-lowres.jpg" data-width="950" data-height="722"><img src="/files/2016-05-29/tracktion7-lowres-small.jpg" alt="Tracktion 7 screenshot, small screen" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres.jpg" data-width="950" data-height="722"><img src="https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres-small.jpg" alt="Tracktion 7 screenshot, small screen" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             Still Tracktion 7, but now on a smaller screen. Contrast this screenshot with the one above: all common UI elements are still there but their sizes are vastly different. Tracktion has the most adaptable dynamic interface of all applications presented in this article, thanks to JUCE's extensive anti-aliased vector graphics support.
           </figcaption>
@@ -291,7 +291,7 @@
         <p>Displaying text elements is accomplished via glyphs pre-rendered into <a href="https://en.wikipedia.org/wiki/Texture_atlas">texture atlases</a> with <a href="https://www.freetype.org/">FreeType</a> (possibly a modified version). One of the biggest weaknesses of OpenGL based UI drawing is the difficulty of rendering crisp and clear looking anti-aliased text, as evidenced by <a href="https://wiki.blender.org/index.php/Dev:Source/Text/Rendering">these notes</a> on the Blender developer wiki.</p>
         <p>In theory, it would be possible to re-use Blender’s cross-platform UI layer written in C in other applications, but because its tight coupling to Blender’s internals, no one has been able to do so yet in practice.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/blender.jpg" data-width="1920" data-height="1200"><img src="/files/2016-05-29/blender-small.jpg" alt="Blender screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/blender.jpg" data-width="1920" data-height="1200"><img src="https://blog.johnnovak.net/files/2016-05-29/blender-small.jpg" alt="Blender screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             Blender's OpenGL-based interface is quite sleek and modern looking. Notice the semi-transparent widgets on top of the 3D views. Nifty.
           </figcaption>
@@ -301,7 +301,7 @@
         <p>We can deduce a lot from the screenshot below. First, note the image dimensions: 2880-by-1714. The display resolution of a 15” 2015 Retina MacBook Pro is 2880-by-1800, so this is a screenshot of the Mac version. Also note that at 1:1 magnification the text and the large icons are very crisp looking, but the rest of the UI, including the render view, is made up of double-sized (2x2) pixels—a tell-tale sign of partial Retina display support. Apparently, they’re using native text rendering, taking advantage of high-resolution displays whenever possible, but the rest of the UI probably consists of simple bitmaps only. The render preview is drawn using 2x2 pixels too, most likely due to performance reasons. Having a look at some random Windows screenshots further validates this assumption; on those images the text looks very much like a default 9px Tahoma UI font rendered with ClearType.</p>
         <p>It seems that similarly to REAPER, Cinema 4D uses native graphics and text rendering to draw its UI, probably via some custom wrapper libraries.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/cinema4d.png" data-width="2880" data-height="1714"><img src="/files/2016-05-29/cinema4d-small.jpg" alt="Cinema 4D screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/cinema4d.png" data-width="2880" data-height="1714"><img src="https://blog.johnnovak.net/files/2016-05-29/cinema4d-small.jpg" alt="Cinema 4D screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             Cinema 4D on a Retina display MacBook Pro. Note that the fonts and the big icons are shown at actual pixel resolution, while the rest of the UI is rendered with double-sized (2x2) pixels.
           </figcaption>
@@ -343,7 +343,7 @@
         <p>Relying on the cross-platform Java runtime is certainly very convenient from the developers’ perspective, but is not without some serious drawbacks. First of all, the whole Java runtime environment has to be bundled with the application (at least on Windows and OS X), which accounts to a whopping 172 MiB in this concrete example (that’s 78% of the total install size!). Interface redraws are much more sluggish compared to native applications like REAPER and Renoise, startup times are generally slow, and Java applications overall tend to be memory hogs. All these things are mostly non-issues for long-running server-side applications (the most natural habitat of Java bytecode), but they make the platform a less than ideal choice for high-performance desktop applications.</p>
         <p>In conclusion, while Java is certainly not the most terrible choice for a cross-platform GUI app, it’s far from being the greatest either. For some less demanding software, such as NodeBox, it may be an OK solution, but I’m really averse to the idea of a DAW written in Java where every little bit of performance counts.</p>
         <figure class="image">
-          <a class="largeimg" href="/files/2016-05-29/nodebox.png" data-width="1100" data-height="800"><img src="/files/2016-05-29/nodebox-small.jpg" alt="NodeBox3 screenshot" style="width: 100%"></a>
+          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/nodebox.png" data-width="1100" data-height="800"><img src="https://blog.johnnovak.net/files/2016-05-29/nodebox-small.jpg" alt="NodeBox3 screenshot" style="width: 100%"></a>
           <figcaption style=" width: 100%;">
             NodeBox3 has a pleasant looking GUI built using Swing that looks identical on all supported platforms. UI redraws are noticeably sluggish even on fast computers compared to native applications that use OS level graphics APIs directly.
           </figcaption>
@@ -469,7 +469,7 @@
         <p>Oh well, I only wanted to display a few buttons and maybe push some pixels, but fuck all that, let’s write a whole cross-platform GUI library in Nim!</p>
         <p>Time to get serious!</p>
         <figure class="image">
-          <img src="/files/2016-05-29/fuck-everything.jpg" alt="Fuck everything" style="width: 100%">
+          <img src="https://blog.johnnovak.net/files/2016-05-29/fuck-everything.jpg" alt="Fuck everything" style="width: 100%">
           <figcaption style=" width: 100%;">
             The above fine faux-leather jacket wearing gentleman already knows the secret: Qt is not the answer to everything.
           </figcaption>
