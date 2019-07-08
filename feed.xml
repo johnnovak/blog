@@ -8,7 +8,11 @@
         
             <item>
                 <title>Raspbian Stretch home server setup</title>
-                <description>&lt;p class=&quot;intro&quot;&gt;Okay, so the Micro SD card in my trusty Raspberry Pi 2 &lt;strike&gt;torrent
+                <description>&lt;p class=&quot;intro bottom-separator&quot;&gt;UPDATE 2019-07-08: Added instructions on enabling exFAT support, made the
+fstab mounting command more robust, and added the &lt;a href=&quot;#fixing-boot-problems-due-to-bad-fstab-file&quot;&gt;Fixing boot problems due to
+bad fstab file&lt;/a&gt; section.&lt;/p&gt;
+
+&lt;p class=&quot;intro&quot;&gt;Okay, so the Micro SD card in my trusty Raspberry Pi 2 &lt;strike&gt;torrent
 box&lt;/strike&gt; home server finally bit the dust after three years of steady
 service, so I had to get a new one and reinstall everything from scratch (no
 pun intended), which I have documented in this post in detail. What we’ll
@@ -39,7 +43,7 @@ something and then you get hacked!&lt;/strong&gt;&lt;/p&gt;
   &lt;li&gt;&lt;a href=&quot;#installing-raspbian-scratch&quot; id=&quot;markdown-toc-installing-raspbian-scratch&quot;&gt;Installing Raspbian Scratch&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#enabling-ssh-access&quot; id=&quot;markdown-toc-enabling-ssh-access&quot;&gt;Enabling SSH access&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#enabling-vnc-access&quot; id=&quot;markdown-toc-enabling-vnc-access&quot;&gt;Enabling VNC access&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#mounting-an-ntfs-formatted-external-usb-hdd&quot; id=&quot;markdown-toc-mounting-an-ntfs-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS formatted external USB HDD&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd&quot; id=&quot;markdown-toc-mounting-an-ntfs-or-exfat-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS or exFAT formatted external USB HDD&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#setting-up-an-ftp-server&quot; id=&quot;markdown-toc-setting-up-an-ftp-server&quot;&gt;Setting up an FTP server&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#setting-up-deluge&quot; id=&quot;markdown-toc-setting-up-deluge&quot;&gt;Setting up Deluge&lt;/a&gt;    &lt;ul&gt;
       &lt;li&gt;&lt;a href=&quot;#installing-the-debian-jessie-version&quot; id=&quot;markdown-toc-installing-the-debian-jessie-version&quot;&gt;Installing the Debian Jessie version&lt;/a&gt;&lt;/li&gt;
@@ -47,6 +51,13 @@ something and then you get hacked!&lt;/strong&gt;&lt;/p&gt;
       &lt;li&gt;&lt;a href=&quot;#configuring-the-remote-thin-client&quot; id=&quot;markdown-toc-configuring-the-remote-thin-client&quot;&gt;Configuring the remote thin client&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#configuring-the-webui&quot; id=&quot;markdown-toc-configuring-the-webui&quot;&gt;Configuring the WebUI&lt;/a&gt;&lt;/li&gt;
       &lt;li&gt;&lt;a href=&quot;#setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot&quot; id=&quot;markdown-toc-setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot&quot;&gt;Setting up Deluge daemon and WebUI to start automatically on boot&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#fixing-boot-problems-due-to-bad-fstab-file&quot; id=&quot;markdown-toc-fixing-boot-problems-due-to-bad-fstab-file&quot;&gt;Fixing boot problems due to bad fstab file&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#confirming-the-issue&quot; id=&quot;markdown-toc-confirming-the-issue&quot;&gt;Confirming the issue&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#editing-cmdlinetxt&quot; id=&quot;markdown-toc-editing-cmdlinetxt&quot;&gt;Editing cmdline.txt&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#remounting-the-root-partition-in-read-write-mode&quot; id=&quot;markdown-toc-remounting-the-root-partition-in-read-write-mode&quot;&gt;Remounting the root partition in read-write mode&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#fixing-fstab&quot; id=&quot;markdown-toc-fixing-fstab&quot;&gt;Fixing fstab&lt;/a&gt;&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;#in-closing&quot; id=&quot;markdown-toc-in-closing&quot;&gt;In closing&lt;/a&gt;&lt;/li&gt;
@@ -120,7 +131,7 @@ the change to take effect.&lt;/p&gt;
 &lt;p&gt;Alternative instructions about the whole setup can be found
 &lt;a href=&quot;https://www.realvnc.com/en/connect/docs/raspberry-pi.html&quot;&gt;here&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h2 id=&quot;mounting-an-ntfs-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS formatted external USB HDD&lt;/h2&gt;
+&lt;h2 id=&quot;mounting-an-ntfs-or-exfat-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS or exFAT formatted external USB HDD&lt;/h2&gt;
 
 &lt;p&gt;When connecting the external USB drive, Raspbian will automatically mount it.
 Unfortunately, the default NTFS driver that comes with the OS can only mount
@@ -130,6 +141,17 @@ full read-write access (but we’ll unmount the partition first):&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;sudo umount /media/pi/&amp;lt;PARTITION_NAME&amp;gt;
 sudo apt-get install ntfs-3g
 &lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Similarly, FAT is supported out-of-the-box, but you’ll need to install
+&lt;strong&gt;exfat-fuse&lt;/strong&gt; to be able to mount exFAT partitions:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install exfat-fuse exfat-utils
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p class=&quot;note&quot;&gt;If you’re trying to format the disk to exFAT on Windows 7+, you’ll quickly
+realise that you cannot select exFAT in the standard disk formatter GUI but
+only FAT and NTFS. The trick is to use &lt;code&gt;format&lt;/code&gt; command in the console (e.g.
+&lt;code&gt;format d: /fs:exfat&lt;/code&gt;).&lt;/p&gt;
 
 &lt;p&gt;Let’s check the list of available partitions; the disk we’re looking for will
 be most likely &lt;code&gt;/dev/sda&lt;/code&gt;:&lt;/p&gt;
@@ -150,11 +172,31 @@ sudo mount -t auto /dev/sda1 /media/USBHDD1
 &lt;p&gt;If everything went fine, we can mount the partition permanently by adding the
 following line to &lt;code&gt;/etc/fstab&lt;/code&gt;:&lt;/p&gt;
 
-&lt;pre&gt;&lt;code&gt;/dev/sda1       /media/USBHDD1  auto    noatime           0       0
+&lt;pre&gt;&lt;code&gt;/dev/sda1   /media/USBHDD1   auto   defaults,noatime,nofail,x-systemd.device-timeout=10   0   0
 &lt;/code&gt;&lt;/pre&gt;
 
 &lt;p&gt;Reboot with &lt;code&gt;sudo reboot&lt;/code&gt; to confirm that the partition gets mounted
 automatically.&lt;/p&gt;
+
+&lt;p&gt;Note that we’re exercising some precaution here:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code&gt;nofail&lt;/code&gt; means that the boot process
+  will continue regardless whether the volume can be mounted or not. Without
+  this we would end up in emergency mode if the volume could not be mounted
+  for any reason, in which case refer to the &lt;a href=&quot;#fixing-boot-problems-due-to-bad-fstab-file&quot;&gt;Fixing boot problems due to bad
+  fstab file&lt;/a&gt; section for
+  instructions on how to get out of this rather unfortunate situation. With
+  &lt;code&gt;nofail&lt;/code&gt; in place, the OS will at least boot normally so we can SSH/VNC into
+  the box to rectify the situation more easily.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;code&gt;x-systemd.device-timeout&lt;/code&gt; sets the wait timeout in seconds for the mount
+  command; you might want to set this a bit higher for drives that take a while
+  to spin up.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
 
 &lt;h2 id=&quot;setting-up-an-ftp-server&quot;&gt;Setting up an FTP server&lt;/h2&gt;
 
@@ -354,6 +396,64 @@ sudo -u pi /usr/bin/python /usr/bin/deluge-web &amp;amp;
 
 &lt;p&gt;Reboot and test that you can still connect using both the thin client and the
 WebUI.&lt;/p&gt;
+
+&lt;h2 id=&quot;fixing-boot-problems-due-to-bad-fstab-file&quot;&gt;Fixing boot problems due to bad fstab file&lt;/h2&gt;
+
+&lt;p&gt;If there’s an error in the &lt;code&gt;fstab&lt;/code&gt; file and one of the partitions cannot be
+mounted, Raspbian will go into emergency mode at startup. This means you won’t
+be able to access it externally via the network as loading the OS has been
+essentially aborted. So if you’re suspecting this is the case, the only way to
+remedy the situation is to hook up the Pi to a monitor and a keyboard and
+follow the instructions below.&lt;/p&gt;
+
+&lt;h3 id=&quot;confirming-the-issue&quot;&gt;Confirming the issue&lt;/h3&gt;
+
+&lt;p&gt;The first step is to confirm the issue. Make sure you see something like this
+on the screen when attempting to boot up the device:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;You are in emergency mode. [lots of text, omitted...]
+
+Cannot open access to console, the root account is locked.
+See sulogin(8) man page for more details.
+
+Press Enter to continue.
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Pressing Enter would just reset the Pi and start the boot process again, so
+we’ll need to do something else to get out of the reboot loop.&lt;/p&gt;
+
+&lt;h3 id=&quot;editing-cmdlinetxt&quot;&gt;Editing cmdline.txt&lt;/h3&gt;
+
+&lt;p&gt;Switch off the Pi and take out the SD card; we’ll need to use another computer
+to append the following at the end of &lt;code&gt;cmdline.txt&lt;/code&gt; on the boot partition of
+the SD card:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;init=/bin/sh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This can be a bit problematic as I didn’t have much luck with trying to get
+Windows to recognise the boot partition, so I had to use a Mac in the end
+(another Linux box would work too, of course). After this edit, you should be
+able to boot into a minimal shell environment.&lt;/p&gt;
+
+&lt;h3 id=&quot;remounting-the-root-partition-in-read-write-mode&quot;&gt;Remounting the root partition in read-write mode&lt;/h3&gt;
+
+&lt;p&gt;The next problem is that we need to remount the root partition in read-write
+mode, so we can fix the &lt;code&gt;fstab&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mount -o remount,rw /
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;fixing-fstab&quot;&gt;Fixing fstab&lt;/h3&gt;
+
+&lt;p&gt;Now we’re on easy street, just edit &lt;code&gt;/etc/fstab&lt;/code&gt; with &lt;code&gt;vi&lt;/code&gt; or &lt;code&gt;nano&lt;/code&gt; and
+comment out the problematic line. We’ll also need to undo the changes we did
+to &lt;code&gt;cmdline.txt&lt;/code&gt; on the second computer after this.&lt;/p&gt;
+
+&lt;p&gt;If you got it all right, you should be able to boot the Pi normally again.
+Then you can just &lt;em&gt;carefully&lt;/em&gt; follow the &lt;a href=&quot;#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd&quot;&gt;Mounting an NTFS or exFAT formatted
+external USB HDD&lt;/a&gt;
+section again to correct the problematic mount command.&lt;/p&gt;
 
 &lt;h2 id=&quot;in-closing&quot;&gt;In closing&lt;/h2&gt;
 

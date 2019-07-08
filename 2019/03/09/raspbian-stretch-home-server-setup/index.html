@@ -78,6 +78,7 @@
             </li>
           </ul>
         </nav>
+        <p class="intro bottom-separator">UPDATE 2019-07-08: Added instructions on enabling exFAT support, made the fstab mounting command more robust, and added the <a href="#fixing-boot-problems-due-to-bad-fstab-file">Fixing boot problems due to bad fstab file</a> section.</p>
         <p class="intro">Okay, so the Micro SD card in my trusty Raspberry Pi 2 <strike>torrent box</strike> home server finally bit the dust after three years of steady service, so I had to get a new one and reinstall everything from scratch (no pun intended), which I have documented in this post in detail. What we’ll cover here is how to set up the Pi running <strong>Raspbian Scratch</strong> with SSH, VNC and FTP support, an external NTFS hard drive for storage, and the Deluge torrent client with remote access enabled—needless to say, strictly for downloading Linux ISO images only!</p>
         <p class="intro">I have used a <strong>Raspberry Pi 2 B+</strong> with a USB WiFi dongle for the purpose of this exercise—in theory, the process should be the same for the Pi 3 with its built-in WiFi. A word of caution to younger players: buy a proper Raspberry-approved power source that’s capable of providing stable 2.5A power; this will save you lots of headaches later on.</p>
         <p class="intro">Also, a word of wisdom to my brothers and sisters: my broken 8 GB SanDisk card came with a 10-year warranty so I got a new 16 GB one for free! Always keep those receipts guys! :)</p>
@@ -94,7 +95,7 @@
             <a href="#enabling-vnc-access" id="markdown-toc-enabling-vnc-access">Enabling VNC access</a>
           </li>
           <li>
-            <a href="#mounting-an-ntfs-formatted-external-usb-hdd" id="markdown-toc-mounting-an-ntfs-formatted-external-usb-hdd">Mounting an NTFS formatted external USB HDD</a>
+            <a href="#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd" id="markdown-toc-mounting-an-ntfs-or-exfat-formatted-external-usb-hdd">Mounting an NTFS or exFAT formatted external USB HDD</a>
           </li>
           <li>
             <a href="#setting-up-an-ftp-server" id="markdown-toc-setting-up-an-ftp-server">Setting up an FTP server</a>
@@ -116,6 +117,23 @@
               </li>
               <li>
                 <a href="#setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot" id="markdown-toc-setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot">Setting up Deluge daemon and WebUI to start automatically on boot</a>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a href="#fixing-boot-problems-due-to-bad-fstab-file" id="markdown-toc-fixing-boot-problems-due-to-bad-fstab-file">Fixing boot problems due to bad fstab file</a>
+            <ul>
+              <li>
+                <a href="#confirming-the-issue" id="markdown-toc-confirming-the-issue">Confirming the issue</a>
+              </li>
+              <li>
+                <a href="#editing-cmdlinetxt" id="markdown-toc-editing-cmdlinetxt">Editing cmdline.txt</a>
+              </li>
+              <li>
+                <a href="#remounting-the-root-partition-in-read-write-mode" id="markdown-toc-remounting-the-root-partition-in-read-write-mode">Remounting the root partition in read-write mode</a>
+              </li>
+              <li>
+                <a href="#fixing-fstab" id="markdown-toc-fixing-fstab">Fixing fstab</a>
               </li>
             </ul>
           </li>
@@ -163,11 +181,15 @@
           </li>
         </ol>
         <p>Alternative instructions about the whole setup can be found <a href="https://www.realvnc.com/en/connect/docs/raspberry-pi.html">here</a>.</p>
-        <h2 id="mounting-an-ntfs-formatted-external-usb-hdd">Mounting an NTFS formatted external USB HDD</h2>
+        <h2 id="mounting-an-ntfs-or-exfat-formatted-external-usb-hdd">Mounting an NTFS or exFAT formatted external USB HDD</h2>
         <p>When connecting the external USB drive, Raspbian will automatically mount it. Unfortunately, the default NTFS driver that comes with the OS can only mount NTFS partitions in read-only mode, so we’ll need to install <strong>ntfs-3g</strong> to get full read-write access (but we’ll unmount the partition first):</p>
         <pre><code>sudo umount /media/pi/&lt;PARTITION_NAME&gt;
 sudo apt-get install ntfs-3g
 </code></pre>
+        <p>Similarly, FAT is supported out-of-the-box, but you’ll need to install <strong>exfat-fuse</strong> to be able to mount exFAT partitions:</p>
+        <pre><code>sudo apt-get install exfat-fuse exfat-utils
+</code></pre>
+        <p class="note">If you’re trying to format the disk to exFAT on Windows 7+, you’ll quickly realise that you cannot select exFAT in the standard disk formatter GUI but only FAT and NTFS. The trick is to use <code>format</code> command in the console (e.g. <code>format d: /fs:exfat</code>).</p>
         <p>Let’s check the list of available partitions; the disk we’re looking for will be most likely <code>/dev/sda</code>:</p>
         <pre><code>sudo fdisk -l
 </code></pre>
@@ -177,9 +199,18 @@ sudo mount -t auto /dev/sda1 /media/USBHDD1
 </code></pre>
         <p>Copy some files to <code>/media/USBHDD1</code> to test that the write access works.</p>
         <p>If everything went fine, we can mount the partition permanently by adding the following line to <code>/etc/fstab</code>:</p>
-        <pre><code>/dev/sda1       /media/USBHDD1  auto    noatime           0       0
+        <pre><code>/dev/sda1   /media/USBHDD1   auto   defaults,noatime,nofail,x-systemd.device-timeout=10   0   0
 </code></pre>
         <p>Reboot with <code>sudo reboot</code> to confirm that the partition gets mounted automatically.</p>
+        <p>Note that we’re exercising some precaution here:</p>
+        <ul>
+          <li>
+            <p><code>nofail</code> means that the boot process will continue regardless whether the volume can be mounted or not. Without this we would end up in emergency mode if the volume could not be mounted for any reason, in which case refer to the <a href="#fixing-boot-problems-due-to-bad-fstab-file">Fixing boot problems due to bad fstab file</a> section for instructions on how to get out of this rather unfortunate situation. With <code>nofail</code> in place, the OS will at least boot normally so we can SSH/VNC into the box to rectify the situation more easily.</p>
+          </li>
+          <li>
+            <p><code>x-systemd.device-timeout</code> sets the wait timeout in seconds for the mount command; you might want to set this a bit higher for drives that take a while to spin up.</p>
+          </li>
+        </ul>
         <h2 id="setting-up-an-ftp-server">Setting up an FTP server</h2>
         <p>For FTP access, we’ll use <strong>vsFTPd</strong> instead of the Raspbian default <strong>PureFTPd</strong>:</p>
         <pre><code>sudo apt-get install vsftpd
@@ -291,6 +322,30 @@ mkdir /media/USBHDD1/downloads/watch
 sudo -u pi /usr/bin/python /usr/bin/deluge-web &
 </code></pre>
         <p>Reboot and test that you can still connect using both the thin client and the WebUI.</p>
+        <h2 id="fixing-boot-problems-due-to-bad-fstab-file">Fixing boot problems due to bad fstab file</h2>
+        <p>If there’s an error in the <code>fstab</code> file and one of the partitions cannot be mounted, Raspbian will go into emergency mode at startup. This means you won’t be able to access it externally via the network as loading the OS has been essentially aborted. So if you’re suspecting this is the case, the only way to remedy the situation is to hook up the Pi to a monitor and a keyboard and follow the instructions below.</p>
+        <h3 id="confirming-the-issue">Confirming the issue</h3>
+        <p>The first step is to confirm the issue. Make sure you see something like this on the screen when attempting to boot up the device:</p>
+        <pre><code>You are in emergency mode. [lots of text, omitted...]
+
+Cannot open access to console, the root account is locked.
+See sulogin(8) man page for more details.
+
+Press Enter to continue.
+</code></pre>
+        <p>Pressing Enter would just reset the Pi and start the boot process again, so we’ll need to do something else to get out of the reboot loop.</p>
+        <h3 id="editing-cmdlinetxt">Editing cmdline.txt</h3>
+        <p>Switch off the Pi and take out the SD card; we’ll need to use another computer to append the following at the end of <code>cmdline.txt</code> on the boot partition of the SD card:</p>
+        <pre><code>init=/bin/sh
+</code></pre>
+        <p>This can be a bit problematic as I didn’t have much luck with trying to get Windows to recognise the boot partition, so I had to use a Mac in the end (another Linux box would work too, of course). After this edit, you should be able to boot into a minimal shell environment.</p>
+        <h3 id="remounting-the-root-partition-in-read-write-mode">Remounting the root partition in read-write mode</h3>
+        <p>The next problem is that we need to remount the root partition in read-write mode, so we can fix the <code>fstab</code> file:</p>
+        <pre><code>mount -o remount,rw /
+</code></pre>
+        <h3 id="fixing-fstab">Fixing fstab</h3>
+        <p>Now we’re on easy street, just edit <code>/etc/fstab</code> with <code>vi</code> or <code>nano</code> and comment out the problematic line. We’ll also need to undo the changes we did to <code>cmdline.txt</code> on the second computer after this.</p>
+        <p>If you got it all right, you should be able to boot the Pi normally again. Then you can just <em>carefully</em> follow the <a href="#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd">Mounting an NTFS or exFAT formatted external USB HDD</a> section again to correct the problematic mount command.</p>
         <h2 id="in-closing">In closing</h2>
         <p><em>[This last section isn’t really warranted, but just finishing the post with some configuration steps didn’t seem quite right…]</em></p>
         <p>That’s it folks, enjoy your shiny new 24/7 torrent box! Now go and download some Linux ISOs! :)</p>
