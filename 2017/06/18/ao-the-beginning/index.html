@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
-  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0">
+  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
@@ -9,33 +9,25 @@
   <meta name="author" content="John Novak">
   <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
   <title>Ao Resists the Forces of Darkness (pbrt meets Nim)</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia">
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic"><!--Source Sans Pro is required for the SVG images only -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Astloch">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700,700i&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;display=swap" rel="stylesheet"><!--Source Sans Pro is required for the SVG images only -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Astloch&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.6.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
-  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8">
-  </script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
 </head>
 <body>
-  <script src="https://blog.johnnovak.net/js/lib/respond.min.js">
-  </script>
+  <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
   <div id="wrapper">
     <header id="header">
       <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
@@ -181,16 +173,18 @@
   <span class="n">Vec3i</span><span class="o">*</span> <span class="o">=</span> <span class="n">Vec3</span><span class="o">[</span><span class="kt">int</span><span class="o">]</span></code></pre>
         </figure>
         <h3 id="matrix-inverse">Matrix inverse</h3>
-        <p>I have introduced a special fast version of the 4x4 matrix inverse operation called <code>rigidInverse</code> that can be used to quickly invert affine transforms that don’t have a scaling component. The optimised version only costs 24 FLOPs instead of the 152 FLOPs of the general version (6.3x speedup!). I was able to make good use of this in the <code>lookAt</code> procedure for some internal calculations.</p>
+        <p>I have introduced a special fast version of the 4x4 matrix inverse operation called <code class="highlighter-rouge">rigidInverse</code> that can be used to quickly invert affine transforms that don’t have a scaling component. The optimised version only costs 24 FLOPs instead of the 152 FLOPs of the general version (6.3x speedup!). I was able to make good use of this in the <code class="highlighter-rouge">lookAt</code> procedure for some internal calculations.</p>
         <h3 id="ray-box-intersection-tests">Ray-box intersection tests</h3>
         <p>The book presents a mostly straightforward implementation of the <a href="http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm">slab method</a> invented by Kay and Kayjia for calculating ray-box intersections (where by box we mean axis-aligned bounding boxes, or AABBs). The problem with their algorithm is that it contains a lot of conditional statements which hurt performance. AABB tests must be as fast as possible because a large percentage of the total run time of the renderer will be spent performing these intersection tests. Luckily, there’s an optimised <a href="https://tavianator.com/fast-branchless-raybounding-box-intersections-part-2-nans/">branchless version</a> out there which I ended up adopting. This version reports false hits for degenerate cases where any of the ray origin’s coordinates lay exactly on the slab boundaries, but this is negligible if the actual ray-object intersection routines are correct, and well worth the added 15-20%
         performance boost compared to the 100% correct version.</p>
         <h2 id="notes-on-nim">Notes on Nim</h2>
         <p>The best way to learn the intricacies of any programming language is to write some non-trivial piece of software in it, and pbrt certainly falls into this category. Implementing the code from the first two chapters in Nim has taught me several useful lessons which I am going to summarise below.</p>
         <h3 id="project-structure">Project structure</h3>
-        <p>Nim doesn’t have the concept of access modifiers and packages like Java and Scala, or namespaces like C++. The only available organisational unit is the module that can export some of its symbols, otherwise they are private and unaccessible to the outside world. One file can contain only one module, the filename minus the extension being the name of the module (although a module can be split up into several files with the use of <code>include</code>). All module names have to be unique within the same compilation unit.</p>
-        <p>After much contemplation and experimentation I came up with the following project structure that mirrors that of pbrt. For brevity, only two main modules are presented here, <code>core</code> and <code>filter</code>.</p>
-        <pre><code>src/
+        <p>Nim doesn’t have the concept of access modifiers and packages like Java and Scala, or namespaces like C++. The only available organisational unit is the module that can export some of its symbols, otherwise they are private and unaccessible to the outside world. One file can contain only one module, the filename minus the extension being the name of the module (although a module can be split up into several files with the use of <code class="highlighter-rouge">include</code>). All module names have to be unique within the same compilation unit.</p>
+        <p>After much contemplation and experimentation I came up with the following project structure that mirrors that of pbrt. For brevity, only two main modules are presented here, <code class="highlighter-rouge">core</code> and <code class="highlighter-rouge">filter</code>.</p>
+        <div class="highlighter-rouge">
+          <div class="highlight">
+            <pre class="highlight"><code>src/
   core/
     common.nim
     geometry.nim
@@ -216,19 +210,29 @@ test/
 nim.cfg
 README.md
 </code></pre>
-        <p>As mentioned above, module names must be unique per compilation unit; that’s the reason why I had to call the unit test modules <code>&lt;modulename&gt;Test</code>, otherwise I wouldn’t be able to import <code>&lt;modulename&gt;</code> into them. This also means that public submodules that are imported by other modules must have unique names, for example <code>core/common</code> and <code>filters/common</code> could not be imported by the <code>main</code> module (remember, the filesystem path is <em>not</em> part of the module name, just the filename).</p>
-        <p><code>nim.cfg</code> contains the following:</p>
-        <pre><code>path="src/core"
+          </div>
+        </div>
+        <p>As mentioned above, module names must be unique per compilation unit; that’s the reason why I had to call the unit test modules <code class="highlighter-rouge">&lt;modulename&gt;Test</code>, otherwise I wouldn’t be able to import <code class="highlighter-rouge">&lt;modulename&gt;</code> into them. This also means that public submodules that are imported by other modules must have unique names, for example <code class="highlighter-rouge">core/common</code> and <code class="highlighter-rouge">filters/common</code> could not be imported by the <code class="highlighter-rouge">main</code> module (remember, the filesystem path is <em>not</em> part of the module name, just the filename).</p>
+        <p><code class="highlighter-rouge">nim.cfg</code> contains the following:</p>
+        <div class="highlighter-rouge">
+          <div class="highlight">
+            <pre class="highlight"><code>path="src/core"
 path="src/filters"
 # add a new entry for every module
 </code></pre>
+          </div>
+        </div>
         <p>This way we can conveniently just import submodules by the name of the submodule, as they are all unique. This is much cleaner and easier to maintain than using relative paths, especially in the unit tests. For instance:</p>
-        <pre><code>import geometry     # imports src/core/geometry.nim
+        <div class="highlighter-rouge">
+          <div class="highlight">
+            <pre class="highlight"><code>import geometry     # imports src/core/geometry.nim
 import gaussian     # imports src/filters/gaussian.nim
 </code></pre>
-        <p>The <code>types.nim</code> file inside each main module is a special thing that I am going to explain <a href="#managing-circular-dependencies">a bit later</a>.</p>
+          </div>
+        </div>
+        <p>The <code class="highlighter-rouge">types.nim</code> file inside each main module is a special thing that I am going to explain <a href="#managing-circular-dependencies">a bit later</a>.</p>
         <h3 id="inlining">Inlining</h3>
-        <p>The Nim compiler doesn’t do automatic inlining of small functions across module boundaries; it is the programmer’s responsibility to annotate such functions with the <code>{.inline.}</code> pragma like this:</p>
+        <p>The Nim compiler doesn’t do automatic inlining of small functions across module boundaries; it is the programmer’s responsibility to annotate such functions with the <code class="highlighter-rouge">{.inline.}</code> pragma like this:</p>
         <figure class="highlight">
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">vec3f</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">FloatT</span><span class="p">):</span> <span class="n">Vec3f</span> <span class="p">{.</span><span class="n">inline</span><span class="p">.}</span> <span class="o">=</span>
   <span class="n">result</span> <span class="o">=</span> <span class="n">Vec3f</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">z</span><span class="p">)</span>
@@ -236,9 +240,9 @@ import gaussian     # imports src/filters/gaussian.nim
         </figure>
         <p>This is a small thing, but forgetting about it can result in <a href="/2017/04/22/nim-performance-tuning-for-the-uninitiated/#nim-----vector-module">severe performance penalties</a> in numerical code that needs to be as fast as possible.</p>
         <h3 id="calling-parent-methods">Calling parent methods</h3>
-        <p>Nim doesn’t have a convenient <code>super()</code> pseudo-method that would allow the calling of parent methods in a straightforward manner. This left me scratching my head for a while until I found the answer in the <a href="https://forum.nim-lang.org/">Nim forums</a>. There are two problems here that require slightly different solutions, namely <strong>calling parent constructors</strong> and <strong>calling ordinary parent methods</strong>.</p>
+        <p>Nim doesn’t have a convenient <code class="highlighter-rouge">super()</code> pseudo-method that would allow the calling of parent methods in a straightforward manner. This left me scratching my head for a while until I found the answer in the <a href="https://forum.nim-lang.org/">Nim forums</a>. There are two problems here that require slightly different solutions, namely <strong>calling parent constructors</strong> and <strong>calling ordinary parent methods</strong>.</p>
         <h4 id="calling-parent-constructors">Calling parent constructors</h4>
-        <p>Constructor chaining is most easily accomplished by introducing internal <code>init</code> helper procedures for every subclass which then can be called with the subclass type converted to the parent class type. It’s much easier to understand this by looking at a concrete example:</p>
+        <p>Constructor chaining is most easily accomplished by introducing internal <code class="highlighter-rouge">init</code> helper procedures for every subclass which then can be called with the subclass type converted to the parent class type. It’s much easier to understand this by looking at a concrete example:</p>
         <figure class="highlight">
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">type</span>
   <span class="n">Shape</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span> <span class="k">of</span> <span class="n">RootObj</span>
@@ -248,7 +252,7 @@ import gaussian     # imports src/filters/gaussian.nim
   <span class="n">Circle</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span> <span class="k">of</span> <span class="n">Shape</span>
     <span class="n">radius</span><span class="o">*</span><span class="p">:</span> <span class="kt">float</span>
 
-<span class="k">proc </span><span class="nf">init</span><span class="p">(</span><span class="n">self</span><span class="p">:</span> <span class="kd">var</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kt">float</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
+<span class="k">proc </span><span class="nf">init</span><span class="p">(</span><span class="n">self</span><span class="p">:</span> <span class="k">var</span> <span class="n">Shape</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kt">float</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
   <span class="n">self</span><span class="p">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
   <span class="n">self</span><span class="p">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
   <span class="n">self</span><span class="p">.</span><span class="n">visible</span> <span class="o">=</span> <span class="n">visible</span>
@@ -256,7 +260,7 @@ import gaussian     # imports src/filters/gaussian.nim
 <span class="k">proc </span><span class="nf">initShape</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="kt">float</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="kt">bool</span><span class="p">):</span> <span class="n">Shape</span> <span class="o">=</span>
   <span class="n">init</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">visible</span><span class="p">)</span>
 
-<span class="k">proc </span><span class="nf">init</span><span class="p">(</span><span class="n">self</span><span class="p">:</span> <span class="kd">var</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="kt">float</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
+<span class="k">proc </span><span class="nf">init</span><span class="p">(</span><span class="n">self</span><span class="p">:</span> <span class="k">var</span> <span class="n">Circle</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">:</span> <span class="kt">float</span><span class="p">,</span> <span class="n">visible</span><span class="p">:</span> <span class="kt">bool</span><span class="p">)</span> <span class="o">=</span>
   <span class="n">init</span><span class="p">(</span><span class="n">self</span><span class="p">.</span><span class="n">Shape</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">visible</span><span class="p">)</span>  <span class="c"># this is the trick, call init on a Shape</span>
   <span class="n">self</span><span class="p">.</span><span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span>
 
@@ -264,13 +268,13 @@ import gaussian     # imports src/filters/gaussian.nim
   <span class="n">init</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">visible</span><span class="p">)</span>
 
 <span class="c"># Test</span>
-<span class="kd">var</span> <span class="n">c</span> <span class="o">=</span> <span class="n">initCircle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
+<span class="k">var</span> <span class="n">c</span> <span class="o">=</span> <span class="n">initCircle</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mf">10.2</span><span class="p">,</span> <span class="kp">true</span><span class="p">)</span>
 <span class="n">echo</span> <span class="n">c</span>
 <span class="c"># Prints: (radius: 10.2, x: 5.0, y: 8.0, visible: true)</span></code></pre>
         </figure>
-        <p>The trick is happening in the <code>init</code> procedure of <code>Circle</code>, where we first convert the <code>Circle</code> to a <code>Shape</code> and run the parent <code>init</code> procedure on it.</p>
+        <p>The trick is happening in the <code class="highlighter-rouge">init</code> procedure of <code class="highlighter-rouge">Circle</code>, where we first convert the <code class="highlighter-rouge">Circle</code> to a <code class="highlighter-rouge">Shape</code> and run the parent <code class="highlighter-rouge">init</code> procedure on it.</p>
         <h4 id="calling-ordinary-parent-methods">Calling ordinary parent methods</h4>
-        <p>For ordinary methods, using <a href="https://nim-lang.org/docs/system.html#procCall,untyped"><code>procCall</code></a> that disables dynamic binding for a given call is the solution:</p>
+        <p>For ordinary methods, using <a href="https://nim-lang.org/docs/system.html#procCall,untyped"><code class="highlighter-rouge">procCall</code></a> that disables dynamic binding for a given call is the solution:</p>
         <figure class="highlight">
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">method</span> <span class="n">draw</span><span class="p">(</span><span class="n">self</span><span class="p">:</span> <span class="n">Shape</span><span class="p">)</span> <span class="p">{.</span><span class="n">base</span><span class="p">.}</span> <span class="o">=</span>
   <span class="n">echo</span> <span class="s">"Shape.draw enter"</span>
@@ -296,7 +300,7 @@ import gaussian     # imports src/filters/gaussian.nim
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="c"># bar.nim</span>
 <span class="k">proc </span><span class="nf">barProc</span><span class="o">*</span><span class="p">()</span>     <span class="c"># (1) forward declaration (there's no proc body)</span>
 
-<span class="kn">import</span> <span class="n">foo</span>          <span class="c"># (2) stop parsing bar.nim & continue with foo.nim</span>
+<span class="k">import</span> <span class="n">foo</span>          <span class="c"># (2) stop parsing bar.nim & continue with foo.nim</span>
 
 <span class="k">proc </span><span class="nf">barProc</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span>   <span class="c"># (5) parsing foo.nim completed, continue from here</span>
   <span class="n">echo</span> <span class="s">"bar"</span>
@@ -307,18 +311,18 @@ import gaussian     # imports src/filters/gaussian.nim
         </figure>
         <figure class="highlight">
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="c"># foo.nim</span>
-<span class="kn">import</span> <span class="n">bar</span>      <span class="c"># (3) only the already known symbols in bar.nim are imported,</span>
+<span class="k">import</span> <span class="n">bar</span>      <span class="c"># (3) only the already known symbols in bar.nim are imported,</span>
                 <span class="c">#     which is only the forward declaration of barProc</span>
 
 <span class="k">proc </span><span class="nf">fooProc</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span>
   <span class="n">echo</span> <span class="s">"foo"</span>
   <span class="n">barProc</span><span class="p">()</span>     <span class="c"># (4) this works because of the forward declaration</span></code></pre>
         </figure>
-        <p>Running the code with <code>nim c -r bar</code> will print out <code>bar</code> and <code>foo</code> on alternating lines until we hit a stack overflow. If we wanted to be able to compile <code>foo.nim</code> separately as well, we’d need to put a forward declaration at the top of the <code>foo</code> module too (should be obvious why after following the path of execution in the above listings):</p>
+        <p>Running the code with <code class="highlighter-rouge">nim c -r bar</code> will print out <code class="highlighter-rouge">bar</code> and <code class="highlighter-rouge">foo</code> on alternating lines until we hit a stack overflow. If we wanted to be able to compile <code class="highlighter-rouge">foo.nim</code> separately as well, we’d need to put a forward declaration at the top of the <code class="highlighter-rouge">foo</code> module too (should be obvious why after following the path of execution in the above listings):</p>
         <figure class="highlight">
           <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">fooProc</span><span class="o">*</span><span class="p">()</span>
 
-<span class="kn">import</span> <span class="n">bar</span>
+<span class="k">import</span> <span class="n">bar</span>
 
 <span class="k">proc </span><span class="nf">fooProc</span><span class="o">*</span><span class="p">()</span> <span class="o">=</span>
   <span class="n">echo</span> <span class="s">"foo"</span>
@@ -326,20 +330,20 @@ import gaussian     # imports src/filters/gaussian.nim
         </figure>
         <h4 id="circular-type-dependencies">Circular type dependencies</h4>
         <p>Nim only allows the forward declaration of procedures; for types, we’ll need a different approach. Moreover, there’s a further limitation that <a href="https://nim-lang.org/docs/tut2.html#object-oriented-programming-mutually-recursive-types">mutually recursive types</a> need to be declared within a single type section (this is so to keep compilation times low).</p>
-        <p>Sufficiently complex applications usually have quite complex type graphs where certain types reference each other. Initially, I had a number of “submodules” inside my <code>core</code> module, each of them defining a number of types. Many of these types have references to types defined in other submodules. Attempting to tackle these type dependencies on a case by case basis is just a lot of extra mental overhead and boring work, so the generic solution I ended up with was moving all my top-level types into a new <code>core/types.nim</code> submodule (using the <code>core</code> module as an example) which would then be imported by all <code>core</code> submodules. All the types in <code>core/types.nim</code> are defined in a single type section—this way I don’t even need to think about circular type dependencies anymore.</p>
-        <p>As a concrete example, <code>core/geometry.nim</code> would start like this:</p>
+        <p>Sufficiently complex applications usually have quite complex type graphs where certain types reference each other. Initially, I had a number of “submodules” inside my <code class="highlighter-rouge">core</code> module, each of them defining a number of types. Many of these types have references to types defined in other submodules. Attempting to tackle these type dependencies on a case by case basis is just a lot of extra mental overhead and boring work, so the generic solution I ended up with was moving all my top-level types into a new <code class="highlighter-rouge">core/types.nim</code> submodule (using the <code class="highlighter-rouge">core</code> module as an example) which would then be imported by all <code class="highlighter-rouge">core</code> submodules. All the types in <code class="highlighter-rouge">core/types.nim</code> are defined in a single type section—this way I don’t even need to think about circular type dependencies anymore.</p>
+        <p>As a concrete example, <code class="highlighter-rouge">core/geometry.nim</code> would start like this:</p>
         <figure class="highlight">
-          <pre><code class="language-nimrod" data-lang="nimrod"><span class="kn">import</span> <span class="n">common</span><span class="p">,</span> <span class="n">types</span>
-<span class="kn">import</span> <span class="n">math</span>
+          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">import</span> <span class="n">common</span><span class="p">,</span> <span class="n">types</span>
+<span class="k">import</span> <span class="n">math</span>
 
-<span class="n">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec2f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec2i</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec3f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec3i</span>
-<span class="n">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Box2f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box2i</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box3f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box3i</span>
-<span class="n">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Ray</span>
-<span class="n">export</span> <span class="n">types</span><span class="p">.</span><span class="n">RayDifferential</span></code></pre>
+<span class="k">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec2f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec2i</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec3f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Vec3i</span>
+<span class="k">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Box2f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box2i</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box3f</span><span class="p">,</span> <span class="n">types</span><span class="p">.</span><span class="n">Box3i</span>
+<span class="k">export</span> <span class="n">types</span><span class="p">.</span><span class="n">Ray</span>
+<span class="k">export</span> <span class="n">types</span><span class="p">.</span><span class="n">RayDifferential</span></code></pre>
         </figure>
-        <p>The <code>export</code> statements ensure that the public types of this submodule will be available to the importing module. Private types that are used only internally between the submodules simply don’t get exported anywhere.</p>
+        <p>The <code class="highlighter-rouge">export</code> statements ensure that the public types of this submodule will be available to the importing module. Private types that are used only internally between the submodules simply don’t get exported anywhere.</p>
         <p>First I was averse to the idea of moving all the types into a single file, away from the actual method implementations, but then I grew to like it. It’s not a bad thing to see all types from all submodules in one place, especially when there are lots of complex interdependencies between them. As an interesting note, Haskell, F# and OCaml have the same limitation regarding circular type dependencies.</p>
-        <p>One drawback with this approach is that all properties defined in <code>types.nim</code> must be public (exported with <code>*</code>), otherwise the submodules themselves wouldn’t be able to access them. This breaks encapsulation and can be a problem for bigger projects with many developers working on the code. In reality, I don’t think this is a big deal though for people who know what they are doing. Even the original pbrt authors made a good point about exposing the internal data structures of most of their objects; doing “proper encapsulation” by the book would just add lots of extra cruft that is kind of unnecessary for small to medium sized projects developed by a single person or a handful of people.<sup id="fnref:small"><a href="#fn:small" class="footnote">1</a></sup></p>
+        <p>One drawback with this approach is that all properties defined in <code class="highlighter-rouge">types.nim</code> must be public (exported with <code class="highlighter-rouge">*</code>), otherwise the submodules themselves wouldn’t be able to access them. This breaks encapsulation and can be a problem for bigger projects with many developers working on the code. In reality, I don’t think this is a big deal though for people who know what they are doing. Even the original pbrt authors made a good point about exposing the internal data structures of most of their objects; doing “proper encapsulation” by the book would just add lots of extra cruft that is kind of unnecessary for small to medium sized projects developed by a single person or a handful of people.<sup id="fnref:small" role="doc-noteref"><a href="#fn:small" class="footnote">1</a></sup></p>
         <h2 id="conclusion">Conclusion</h2>
         <p>So long for today folks, hope you have enjoyed today’s session. You can check out the current state of Ao in the <a href="https://github.com/johnnovak/ao">GitHub repository</a>. The takeaway message is that</p>
         <ul>
@@ -371,10 +375,10 @@ import gaussian     # imports src/filters/gaussian.nim
             </li>
           </ul>
         </section>
-        <div class="footnotes">
+        <div class="footnotes" role="doc-endnotes">
           <ol>
-            <li id="fn:small">
-              <p>My personal opinion is that it is actually a good thing that Nim has not been designed for assembly-line style large-scale software development… just look at the macro system and imagine how much havoc a 30+ person VB.NET team could wreak even just by looking at it! <a href="#fnref:small" class="reversefootnote">↩</a></p>
+            <li id="fn:small" role="doc-endnote">
+              <p>My personal opinion is that it is actually a good thing that Nim has not been designed for assembly-line style large-scale software development… just look at the macro system and imagine how much havoc a 30+ person VB.NET team could wreak even just by looking at it!&nbsp;<a href="#fnref:small" class="reversefootnote" role="doc-backlink">↩</a></p>
             </li>
           </ol>
         </div>

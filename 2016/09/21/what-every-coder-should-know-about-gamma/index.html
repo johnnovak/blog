@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
-  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0">
+  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
@@ -9,33 +9,25 @@
   <meta name="author" content="John Novak">
   <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
   <title>What every coder should know about gamma</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia">
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic"><!--Source Sans Pro is required for the SVG images only -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Astloch">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700,700i&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;display=swap" rel="stylesheet"><!--Source Sans Pro is required for the SVG images only -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Astloch&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.6.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
-  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8">
-  </script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
 </head>
 <body>
-  <script src="https://blog.johnnovak.net/js/lib/respond.min.js">
-  </script>
+  <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
   <div id="wrapper">
     <header id="header">
       <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
@@ -161,7 +153,7 @@
           <li>Gamma is a relic from the CRT display era; now that almost everyone uses LCDs, it’s safe to ignore it.</li>
           <li>Gamma is only relevant for graphics professionals working in the print industry where accurate colour reproduction is of great importance—for general image processing, it’s safe to ignore it.</li>
           <li>I’m a game developer, I don’t need to know about gamma.</li>
-          <li>The graphics libraries of my operating system handle gamma correctly.<sup id="fnref:osgamma"><a href="#fn:osgamma" class="footnote">1</a></sup></li>
+          <li>The graphics libraries of my operating system handle gamma correctly.<sup id="fnref:osgamma" role="doc-noteref"><a href="#fn:osgamma" class="footnote">1</a></sup></li>
           <li>The popular graphics library <em>&lt;insert name here&gt;</em> I’m using handles gamma correctly.</li>
           <li>Pixels with RGB values of (128, 128, 128) emit about half as much light as pixels with RGB values of (255, 255, 255).</li>
           <li>It is okay to just load pixel data from a popular image format (JPEG, PNG, GIF etc.) into a buffer using some random library and run image processing algorithms on the raw data directly.</li>
@@ -178,14 +170,14 @@
         <p>Believe it or not, the difference of <strong>light energy emission</strong> between any two neighbouring vertical bars in the below image is a <em>constant</em>. In other words, the amount of light energy emitted by your screen increases by a <em>constant amount</em> from bar to bar, left to right.</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp32.png" alt="Figure 1 — Evenly-spaced greyscale bars in terms of emitted light intensity" style="width: 100%">
-          <figcaption style=" width: 100%; text-align: center;">
+          <figcaption style="width: 100%; text-align: center;">
             Figure 1 — Evenly-spaced greyscale bars in terms of emitted light intensity (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
         <p>Now consider the following image:</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png" alt="Figure 2 — Evenly-spaced greyscale bars in terms of perceptual light intensity" style="width: 100%">
-          <figcaption style=" width: 100%; text-align: center;">
+          <figcaption style="width: 100%; text-align: center;">
             Figure 2 — Evenly-spaced greyscale bars in terms of perceptual light intensity (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
@@ -198,7 +190,7 @@
         <p>Let’s say we wanted to store a representation of the following real-world object as an image file on the computer (let’s pretend for a moment that perfect greyscale gradients exist in the real world, okay?) Here’s how the “real world object” looks like:</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp.png" alt="Figure 3 — Ideal smooth greyscale ramp" style="width: 100%">
-          <figcaption style=" width: 100%; text-align: center;">
+          <figcaption style="width: 100%; text-align: center;">
             Figure 3 — Ideal smooth greyscale ramp (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
@@ -206,7 +198,7 @@
         <p>If we encoded our smooth gradient using only these 32 grey values, we would get something like this (let’s just ignore dither for now to keep things simple):</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/linear-ramp32-perceptual.png" alt="Figure 4 — Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values" style="width: 100%">
-          <figcaption style=" width: 100%; text-align: center;">
+          <figcaption style="width: 100%; text-align: center;">
             Figure 4 — Ideal smooth greyscale ramp represented with 32 physically-linear greyscale values (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
@@ -214,7 +206,7 @@
         <p>This observation has some interesting implications. The error between the original and the 5-bit encoded version is uneven across the image; it’s much larger for dark values than for light ones. In other words, we are losing representational precision for dark values and are using relatively too much precision for lighter shades. Clearly, we’d be better off choosing a different set of 32 greys for our limited palette of shades that would make this error evenly distributed across the whole range, so both dark and light shades would be represented with the same precision. If we encoded our original image with such a greyscale that is <em>perceptually linear</em>, but consequently <em>non-linear</em> in terms of emitted light intensity, and that non-linearity would match that of the human vision, we’d get the exact same greyscale image we have already seen in Figure 2:</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/gamma-ramp32.png" alt="Figure 5 — Ideal smooth greyscale represented with 32 perceptually-linear greyscale values" style="width: 100%">
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Figure 5 — Ideal smooth greyscale represented with 32 perceptually-linear greyscale values (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammaramp.nim">Nim source code</a>)
           </figcaption>
         </figure>
@@ -235,7 +227,7 @@
         <figure class="image">
           <object data="/files/2016-09-21/gamma.svg" type="image/svg+xml" style="width: 100%">
           </object>
-          <figcaption style=" width: 100%; text-align: center;">
+          <figcaption style="width: 100%; text-align: center;">
             Figure 6 — Gamma transfer functions (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gammatransfer.nim">Nim source code</a>)<br>
             <br>
             a) encoding gamma, or gamma compression (γ=1/2.2≈0.4545)<br>
@@ -263,7 +255,7 @@
         <p>Just going by the looks, one might prefer the look of the sRGB-space versions, especially for the last two. However, that’s not how light would behave in the real world (imagine two coloured light sources illuminating a white wall; the colours would mix as in the linear-space case).</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/gradient.png" alt="Figure 7 — For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)" style="width: 80%">
-          <figcaption style=" width: 80%; text-align: center;">
+          <figcaption style="width: 80%; text-align: center;">
             Figure 7 — For each gradient-pair, the top gradient is a linear interpolation between two colours in linear space, then the result converted to sRGB (gamma-correct). The bottom gradients are the results of interpolating between the exact same colours but directly in sRGB space (gamma-incorrect)<br>
             (<a href="https://github.com/johnnovak/johnnovak.site/blob/master/blog/files/2016-09-21/src/gradient.nim">Nim source code</a>).
           </figcaption>
@@ -299,7 +291,7 @@
         <p>The image below contains a simple black and white checkerboard pixel pattern (100% zoom on the left, 400% zoom on the right). The black pixels are RGB(0,0,0), the minimum light intensity your monitor is capable of producing, and the white ones RGB(255,255,255), which is the maximum intensity. Now, if you squint a little, your eyes will blur (average) the light coming from the image, so you will see a grey that’s halfway in intensity between absolute black and white (therefore it’s referred to as <strong>50% grey</strong>).</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/resize-large.png" alt="Figure 11 — Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification." style="width: 220px">
-          <figcaption style=" width: 80%; text-align: center;">
+          <figcaption style="width: 80%; text-align: center;">
             Figure 11 — Black and white checkerboard pixel pattern frequently used in simple gamma calibration programs. The averaged light emission of the area occupied by the pattern is equal to that of a solid 50% grey square. The right image shows the pattern at 400% magnification.
           </figcaption>
         </figure>
@@ -307,7 +299,7 @@
         <p>Let’s try it out! On the image below, <em>A</em> is the checkerboard pattern, <em>B</em> the result of resizing the pattern by 50% directly in sRGB-space (using bicubic interpolation), and <em>C</em> the resizing it in linear space, then converted to sRGB.</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/resize.png" alt="Figure 12 — Effects of gamma-incorrect image resizing. &lt;em&gt;A&lt;/em&gt; is the pixel checkerboard pattern, &lt;em&gt;B &lt;/em&gt;the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and &lt;em&gt;C&lt;/em&gt; the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode)." style="width: 316px">
-          <figcaption style=" width: 80%; text-align: center;">
+          <figcaption style="width: 80%; text-align: center;">
             Figure 12 — Effects of gamma-incorrect image resizing. <em>A</em> is the pixel checkerboard pattern, <em>B</em> the gamma-incorrect result of resizing the image in sRGB space (Photoshop CS6 in 8-bit RGB mode), and <em>C</em> the gamma-correct result of converting the image to linear space before resizing, then back to sRGB at the end (Photoshop CS6 in 32-bit RGB mode).
           </figcaption>
         </figure>
@@ -319,7 +311,7 @@
         <p>I guess it’s no surprise at this point that antialiasing is no exception when it comes to gamma-correctness. Antialiasing in γ=2.2 space results in overly dark “smoothing pixels” (right image); the text appears too heavy, almost as if it was bold. Running the algorithm in linear space produces much better results (left image), although in this case the font looks a bit too thin. Interestingly, Photoshop antialiases text using γ=1.42 by default, and this indeed seems to yield the best looking results (middle image). The reason for this is that most fonts have been designed for gamma-incorrect font rasterizers, hence if you use linear space (correctly), then the fonts will look thinner than they should.</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/antialias.png" alt="Figure 13 — Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2." style="width: 623px">
-          <figcaption style=" width: 623px;">
+          <figcaption style="width: 623px;">
             Figure 13 — Effects of gamma-incorrectness on text antialiasing. The left image was rendered with the option 'Blend Text Colors Using Gamma' set to 1.0, the middle one with 1.45, and the right one with 2.2.
           </figcaption>
         </figure>
@@ -335,14 +327,14 @@
         looking image <em>for that particular scene</em>, and thus not transferable to other scenes or lighting conditions. It’s a lot of wasted energy to work like that.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-09-21/badgamma.png" data-width="1237" data-height="400"><img src="https://blog.johnnovak.net/files/2016-09-21/badgamma.png" alt="TODO" style="width: 100%"></a>
-          <figcaption style=" width: 95%; text-align: center;">
+          <figcaption style="width: 95%; text-align: center;">
             Figure 14 — Effects of gamma-incorrect rendering on diffuse spheres. The gamma-incorrect image on the right shows an unsuccesful attempt at matching the look of the gamma-correct one on the left by tweaking the light intensities alone.
           </figcaption>
         </figure>
         <p>It’s also important to point out that incorrect gamma handling in 3D rendering is one of the main culprits behind the “fake plasticky CGI look” in some (mostly older) games. As illustrated on the image below, rendering realistic looking human skin is almost impossible with a gamma-incorrect workflow; the highlights will just never look right. This gave birth to questionable practices such as compensating for the wrong highlights in the specular maps with inverted hues and all sorts of other nastiness instead of fixing the problem right at the source…</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-09-21/lineargammahead.png" alt="TODO" style="width: 90%">
-          <figcaption style=" width: 90%; text-align: center;">
+          <figcaption style="width: 90%; text-align: center;">
             Figure 15 — Effects of gamma-incorrect rendering on a human head. On the top, a real looking human head; on the bottom, a wax figure approximation.<br>
             (Image from the <a href="https://docs.unity3d.com/Manual/LinearLighting.html">Unity3D manual</a>.)
           </figcaption>
@@ -432,10 +424,10 @@
             </li>
           </ul>
         </section>
-        <div class="footnotes">
+        <div class="footnotes" role="doc-endnotes">
           <ol>
-            <li id="fn:osgamma">
-              <p>Only if your operating system is Mac OS X 10.6 or higher or Linux. <a href="#fnref:osgamma" class="reversefootnote">↩</a></p>
+            <li id="fn:osgamma" role="doc-endnote">
+              <p>Only if your operating system is Mac OS X 10.6 or higher or Linux.&nbsp;<a href="#fnref:osgamma" class="reversefootnote" role="doc-backlink">↩</a></p>
             </li>
           </ol>
         </div>

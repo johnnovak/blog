@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
 <head>
-  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.2.0">
+  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
@@ -9,33 +9,25 @@
   <meta name="author" content="John Novak">
   <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
   <title>Cross-platform GUI Toolkit Trainwreck, 2016 Edition</title>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia">
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700,400italic,700italic"><!--Source Sans Pro is required for the SVG images only -->
-  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inconsolata:400,700">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Astloch">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,400i,600,700,700i&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;display=swap" rel="stylesheet"><!--Source Sans Pro is required for the SVG images only -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Astloch&amp;display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.6.css">
+  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
-  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8">
-  </script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8">
-  </script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
 </head>
 <body>
-  <script src="https://blog.johnnovak.net/js/lib/respond.min.js">
-  </script>
+  <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
   <div id="wrapper">
     <header id="header">
       <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
@@ -150,7 +142,7 @@
         <h2 id="buttons-and-pixels">Buttons and pixels</h2>
         <p>In 2016, developing a program in entirety on one particular platform, for example OS X, and then successfully compiling and running it on another, say Windows, with zero or minimal modifications required is no longer an utopistic dream. In fact, users of dynamic, interpreted or scripting languages (however you like to call them today) have been enjoying the luxuries of easy cross-platform development for many decades now; they won’t even raise an eyebrow on such trivial matters. But even the lowly C and C++ plebs are able to perform this feat with relative ease nowadays—at least, if they stuck to their respective language standards religiously and turned their compiler warnings up to nuclear-strength…</p>
         <p>Being able to use a single codebase for multi-platform applications is of crucial importance. After all, who wants to maintain two or three (or more) codebases that are mostly similar, but <em>not quite</em>? I sure don’t. And then there’s the convenience and flexibility factor too: you can happily develop on your Linux VM on your desktop PC at home, then maybe fix some bugs on your MacBook while sitting on the train, with the confidence that your program will work flawlessly on Windows too. Not having to deal with platform differences and idiosyncrasies takes a huge burden off of the developer’s shoulder that is not to be underestimated.</p>
-        <p>Some compiled languages, like <a href="http://nim-lang.org/">Nim</a>, give you such cross-platform guarantees by design. This is all good, this is all well, this is precisely how things should be. The world is such a wonderful place, after all. Write once, run anywhere (and don’t go near the JVM). Excellent! The universe is smiling at you. Infinity co creates karmic balance. Freedom unfolds into intrinsic actions. Your consciousness manifests through quantum reality. <sup id="fnref:bullshit"><a href="#fn:bullshit" class="footnote">1</a></sup></p>
+        <p>Some compiled languages, like <a href="http://nim-lang.org/">Nim</a>, give you such cross-platform guarantees by design. This is all good, this is all well, this is precisely how things should be. The world is such a wonderful place, after all. Write once, run anywhere (and don’t go near the JVM). Excellent! The universe is smiling at you. Infinity co creates karmic balance. Freedom unfolds into intrinsic actions. Your consciousness manifests through quantum reality. <sup id="fnref:bullshit" role="doc-noteref"><a href="#fn:bullshit" class="footnote">1</a></sup></p>
         <p>Except for one little thing. <strong>You must not under any circumstance</strong> try to open a window (on the computer, I mean), attempt to change the colour of a single pixel in it, or—god forbid!—fantasise about using native (or any kind of, for the matter) GUI controls in a cross-platform and non-hair loss inducing manner! If you disregarded my sage advice and foolishly ventured to accomplish any of the above tasks, the bliss would be over in an instant and you’d find yourself rudely transported back to the early days of computing, where making anything just barely work <em>at all</em> on different OSs would take inordinate amounts of time and effort!</p>
         <h2 id="solution-to-a-problem">Solution to a problem</h2>
         <p>I’m not just talking in the abstract here, I am merely describing my trials and tribulations when attempting to extend my <a href="https://github.com/johnnovak/nim-raytracer">ray tracer</a> I’m developing in Nim with a very minimalistic GUI. My ambitions were fairly modest: I only wanted to open a window and then split it into a canvas and a control area. Onto the canvas I would just blit some pixel data periodically and the control area would contain some buttons and some static text (maybe a progress bar too if I felt particularly bold and adventurous!). I wanted this fine piece of software craftsmanship to work on Windows, Linux and OS X, without having to write any platform specific code. And that’s it!</p>
@@ -164,11 +156,11 @@
         <p>Some people might feel the urge to point out now that I’m way too picky, this is merely a solution to a problem, it works, so I should just suck it up and live with the <strong>over 60-fold increase of my total binary size!</strong> Well, this is a solution to a problem too:</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-05-29/headphones.jpg" alt="Solution to a problem..." style="width: 70%">
-          <figcaption style=" width: 70%;">
+          <figcaption style="width: 70%;">
             Warning: putting up with lots external dependency crap just to make things work somehow is a straight road to this to happen to you!
           </figcaption>
         </figure>
-        <p>And with that move, I had practically exhausted all the readily available GUI options for Nim. (Note that this is not a rant against Nim at all; I absolutely love that language, (in fact, it’s my favourite language at the moment); it’s not Nim’s fault that most—if not <em>all</em>—cross platform GUI toolkits suck in one way or another (having been written in C++ is one major source of such suckage)). <sup id="fnref:lisp"><a href="#fn:lisp" class="footnote">2</a></sup></p>
+        <p>And with that move, I had practically exhausted all the readily available GUI options for Nim. (Note that this is not a rant against Nim at all; I absolutely love that language, (in fact, it’s my favourite language at the moment); it’s not Nim’s fault that most—if not <em>all</em>—cross platform GUI toolkits suck in one way or another (having been written in C++ is one major source of such suckage)). <sup id="fnref:lisp" role="doc-noteref"><a href="#fn:lisp" class="footnote">2</a></sup></p>
         <p>At this point, the needle of my stress-o-meter was already hovering in the orange zone. Luckily enough, I then found something interesting…</p>
         <h2 id="imgui-to-the-rescue">IMGUI to the rescue</h2>
         <p>I haven’t heard about immediate mode UIs (IMGUI) before, so in my initial excitement I thought this could be the answer to all my woes. For anyone not familiar with the concept, the general idea is that with an IMGUI the UI does not live in memory and manage it’s own state, as it is the case with traditional retained mode GUIs (RMGUI), but it gets “recreated” and redrawn on the fly on every frame at 60 FPS (or whatever your framerate is). From an implementation perspective, an IMGUI essentially boils down to one function per widget type, where that single function performs all duties related to the correct functioning of that particular widget (event handling, drawing, reporting the current state etc.) The construction of an IMGUI based UI thus becomes a series of simple function calls which makes it an attractive option from a simplicity and iteration speed standpoint. Also, because the whole interface gets fully redrawn on every frame, there’s no messing with dirty
@@ -187,13 +179,13 @@
           </li>
         </ul>
         <h3 id="exit-nanovg">Exit NanoVG</h3>
-        <p>The first problem was easy to fix. The abysmal performance had nothing to do with NanoVG or OpenGL, it was caused by the constant redrawing at 60 FPS. The solution was to redraw only when needed: as a quick hack I introduced a global boolean <code>doRedraw</code> and set it to true only when an input event was received or the internal application state had been changed (e.g. the framebuffer had been updated). Then the drawing would only happen when <code>doRedraw</code> was set to true. Surely this could be done in a nicer way, but the general concept would be the same.</p>
+        <p>The first problem was easy to fix. The abysmal performance had nothing to do with NanoVG or OpenGL, it was caused by the constant redrawing at 60 FPS. The solution was to redraw only when needed: as a quick hack I introduced a global boolean <code class="highlighter-rouge">doRedraw</code> and set it to true only when an input event was received or the internal application state had been changed (e.g. the framebuffer had been updated). Then the drawing would only happen when <code class="highlighter-rouge">doRedraw</code> was set to true. Surely this could be done in a nicer way, but the general concept would be the same.</p>
         <p>The second issue with text rendering was a harder nut to crack. NanoVG uses the tiny <a href="https://github.com/nothings/stb/blob/master/stb_truetype.h">stb_truetype</a> single-header C font rasterizer to create the font atlases used for text output. This is all well, but the quality at small font sizes is not that great at all (not great enough to annoy the hell out of me). NanoVG seems to have optional support for FreeType, but even if that works, it has only quite rudimentary support for handling text layouts (which is quite buggy, by the way). I really have zero inclination to neither start hacking the C code, nor come up with my own font layout engine… I know there’s stuff like <a href="http://www.pango.org/">Pango</a> and <a href="https://www.freedesktop.org/wiki/Software/HarfBuzz/">HarfBuzz</a>, but I really don’t want to <a href="https://signalvnoise.com/posts/3183-the-art-of-computer-typography">do a Donald E. Knuth</a> here and spend too much time on a problem
-        that has already been solved on the OS graphics library level in a perfectly satisfactory manner. I just want to call <code>drawText()</code> and be done with it!</p>
+        that has already been solved on the OS graphics library level in a perfectly satisfactory manner. I just want to call <code class="highlighter-rouge">drawText()</code> and be done with it!</p>
         <p>Alright, so OpenGL—and thus NanoVG—is not the way to go because of this whole text rendering fiasco… At this point, the progress of my adventures in the wonderful realm of cross-platform graphical user interfaces could be visualised pretty much spot on as follows:</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-05-29/fail.jpg" alt="FAIL" style="width: auto">
-          <figcaption style=" width: auto; text-align: center;">
+          <figcaption style="width: auto; text-align: center;">
             FAIL
           </figcaption>
         </figure>
@@ -239,7 +231,7 @@
         <p>I certainly don’t disagree with that! (so, in short, no thanks…)</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/reaper.png" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-05-29/reaper-small.jpg" alt="REAPER 5 screenshot showing the Funktion 1.0 skin" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             This is REAPER 5 in fullscreen mode, featuring the <a href="http://stash.reaper.fm/theme/1792/Funktion%201.0">Funktion 1.0</a> skin (designed by <em>yours truly</em>). Note the standard Windows menu bar on top.
           </figcaption>
         </figure>
@@ -276,7 +268,7 @@
         <p>Renoise is closed source, so unfortunately I could not inspect how they accomplished all this, but very likely they had to come up with their own UI and graphics wrappers to maintain a single codebase for all three platforms.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/renoise.png" data-width="1920" data-height="1080"><img src="https://blog.johnnovak.net/files/2016-05-29/renoise-small.jpg" alt="Renoise 3 screenshot" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Renoise 3 in fullscreen. Everything is custom drawn, such as the menu bar and the preferences dialog in the middle of the screen. Again, the nice looking theme is yet another project of mine.
           </figcaption>
         </figure>
@@ -306,13 +298,13 @@
         <p>The JUCE library is available for free for non-commercial open-source projects, but a commercial license will make the wallets of enterprising developers exactly $999 lighter.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/tracktion7.jpg" data-width="1800" data-height="1013"><img src="https://blog.johnnovak.net/files/2016-05-29/tracktion7-small.jpg" alt="Tracktion 7 screenshot, big screen" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Tracktion 7 in it's fully anti-aliased single-window glory. Previous versions might have looked somewhat less sleek, but the UI was designed to be highly scalable right from the very first release.
           </figcaption>
         </figure>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres.jpg" data-width="950" data-height="722"><img src="https://blog.johnnovak.net/files/2016-05-29/tracktion7-lowres-small.jpg" alt="Tracktion 7 screenshot, small screen" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Still Tracktion 7, but now on a smaller screen. Contrast this screenshot with the one above: all common UI elements are still there but their sizes are vastly different. Tracktion has the most adaptable dynamic interface of all applications presented in this article, thanks to JUCE's extensive anti-aliased vector graphics support.
           </figcaption>
         </figure>
@@ -355,7 +347,7 @@
         <p>In theory, it would be possible to re-use Blender’s cross-platform UI layer written in C in other applications, but because its tight coupling to Blender’s internals, no one has been able to do so yet in practice.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/blender.jpg" data-width="1920" data-height="1200"><img src="https://blog.johnnovak.net/files/2016-05-29/blender-small.jpg" alt="Blender screenshot" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Blender's OpenGL-based interface is quite sleek and modern looking. Notice the semi-transparent widgets on top of the 3D views. Nifty.
           </figcaption>
         </figure>
@@ -365,7 +357,7 @@
         <p>It seems that similarly to REAPER, Cinema 4D uses native graphics and text rendering to draw its UI, probably via some custom wrapper libraries.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/cinema4d.png" data-width="2880" data-height="1714"><img src="https://blog.johnnovak.net/files/2016-05-29/cinema4d-small.jpg" alt="Cinema 4D screenshot" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             Cinema 4D on a Retina display MacBook Pro. Note that the fonts and the big icons are shown at actual pixel resolution, while the rest of the UI is rendered with double-sized (2x2) pixels.
           </figcaption>
         </figure>
@@ -407,7 +399,7 @@
         <p>In conclusion, while Java is certainly not the most terrible choice for a cross-platform GUI app, it’s far from being the greatest either. For some less demanding software, such as NodeBox, it may be an OK solution, but I’m really averse to the idea of a DAW written in Java where every little bit of performance counts.</p>
         <figure class="image">
           <a class="largeimg" href="https://blog.johnnovak.net/files/2016-05-29/nodebox.png" data-width="1100" data-height="800"><img src="https://blog.johnnovak.net/files/2016-05-29/nodebox-small.jpg" alt="NodeBox3 screenshot" style="width: 100%"></a>
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             NodeBox3 has a pleasant looking GUI built using Swing that looks identical on all supported platforms. UI redraws are noticeably sluggish even on fast computers compared to native applications that use OS level graphics APIs directly.
           </figcaption>
         </figure>
@@ -533,17 +525,17 @@
         <p>Time to get serious!</p>
         <figure class="image">
           <img src="https://blog.johnnovak.net/files/2016-05-29/fuck-everything.jpg" alt="Fuck everything" style="width: 100%">
-          <figcaption style=" width: 100%;">
+          <figcaption style="width: 100%;">
             The above fine faux-leather jacket wearing gentleman already knows the secret: Qt is not the answer to everything.
           </figcaption>
         </figure>
-        <div class="footnotes">
+        <div class="footnotes" role="doc-endnotes">
           <ol>
-            <li id="fn:bullshit">
-              <p>The last three new age wisdoms courtesy of the <a href="http://wisdomofchopra.com/">Wisdom of Chopra</a> bullshit generator. <a href="#fnref:bullshit" class="reversefootnote">↩</a></p>
+            <li id="fn:bullshit" role="doc-endnote">
+              <p>The last three new age wisdoms courtesy of the <a href="http://wisdomofchopra.com/">Wisdom of Chopra</a> bullshit generator.&nbsp;<a href="#fnref:bullshit" class="reversefootnote" role="doc-backlink">↩</a></p>
             </li>
-            <li id="fn:lisp">
-              <p>Note the nested parentheses—a true tell-tale sign of my latent LISP tendencies! <a href="#fnref:lisp" class="reversefootnote">↩</a></p>
+            <li id="fn:lisp" role="doc-endnote">
+              <p>Note the nested parentheses—a true tell-tale sign of my latent LISP tendencies!&nbsp;<a href="#fnref:lisp" class="reversefootnote" role="doc-backlink">↩</a></p>
             </li>
           </ol>
         </div>
