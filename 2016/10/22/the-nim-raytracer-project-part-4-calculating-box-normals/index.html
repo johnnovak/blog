@@ -1,82 +1,123 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+
 <head>
-  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
   <meta name="description" content="Personal blog of John Novak">
   <meta name="author" content="John Novak">
   <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
-  <title>The Nim Ray Tracer Project – Part 4: Calculating Box Normals</title>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;display=swap" rel="stylesheet"><!--Source Sans Pro is required for the SVG images only -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Astloch&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&amp;display=swap" rel="stylesheet">
+
+  <title>The Nim Ray Tracer Project &ndash; Part 4: Calculating Box Normals</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel="stylesheet">
+
+  <!--Source Sans Pro is required for the SVG images only -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
+
   <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script>
+  <!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
 </head>
+
 <body>
   <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
+
   <div id="wrapper">
+
     <header id="header">
-      <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
-      <p class="tagline">Riding on the tail of the<br>
-      Gaussian curve<br>
-      since 1979</p>
+      <div id="header-bg"></div>
+      <a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
+      <p class="tagline">Riding on the tail of the<br> Gaussian curve<br> since 1979</p>
+
       <nav>
         <ul>
-          <li>
-            <a href="https://blog.johnnovak.net/about/">About</a>
-          </li>
-          <li>
-            <a href="https://blog.johnnovak.net/archives/">Archives</a>
-          </li>
-          <li>
-            <a href="https://blog.johnnovak.net/tags/">Tags</a>
-          </li>
-          <li class="last">
-            <a href="https://blog.johnnovak.net/feed.xml">Rss</a>
-          </li>
+          <li><a href="https://blog.johnnovak.net/about/">About</a></li>
+          <li><a href="https://blog.johnnovak.net/archives/">Archives</a></li>
+          <li><a href="https://blog.johnnovak.net/tags/">Tags</a></li>
+          <li class="last"><a href="https://blog.johnnovak.net/feed.xml">Rss</a></li>
         </ul>
       </nav>
     </header>
+
     <div role="main">
-      <article class="post">
-        <header>
-          <h1><a href="https://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/">The Nim Ray Tracer Project – Part 4: Calculating Box Normals</a></h1>
-          <p class="date"><time datetime="2016-10-22">2016 Oct 22</time></p>
-        </header>
-        <nav class="tags">
-          <ul>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
-            </li>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/ray%20tracing/">ray tracing</a>
-            </li>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/nim/">nim</a>
-            </li>
-          </ul>
-        </nav>
-        <p class="intro">[I’ve been listening to <em>Shadows of the Heart</em> from <em>Dan Pound</em> all week, it’s just the perfect definition of ambient that, <a href="http://music.hyperreal.org/artists/brian_eno/MFA-txt.html">according to Brian Eno</a>, “must be as ignorable as it is interesting”. No track highlights this time, this is really meant to be listened to from beginning to end, over and over again; it’s one singular 55-minute piece of soothing ambient symphony!]</p>
-        <p>I needed a way to calculate normals for the box primitive in my ray tracer. Of course, this is trivial if the boxes are represented as a triangle meshes with stored per vertex normals—just use the triangle intersection routine and job done! Interestingly, all online resources I could find either suggest this approach or some naive algorithm that intersects the ray with all the six planes that define the box… Ughh, we can certainly do better than that!</p>
-        <p>First of all, because we’re not dealing with arbitrary boxes in 3D space here, we can make certain optimisations. For my case, I wanted to be able to calculate the normals for <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">axis-aligned bounded boxes</a> (AABBs) only that are defined just by their two diagonally opposite points.</p>
-        <p>Why just AABBs? What about boxes that are not parallel to the axes? Well, the way I’m doing things is that the final world position of an object is described by its <code class="highlighter-rouge">objectToWorld</code> transform matrix that can include rotation as well. Using AABBs for boxes, unit spheres for spheres etc. simplifies the intersection routines a lot (makes them faster to calculate). Then during rendering, I’m using the inverse transform <code class="highlighter-rouge">worldToObject</code> to transform the ray to object space and do the intersection there<sup id="fnref:intersect" role="doc-noteref"><a href="#fn:intersect" class="footnote">1</a></sup>. This method is <em>vastly</em> more efficient for triangle meshes as well—we only need to inverse transform a single ray instead of transforming potentially thousands or millions of triangles!</p>
-        <p>This is how our geometry definitions look like in Nim (we’re using <a href="https://github.com/stavenko/nim-glm">nim-glm</a> for the vector maths stuff). We’re going to use AABBs later for constructing <a href="https://en.wikipedia.org/wiki/Bounding_volume_hierarchy">bounding volume hierarchies</a> (BVH) as well, hence the separate <code class="highlighter-rouge">AABB</code> and <code class="highlighter-rouge">Box</code> types.</p>
-        <figure class="highlight">
-          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">import</span> <span class="n">glm</span>
+
+
+
+<article class="post">
+  <header>
+    <h1><a href="https://blog.johnnovak.net/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/">The Nim Ray Tracer Project &ndash; Part 4: Calculating Box Normals</a></h1>
+    <p class="date"><time datetime="2016-10-22">2016 Oct 22</time></p>
+  </header>
+
+  
+    <nav class="tags">
+      <ul>
+      
+        <li><a href="https://blog.johnnovak.net/tag/graphics/">graphics</a></li>
+      
+        <li><a href="https://blog.johnnovak.net/tag/ray tracing/">ray tracing</a></li>
+      
+        <li><a href="https://blog.johnnovak.net/tag/nim/">nim</a></li>
+      
+      </ul>
+    </nav>
+  
+
+  <p class="intro">[I’ve been listening to <em>Shadows of the Heart</em> from <em>Dan Pound</em> all week, it’s
+just the perfect definition of ambient that, <a href="http://music.hyperreal.org/artists/brian_eno/MFA-txt.html">according to Brian
+Eno</a>, “must be as
+ignorable as it is interesting”. No track highlights this time, this is really
+meant to be listened to from beginning to end, over and over again; it’s one
+singular 55-minute piece of soothing ambient symphony!]</p>
+
+<p>I needed a way to calculate normals for the box primitive in my ray tracer.
+Of course, this is trivial if the boxes are represented as a triangle meshes
+with stored per vertex normals—just use the triangle intersection routine
+and job done! Interestingly, all online resources I could find either suggest
+this approach or some naive algorithm that intersects the ray with all the six
+planes that define the box… Ughh, we can certainly do better than that!</p>
+
+<p>First of all, because we’re not dealing with arbitrary boxes in 3D space here,
+we can make certain optimisations. For my case, I wanted to be able to
+calculate the normals for <a href="https://en.wikipedia.org/wiki/Minimum_bounding_box#Axis-aligned_minimum_bounding_box">axis-aligned bounded
+boxes</a>
+(AABBs) only that are defined just by their two diagonally opposite points.</p>
+
+<p>Why just AABBs? What about boxes that are not parallel to the axes? Well, the
+way I’m doing things is that the final world position of an object is
+described by its <code class="highlighter-rouge">objectToWorld</code> transform matrix that can include rotation as
+well. Using AABBs for boxes, unit spheres for spheres etc. simplifies the
+intersection routines a lot (makes them faster to calculate). Then during
+rendering, I’m using the inverse transform <code class="highlighter-rouge">worldToObject</code> to transform the
+ray to object space and do the intersection there<sup id="fnref:intersect" role="doc-noteref"><a href="#fn:intersect" class="footnote">1</a></sup>. This method is
+<em>vastly</em> more efficient for triangle meshes as well—we only need to inverse
+transform a single ray instead of transforming potentially thousands or
+millions of triangles!</p>
+
+<p>This is how our geometry definitions look like in Nim (we’re using
+<a href="https://github.com/stavenko/nim-glm">nim-glm</a> for the vector maths stuff).
+We’re going to use AABBs later for constructing <a href="https://en.wikipedia.org/wiki/Bounding_volume_hierarchy">bounding volume
+hierarchies</a>  (BVH)
+as well, hence the separate <code class="highlighter-rouge">AABB</code> and <code class="highlighter-rouge">Box</code> types.</p>
+
+<figure class="highlight"><pre><code class="language-nimrod" data-lang="nimrod"><span class="k">import</span> <span class="n">glm</span>
 
 <span class="k">type</span>
   <span class="n">AABB</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
@@ -94,34 +135,84 @@
     <span class="k">discard</span>
 
   <span class="n">Box</span><span class="o">*</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span> <span class="k">of</span> <span class="n">Geometry</span>
-    <span class="n">aabb</span><span class="o">*</span><span class="p">:</span> <span class="n">AABB</span></code></pre>
-        </figure>
-        <h2 id="box-normal-algorithm">Box normal algorithm</h2>
-        <p>We’ll solve the problem for the unit cube first, then we’ll find a way to map the solution from an arbitrary AABB to the unit cube. For the sake of simplicity, we’re going to illustrate the basic algorithm in 2D only; extending it to 3D is trivial.</p>
-        <h3 id="solution-for-the-unit-cube">Solution for the unit cube</h3>
-        <p>Consider the blue $P$ points that lie on the rectangle in Figure 1. By looking at the vectors pointing to these points (blue arrows), we can make the observation that by taking the integer parts of the vectors’ coordinates (<em>not</em> rounding!), we would get the normals we’re after (green arrows). And that’s it!</p>
-        <figure class="image">
-          <object data="/files/2016-10-22/box-normals.svg" type="image/svg+xml" style="width: 100%">
-          </object>
-          <figcaption style="text-align: center;">
-            Figure 1 — Calculating normals for the unit rectangle in 2D. The vectors pointing to the blue points P are the hit points, and the green vectors N the corresponding normals.
-          </figcaption>
-        </figure>
-        <p>There are some complications though. This approach yields perfectly correct results for $P_1$, $P_2$ and $P_3$, but for $P_4$ we’d get $(1, -1)$, which firstly is not a normal, and secondly, is diagonal. Strictly speaking, the diagonal-ness is a bit incorrect, although it can be argued that the normals are “undefined” at the corners, thus the diagonal could as well be accepted as a valid answer. Either way, in practice this won’t make any difference—we will very rarely hit the corners exactly, and even if we did, the “degenerate” normals will be averaged out with the “normal” ones during multi-sampling. We just need to normalise our resulting vector after the integer truncation to ensure that the length is always 1.</p>
-        <p>Of course, we can always put a few if statements at the end to filter out the diagonals, but that would make the whole algorithm slower. It’s also worth mentioning that in 3D we will have edge cases too in addition to the corner cases (no pun intended).</p>
-        <h3 id="solution-for-arbitrary-aabbs">Solution for arbitrary AABBs</h3>
-        <p>Mapping the problem from an AABB to the unit cube is basically a translation and scaling exercise. Our AABB is defined by its two diagonally opposite points, $V_{\min}$ and $V_{\max}$, from which we can easily calculate its centre point $C$ (now in 3D):</p>
-        <p>$$ C=⟨{V_{\min_\x} + V_{\max_\x}} / 2, {V_{\min_\y} + V_{\max_\y}} / 2, {V_{\min_\z} + V_{\max_\z}} / 2⟩$$</p>
-        <p>Next, we’ll calculate the vector $p↖{→}$ that points from the centre point to the hit point $P_{\hit}$:</p>
-        <p>$$ p↖{→} = P_{\hit} - C $$</p>
-        <p>This vector corresponds to the blue vectors in Figure 1. What we need to do next is map $p↖{→}$ to the unit cube by calculating divisor values for each of its dimensions:</p>
-        <p>$$ \d_x = {\abs(V_{\min_\x}-V_{\max_\x})} / 2 $$ $$ \d_y = {\abs(V_{\min_\y}-V_{\max_\y})} / 2 $$ $$ \d_z = {\abs(V_{\min_\z}-V_{\max_\z})} / 2 $$</p>
-        <p>From $p↖{→}$ and the scalar divisors $\d_x$, $\d_y$ and $\d_z$ we can calculate the normal $n↖{→}$ at the hit point (the green vectors in Figure 1):</p>
-        <p>$$ n↖{→} = ⟨\int(p_\x / \d_x), \int(p_\y / \d_y), \int(p_\z / \d_z)⟩ $$</p>
-        <h2 id="implementation">Implementation</h2>
-        <p>Okay, time to have a look at some Nim code! This is a slightly optimised version of the above algorithm:</p>
-        <figure class="highlight">
-          <pre><code class="language-nimrod" data-lang="nimrod"><span class="k">method</span> <span class="n">normal</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">hit</span><span class="p">:</span> <span class="n">Vec4</span><span class="o">[</span><span class="kt">float</span><span class="o">]</span><span class="p">):</span> <span class="n">Vec4</span><span class="o">[</span><span class="kt">float</span><span class="o">]</span> <span class="o">=</span>
+    <span class="n">aabb</span><span class="o">*</span><span class="p">:</span> <span class="n">AABB</span></code></pre></figure>
+
+<h2 id="box-normal-algorithm">Box normal algorithm</h2>
+
+<p>We’ll solve the problem for the unit cube first, then we’ll find a way to map
+the solution from an arbitrary AABB to the unit cube.  For the sake of
+simplicity, we’re going to illustrate the basic algorithm in 2D only;
+extending it to 3D is trivial.</p>
+
+<h3 id="solution-for-the-unit-cube">Solution for the unit cube</h3>
+
+<p>Consider the blue $P$ points that lie on the rectangle in Figure 1. By
+looking at the vectors pointing to these points (blue arrows), we can make the
+observation that by taking the integer parts of the vectors’ coordinates
+(<em>not</em> rounding!), we would get the normals we’re after (green arrows). And
+that’s it!</p>
+
+<figure class="image">
+  
+  <object data="/files/2016-10-22/box-normals.svg" type="image/svg+xml" style="width: 100%"></object>
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 1 &mdash; Calculating normals for the unit rectangle in 2D. The vectors pointing to the blue points P are the hit points, and the green vectors N the corresponding normals.</figcaption>
+  
+</figure>
+
+<p>There are some complications though. This approach yields perfectly correct
+results for $P_1$, $P_2$ and $P_3$, but for $P_4$ we’d get $(1,
+-1)$, which firstly is not a normal, and secondly, is diagonal. Strictly
+speaking, the diagonal-ness is a bit incorrect, although it can be argued that
+the normals are “undefined” at the corners, thus the diagonal could as
+well be accepted as a valid answer. Either way, in practice this won’t make
+any difference—we will very rarely hit the corners exactly, and even if we
+did, the “degenerate” normals will be averaged out with the “normal” ones
+during multi-sampling. We just need to normalise our resulting vector after
+the integer truncation to ensure that the length is always 1.</p>
+
+<p>Of course, we can always put a few if statements at the end to filter out the
+diagonals, but that would make the whole algorithm slower. It’s also worth
+mentioning that in 3D we will have edge cases too in addition to the corner
+cases (no pun intended).</p>
+
+<h3 id="solution-for-arbitrary-aabbs">Solution for arbitrary AABBs</h3>
+
+<p>Mapping the problem from an AABB to the unit cube is basically a translation
+and scaling exercise. Our AABB is defined by its two diagonally opposite
+points, $V_{\min}$ and $V_{\max}$, from which we can easily calculate its
+centre point $C$ (now in 3D):</p>
+
+<p>$$ C=⟨{V_{\min_\x} + V_{\max_\x}} / 2, {V_{\min_\y} + V_{\max_\y}} / 2, {V_{\min_\z} + V_{\max_\z}} / 2⟩$$</p>
+
+<p>Next, we’ll calculate the vector $p↖{→}$ that points from the centre point to
+the hit point $P_{\hit}$:</p>
+
+<p>$$ p↖{→} = P_{\hit} - C $$</p>
+
+<p>This vector corresponds to the blue vectors in Figure 1. What we need to do
+next is map $p↖{→}$ to the unit cube by calculating divisor values
+for each of its dimensions:</p>
+
+<p>$$ \d_x = {\abs(V_{\min_\x}-V_{\max_\x})} / 2 $$
+$$ \d_y = {\abs(V_{\min_\y}-V_{\max_\y})} / 2 $$
+$$ \d_z = {\abs(V_{\min_\z}-V_{\max_\z})} / 2 $$</p>
+
+<p>From $p↖{→}$ and the scalar divisors $\d_x$, $\d_y$ and $\d_z$ we can
+calculate the normal $n↖{→}$ at the hit point (the green vectors in Figure
+1):</p>
+
+<p>$$ n↖{→} = ⟨\int(p_\x / \d_x), \int(p_\y / \d_y), \int(p_\z / \d_z)⟩ $$</p>
+
+<h2 id="implementation">Implementation</h2>
+
+<p>Okay, time to have a look at some Nim code!  This is a slightly optimised
+version of the above algorithm:</p>
+
+<figure class="highlight"><pre><code class="language-nimrod" data-lang="nimrod"><span class="k">method</span> <span class="n">normal</span><span class="o">*</span><span class="p">(</span><span class="n">b</span><span class="p">:</span> <span class="n">Box</span><span class="p">,</span> <span class="n">hit</span><span class="p">:</span> <span class="n">Vec4</span><span class="o">[</span><span class="kt">float</span><span class="o">]</span><span class="p">):</span> <span class="n">Vec4</span><span class="o">[</span><span class="kt">float</span><span class="o">]</span> <span class="o">=</span>
   <span class="k">let</span>
     <span class="n">c</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span><span class="p">.</span><span class="n">aabb</span><span class="p">.</span><span class="n">vmin</span> <span class="o">+</span> <span class="n">b</span><span class="p">.</span><span class="n">aabb</span><span class="p">.</span><span class="n">vmax</span><span class="p">)</span> <span class="o">*</span> <span class="mf">0.5</span>
     <span class="n">p</span> <span class="o">=</span> <span class="n">hit</span> <span class="o">-</span> <span class="n">c</span>
@@ -130,57 +221,118 @@
 
   <span class="n">result</span> <span class="o">=</span> <span class="n">vec</span><span class="p">(((</span><span class="n">p</span><span class="p">.</span><span class="n">x</span> <span class="o">/</span> <span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">bias</span><span class="p">).</span><span class="kt">int</span><span class="p">).</span><span class="kt">float</span><span class="p">,</span>
                <span class="p">((</span><span class="n">p</span><span class="p">.</span><span class="n">y</span> <span class="o">/</span> <span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">bias</span><span class="p">).</span><span class="kt">int</span><span class="p">).</span><span class="kt">float</span><span class="p">,</span>
-               <span class="p">((</span><span class="n">p</span><span class="p">.</span><span class="n">z</span> <span class="o">/</span> <span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">bias</span><span class="p">).</span><span class="kt">int</span><span class="p">).</span><span class="kt">float</span><span class="p">).</span><span class="n">normalize</span></code></pre>
-        </figure>
-        <p>Wait a minute, what’s that multiplier <code class="highlighter-rouge">bias</code> doing there? That, my friend, is <strong>the amount of difference between theory of practice</strong>. For educational purposes only, this is what we would get if we left it off:</p>
-        <figure class="image">
-          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" alt="Figure 2 — Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows." style="width: 100%"></a>
-          <figcaption style="text-align: center;">
-            Figure 2 — Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.
-          </figcaption>
-        </figure>
-        <p>Ooops, not exactly the result we were hoping for! What’s going on here? The problem is that because of floating point inaccuracies, our final coordinates that are supposed to be 1.0 will sometimes end up being a bit less than that, say 0.999999994, and in the final casting to int step they will become 0 instead of 1. To fix this, we’ll need to nudge the points a tiny bit outwards by scaling them up by a multiplicative epsilon value. The good news is that this bias value doesn’t have to be terribly accurate; we’re going to truncate the decimals away anyway. With this fix in place, we’ll get the correct results:</p>
-        <figure class="image">
-          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" alt="Figure 3 — Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good." style="width: 100%"></a>
-          <figcaption style="text-align: center;">
-            Figure 3 — Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.
-          </figcaption>
-        </figure>
-        <h2 id="correctness-vs-real-life">Correctness vs real life</h2>
-        <p>As I explained above, although this fast normal calculation method can be considered incorrect by the mathematician types (and perhaps it is, I don’t know for sure), it seems to work perfectly fine for practical purposes. At least, I couldn’t spot any unwanted artefacts on my test renders, and theoretically, there’s very little chance to run into those diagonal normals, and even then, their contribution to the final image would be minimal.</p>
-        <p>In parting, here is a more complex scene to prove my point. If anyone is aware of a situation where this algorithm could cause problems, I am interested to hear about it though!</p>
-        <figure class="image">
-          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/cube.png" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-10-22/cube.png" alt="" style="width: 100%"></a>
-          <figcaption style="text-align: center;">
-            Figure 4 — A cube made up of 64 smaller cubes. Even with our slightly “incorrect” normal calculation method, no weird artifacts can be observed whatsoever.
-          </figcaption>
-        </figure>
-        <div class="footnotes" role="doc-endnotes">
-          <ol>
-            <li id="fn:intersect" role="doc-endnote">
-              <p>Transforming the <em>object to world space</em> with the object-to-world matrix and intersecting it with the world space ray is mathematically equivalent to transforming the <em>ray to object space</em> with the world-to-object matrix (which is the simple matrix inverse of the object-to-world matrix) and doing the intersection there. I’m saying “mathematically” because due to floating point inaccuracies the two methods won’t yield exactly identical results. But the ray-to-object-space way actually keeps the relative error smaller and more uniform—as long as the object space coordinates have similar scale and are centred around the origin.&nbsp;<a href="#fnref:intersect" class="reversefootnote" role="doc-backlink">↩</a></p>
-            </li>
-          </ol>
-        </div>
-        <section class="comments">
-          <h2>Comments</h2><noscript>
-          <p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
-          <div id="disqus_thread"></div>
-          <script type="text/javascript">
-          var disqus_shortname = "johnnovak";
-          var disqus_identifier = "/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/";
-          var disqus_title = "The Nim Ray Tracer Project &ndash; Part 4: Calculating Box Normals";
-          var disqus_url = "https://blog.johnnovak.net//2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/";
+               <span class="p">((</span><span class="n">p</span><span class="p">.</span><span class="n">z</span> <span class="o">/</span> <span class="n">abs</span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="n">bias</span><span class="p">).</span><span class="kt">int</span><span class="p">).</span><span class="kt">float</span><span class="p">).</span><span class="n">normalize</span></code></pre></figure>
 
-          (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-        </section>
-      </article>
+<p>Wait a minute, what’s that multiplier <code class="highlighter-rouge">bias</code> doing there? That, my friend, is
+<strong>the amount of difference between theory of practice</strong>. For educational
+purposes only, this is what we would get if we left it off:</p>
+
+<figure class="image">
+  
+    
+      <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" data-width="1200" data-height="800">
+        <img src="https://blog.johnnovak.net/files/2016-10-22/boxes-bad.png" alt="Figure 2 &mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows." style="width: 100%" />
+      </a>
+    
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 2 &mdash; Boxes rendered with our box normal method omitting the bias multiplier. Due to floating point inaccuracies, we can observe something akin to the self-shadowing phenomena when calculating ray traced shadows.</figcaption>
+  
+</figure>
+
+<p>Ooops, not exactly the result we were hoping for! What’s going on here? The
+problem is that because of floating point inaccuracies, our final coordinates
+that are supposed to be 1.0 will sometimes end up being a bit less than that,
+say 0.999999994, and in the final casting to int step they will become
+0 instead of 1. To fix this, we’ll need to nudge the points a tiny bit
+outwards by scaling them up by a multiplicative epsilon value. The good news
+is that this bias value doesn’t have to be terribly accurate; we’re going to
+truncate the decimals away anyway. With this fix in place, we’ll get the
+correct results:</p>
+
+<figure class="image">
+  
+    
+      <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" data-width="1200" data-height="800">
+        <img src="https://blog.johnnovak.net/files/2016-10-22/boxes-ok.png" alt="Figure 3 &mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good." style="width: 100%" />
+      </a>
+    
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 3 &mdash; Boxes rendered with our box normal method; this time applying the bias multiplier. No weird artefacts can be observed, everything is looking good.</figcaption>
+  
+</figure>
+
+<h2 id="correctness-vs-real-life">Correctness vs real life</h2>
+
+<p>As I explained above, although this fast normal calculation method can be
+considered incorrect by the mathematician types (and perhaps it is, I don’t
+know for sure), it seems to work perfectly fine for practical purposes. At
+least, I couldn’t spot any unwanted artefacts on my test renders, and
+theoretically, there’s very little chance to run into those diagonal normals,
+and even then, their contribution to the final image would be minimal.</p>
+
+<p>In parting, here is a more complex scene to prove my point.  If anyone is
+aware of a situation where this algorithm could cause problems, I am
+interested to hear about it though!</p>
+
+<figure class="image">
+  
+    
+      <a class="largeimg" href="https://blog.johnnovak.net/files/2016-10-22/cube.png" data-width="1200" data-height="800">
+        <img src="https://blog.johnnovak.net/files/2016-10-22/cube.png" alt="" style="width: 100%" />
+      </a>
+    
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 4 &mdash; A cube made up of 64 smaller cubes. Even with our slightly &ldquo;incorrect&rdquo; normal calculation method, no weird artifacts can be observed whatsoever.</figcaption>
+  
+</figure>
+
+<div class="footnotes" role="doc-endnotes">
+  <ol>
+    <li id="fn:intersect" role="doc-endnote">
+      <p>Transforming the <em>object to world space</em> with the object-to-world matrix and intersecting it with the world space ray is mathematically equivalent to transforming the <em>ray to object space</em> with the world-to-object matrix (which is the simple matrix inverse of the object-to-world matrix) and doing the intersection there. I’m saying “mathematically” because due to floating point inaccuracies the two methods won’t yield exactly identical results. But the ray-to-object-space way actually keeps the relative error smaller and more uniform—as long as the object space coordinates have similar scale and are centred around the origin. <a href="#fnref:intersect" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
+    </li>
+  </ol>
+</div>
+
+
+  <section class="comments">
+
+  <h2>Comments</h2>
+
+  <noscript><p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "johnnovak";
+    var disqus_identifier = "/2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/";
+    var disqus_title = "The Nim Ray Tracer Project &ndash; Part 4: Calculating Box Normals";
+    var disqus_url = "https://blog.johnnovak.net//2016/10/22/the-nim-raytracer-project-part-4-calculating-box-normals/";
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+</section>
+
+</article>
+
+
+
     </div>
   </div>
 </body>
 </html>
+
+
+

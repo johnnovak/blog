@@ -1,238 +1,494 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
+
 <head>
-  <meta name="generator" content="HTML Tidy for HTML5 for Linux version 5.6.0">
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
   <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
   <meta name="description" content="Personal blog of John Novak">
   <meta name="author" content="John Novak">
   <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
-  <title>The Nim Ray Tracer Project – Part 2: The Basics</title>
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&amp;display=swap" rel="stylesheet"><!--Source Sans Pro is required for the SVG images only -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=Astloch&amp;display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&amp;display=swap" rel="stylesheet">
+
+  <title>The Nim Ray Tracer Project &ndash; Part 2: The Basics</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"> 
+  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel="stylesheet">
+
+  <!--Source Sans Pro is required for the SVG images only -->
+  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
+
+  <link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
+
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
   <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
+
   <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
   <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script><!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script>
+  <!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
+
   <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
 </head>
+
 <body>
   <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
+
   <div id="wrapper">
+
     <header id="header">
-      <div id="header-bg"></div><a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
-      <p class="tagline">Riding on the tail of the<br>
-      Gaussian curve<br>
-      since 1979</p>
+      <div id="header-bg"></div>
+      <a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
+      <p class="tagline">Riding on the tail of the<br> Gaussian curve<br> since 1979</p>
+
       <nav>
         <ul>
-          <li>
-            <a href="https://blog.johnnovak.net/about/">About</a>
-          </li>
-          <li>
-            <a href="https://blog.johnnovak.net/archives/">Archives</a>
-          </li>
-          <li>
-            <a href="https://blog.johnnovak.net/tags/">Tags</a>
-          </li>
-          <li class="last">
-            <a href="https://blog.johnnovak.net/feed.xml">Rss</a>
-          </li>
+          <li><a href="https://blog.johnnovak.net/about/">About</a></li>
+          <li><a href="https://blog.johnnovak.net/archives/">Archives</a></li>
+          <li><a href="https://blog.johnnovak.net/tags/">Tags</a></li>
+          <li class="last"><a href="https://blog.johnnovak.net/feed.xml">Rss</a></li>
         </ul>
       </nav>
     </header>
-    <div role="main">
-      <article class="post">
-        <header>
-          <h1><a href="https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/">The Nim Ray Tracer Project – Part 2: The Basics</a></h1>
-          <p class="date"><time datetime="2016-04-30">2016 Apr 30</time></p>
-        </header>
-        <nav class="tags">
-          <ul>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/graphics/">graphics</a>
-            </li>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/ray%20tracing/">ray tracing</a>
-            </li>
-            <li>
-              <a href="https://blog.johnnovak.net/tag/nim/">nim</a>
-            </li>
-          </ul>
-        </nav>
-        <p class="intro">[I have to tell that even after 34 years, <em>Brian Eno</em>’s ambient music is still so much better than 99.9999% of all recent electronic releases. Listening to <em>Ambient 4: On Land</em> from 1982; track #2 <em>The Lost Day</em> has a wonderfully creepy atmosphere…]</p>
-        <p id="toc-header">Table of contents</p>
-        <ul id="markdown-toc">
-          <li>
-            <a href="#the-basics" id="markdown-toc-the-basics">The Basics</a>
-            <ul>
-              <li>
-                <a href="#coordinate-system" id="markdown-toc-coordinate-system">Coordinate system</a>
-              </li>
-              <li>
-                <a href="#notation" id="markdown-toc-notation">Notation</a>
-              </li>
-              <li>
-                <a href="#transform-matrices" id="markdown-toc-transform-matrices">Transform matrices</a>
-                <ul>
-                  <li>
-                    <a href="#translation-and-scaling" id="markdown-toc-translation-and-scaling">Translation and scaling</a>
-                  </li>
-                  <li>
-                    <a href="#rotation-around-a-given-axis" id="markdown-toc-rotation-around-a-given-axis">Rotation around a given axis</a>
-                  </li>
-                </ul>
-              </li>
-              <li>
-                <a href="#calculating-primary-rays" id="markdown-toc-calculating-primary-rays">Calculating primary rays</a>
-              </li>
-              <li>
-                <a href="#ray-sphere-intersection" id="markdown-toc-ray-sphere-intersection">Ray-sphere intersection</a>
-              </li>
-              <li>
-                <a href="#ray-plane-intersection" id="markdown-toc-ray-plane-intersection">Ray-plane intersection</a>
-              </li>
-            </ul>
-          </li>
-          <li>
-            <a href="#in-the-next-episode" id="markdown-toc-in-the-next-episode">In the next episode…</a>
-          </li>
-          <li>
-            <a href="#suggested-reading" id="markdown-toc-suggested-reading">Suggested reading</a>
-          </li>
-        </ul>
-        <h2 id="the-basics">The Basics</h2>
-        <p>Hello again! In the <a href="/2016/04/28/the-nim-raytracer-project-part-1-introduction/">initial post</a> of this series I talked about ray tracing in general and my reasons for writing my own ray tracing renderer in the most awesome <a href="http://nim-lang.org/">Nim</a> language. Before writing any code though, in this part we’ll examine the basic maths required for such a renderer.</p>
-        <p>Most of this stuff is a distilled version of the information contained in the excellent <a href="http://www.scratchapixel.com/">Scratchapixel 2.0 – Learn Computer Graphics Programming from Scratch</a> learning resource, which I highly recommend to all graphics programming enthusiasts. There’s absolutely zero point in recreating the superb explanations from those lessons here, so just go and read the original materials if you’re interested.</p>
-        <p>My only problem with Scratchapixel was that while the content is generally of very high quality, the mathematical notation they use is sometimes a bit sloppy and a few formulas are actually incorrect (just a <em>very few</em>, to be fair). I tried to supplement Scratchapixel with other random learning materials found on the Internet but that also proved to be problematic because of the slightly different notational conventions and assumptions of different authors (e.g. some people assume a right-handed while others a left-handed coordinate system, maths folks like their z-axis to point upwards, but in computer graphics that’s usually the y-axis and the z-axis points towards the viewer, then there’s the difference between row and column vector notation and so on). While these differences might be laughably trivial to a mathematician or to someone who is already pretty familiar with the subject, they can surely confuse the hell out of a newcomer, like myself (or maybe I just
-        get confused too easily, that might very well be the case…).</p>
-        <p>I’m not exactly the biggest fan of littering the source code with page-long explanatory comments either, so all my development notes will end up in these blog posts. That way I will have at least a remote chance of understanding what the hell I was doing here a couple of years down the track, and maybe others will find my development diary also useful (or amusing, depending on their perspective…).</p>
-        <p>Alright, let’s get down to business!</p>
-        <h3 id="coordinate-system">Coordinate system</h3>
-        <p>We are going to use a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system#In_three_dimensions">right-handed Cartesian coordinate system</a> to represents objects in our 3D world, where the <em>y-axis</em> points up, the <em>x-axis</em> to the right and the <em>z-axis</em> “outward”. In right-handed coordinate systems, positive rotation is <a href="https://www.evl.uic.edu/ralph/508S98/coordinates.html">counter-clockwise</a> about the axis of rotation.</p>
-        <figure class="image">
-          <object data="/files/2016-04-30/coordinate-system.svg" type="image/svg+xml" style="width: 100%">
-          </object>
-          <figcaption style="text-align: center;">
-            Figure 1 — The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.
-          </figcaption>
-        </figure>
-        <p>The choice of coordinate system handedness is nothing more than a convention: DirectX, Unity, Maya and Pixar’s RenderMan use left-handed coordinate systems, while OpenGL, <a href="http://www.pbrt.org/">pbrt</a> and most other 3D modelling software are right-handed. For our purposes, compatibility with OpenGL and pbrt are the most important. Also, right-handed coordinate systems are the norm in mathematics, which will also make life a bit easier.</p>
-        <h3 id="notation">Notation</h3>
-        <p>As I mentioned, the aim is to use a consistent mathematical notation throughout the whole series, so let’s define that first!</p>
-        <p>$$\cl"ma-legend-align"{\table f, \text"scalar"; P, \text"point"; (P_x, P_y, P_z), \text"point (by coordinates)"; \AB, \text"segment"; v↖{→}, \text"vector"; ⟨\v_\x, \v_\y, \v_\z⟩, \text"vector (by coordinates)"; n↖{∧}, \text"unit vector)"; {‖v↖{→}‖}, \text"magnitude (length) of vector"; a↖{→}·b↖{→}, \text"dot product"; a↖{→}×b↖{→}, \text"cross product"; \bo M, \text"matrix"; }$$</p>
-        <p>Column notation is used for vectors:</p>
-        <p>$$ v↖{→}=[\table x; y; z; w; ] $$</p>
-        <p class="note">If the formulas look like crap in your browser, that means it sadly doesn’t support MathML. Solution? Use a better browser, like <a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a>.</p>
-        <h3 id="transform-matrices">Transform matrices</h3>
-        <p>All the matrix stuff will be eventually handled by a <a href="https://github.com/stavenko/nim-glm">matrix library</a> written by someone else, but it’s still useful to know how these transforms look like in our right-handed coordinate system (for example, for performance purposes we might hand-code some optimised versions of these transforms later).</p>
-        <h4 id="translation-and-scaling">Translation and scaling</h4>
-        <p>$$\bo T=[\table 1, 0, 0, t_x; 0, 1, 0, t_y; 0, 0, 1, t_z; 0, 0, 0, 1; ] \;\;\;\;\;\;\bo S=[\table s_x, 0, 0, 0; 0, s_y, 0, 0; 0, 0, s_z, 0; 0, 0, 0, 1; ]$$</p>
-        <h4 id="rotation-around-a-given-axis">Rotation around a given axis</h4>
-        <p>$$\bo R_\x=[\table 1, 0, 0, 0; 0, \cos θ, -\sin θ, 0; 0, \sin θ, \cos θ, 0; 0, 0, 0, 1; ] \;\;\;\;\;\;\bo R_\y=[\table \cos θ, 0, \sin θ, 0; 0, 1, 0, 0; -\sin θ, 0, \cos θ, 0; 0, 0, 0, 1; ]$$</p>
-        <p>$$\bo R_\z=[\table \cos θ, -\sin θ, 0, 0; \sin θ, \cos θ, 0, 0; 0, 0, 1, 0; 0, 0, 0, 1; ]$$</p>
-        <h3 id="calculating-primary-rays">Calculating primary rays</h3>
-        <p>Let $(P_x, P_y)$ be the <strong>pixel coordinates</strong> of a pixel of the final image, $w$ and $h$ the width and the height of the image in pixels and $r = w / h$ the image aspect ratio.</p>
-        <figure class="image">
-          <object data="/files/2016-04-30/mappings.svg" type="image/svg+xml" style="width: 100%">
-          </object>
-          <figcaption style="width: 100%; text-align: center;">
-            Figure 2 — The relationships between the raster, NDC and screen spaces.
-          </figcaption>
-        </figure>
-        <p>We have to shoot the rays through the middle of the pixels, thus the $(R_x, R_y)$ <strong>raster coordinates</strong> of a given pixel are as follows:</p>
-        <p>$$\cl"ma-join-align"{\table R_x ,= P_x + 0.5; R_y ,= P_y + 0.5; }$$</p>
-        <p>From this follows the formula for calculating the $(N_x, N_y)$ <strong>normalised device coordinates (NDC)</strong>:</p>
-        <p>$$\cl"ma-join-align"{\table N_x ,= R_x / w r; N_y ,= R_y / h; }$$</p>
-        <p>And finally the $(S_x, S_y)$ <strong>screen coordinates</strong>:</p>
-        <p>$$\cl"ma-join-align"{\table S_x ,= 2 N_x - r; S_y ,= -(2 N_y - 1) }$$</p>
-        <p>To simplify the calculations, let the image plane be -1 distance away from the origin on the z-axis and let $α$ be the <strong>vertical field of view (FOV)</strong> of the camera. From Figure 3 it can be seen that by default the field of view is 90° (because $\tan 90° / 2 = \tan 45° = 1 = \BC $), and the length of $\BC$ is actually the $f$ <strong>field of view factor</strong> of the camera.</p>
-        <figure class="image">
-          <object data="/files/2016-04-30/fov.svg" type="image/svg+xml" style="width: 100%">
-          </object>
-          <figcaption style="width: 100%; text-align: center;">
-            Figure 3 — Calculating the vertical field of view (FOV) factor.
-          </figcaption>
-        </figure>
-        <p>$$\tan α / 2 = \BC / \AB = \BC / 1$$ $$\BC = \tan α / 2 = f$$</p>
-        <p>To obtain the desired field of view, the image surface has to be scaled by the field of view factor (this is akin to zooming with a traditional camera lens). Thus we yield the screen coordinates normalised by the field of view factor:</p>
-        <p>$$\cl"ma-join-align"{\table S_x ,= (2 N_x - r) f; S_y ,= -(2 N_y - 1) f; }$$</p>
-        <p>After substitutions, the final transform from pixel coordinates to screen coordinates looks like this:</p>
-        <p>$$\cl"ma-join-align"{\table S_x ,= ({2 (P_x + 0.5) r} / w - r) f; S_y ,= (1 - {2 (P_y + 0.5)} / h) f; }$$</p>
-        <p>So for each pixel $(P_x, P_y)$ in the image we can now calculate the corresponding screen coordinates $(S_x, S_y)$ we’ll need to shoot the primary rays through. Since the camera is at the origin, the direction vector $d↖{∧}$ of the ray corresponding to pixel $(P_x, P_y)$ is simply the vector $⟨S_x, S_y⟩$ normalised:</p>
-        <p>$$ d↖{∧} = ⟨S_x, S_y⟩ / {‖⟨S_x, S_y⟩‖}$$</p>
-        <p>As the last step, we’ll need to multiply the resulting direction vector $d↖{∧}$ and the camera position $O$ (which is at the origin by default) with the $\bo C$ camera-to-world transform matrix:</p>
-        <p>$$ d_{\w}↖{∧} = \bo C d↖{∧}$$ $$ O_{\w} = \bo C O$$</p>
-        <p>Note that assuming 4-component vectors and a 4x4 transform matrix that is used for both translation and rotation, the above will only work correctly if the fourth $w$ component of the direction vector $d↖{∧}$ is set to 0, and the $w$ component of the point $O$ is set to 1. Remember that the camera position is at the origin before the transform, so $O$ will be always equal to this:</p>
-        <p>$$ O=[\table 0; 0; 0; 1; ] $$</p>
-        <h3 id="ray-sphere-intersection">Ray-sphere intersection</h3>
-        <p>The implicit equation of a <strong>sphere</strong> with centre point $C$ and radius $r$:</p>
-        <p>$$(x-C_x)^2 + (y-C_y)^2 + (z-C_z)^2 = r^2$$</p>
-        <p>The parametric equation of a <strong>half-open line segment</strong> (the ray, in our case), where $\O$ is the starting point, $d↖{∧}$ the direction vector and $P$ a point on the segment for any $t≧0$:</p>
-        <p>$$P = O + d↖{∧}t$$</p>
-        <p>Written component-wise:</p>
-        <p>$$P_x = O_x + d_xt $$ $$P_y = O_y + d_yt $$ $$P_z = O_z + d_zt $$</p>
-        <p>To get the ray-sphere intersection points, we’ll need to substitute $P_x$, $P_y$ and $P_z$ into the equation of the sphere:</p>
-        <p>$$(O_x + d_xt - C_x)^2 + (O_y + d_yt-C_y)^2 + (O_z + d_zt-C_z)^2 = r^2$$</p>
-        <p>The first parenthesised expression can be expanded like this:</p>
-        <p>$$\cl"ma-join-align"{\table (O_x + d_xt - C_x)^2 ,= O_x^2 + O_x d_xt - O_xC_x + d_xtO_x + d_x^2t^2 - d_xtC_x - C_xO_x - C_xd_xt + C_x^2; ,= O_x^2 + 2O_x d_xt - 2O_xC_x + d_x^2t^2 - 2C_x d_xt + C_x^2; ,= d_x^2t^2 + (2O_x d_x - 2C_x d_x)t + (O_x^2 - 2O_xC_x + C_x^2); ,= d_x^2t^2 + (2d_x(O_x- C_x))t + (O_x - C_x)^2; }$$</p>
-        <p>The remaining two expressions can be expanded in a similar way, so the final equation will have the form of a quadratic equation $ at^2 + bt + c = 0$, where:</p>
-        <p>$$\cl"ma-join-align"{\table a ,= d_x^2 + d_y^2 + d_z^2; b ,= 2 (d_x(O_x - C_x) + d_y(O_y - C_y) + d_z(O_z - C_z)); c ,= (O_x - C_x)^2 + (O_y - C_y)^2 + (O_z - C_z)^2; }$$</p>
-        <p>First the discriminant $\Δ$ needs to be calculated. If $\Δ &lt; 0$, the ray does not intersect the sphere; if $\Δ = 0$, the ray touches the sphere (one intersection point); and if $\Δ &gt; 0$, it intersects the sphere at two points. The equation can be solved for $t$ by applying the following formula that takes care of the <a href="https://en.wikipedia.org/wiki/Loss_of_significance#A_better_algorithm">loss of significance</a> floating-point problem:</p>
-        <p>$$\Δ = b^2-4ac$$</p>
-        <p>$$t_1 = {-b-\sgn(b)√\Δ} / {4a}\;\;\;,\;\;\;t_2 = c/{a t_1}$$</p>
-        <h3 id="ray-plane-intersection">Ray-plane intersection</h3>
-        <p>A <strong>plane</strong> can be defined by a normal vector $n↖{∧}$ and a point $P_o$, where $n↖{∧}$ represents the orientation of the plane and $P_o$ how far away the plane is from the origin. We know that the dot product of two vectors is zero only if they are perpendicular to each other, from which follows that for every point $\P$ that lies on the plane defined by $n↖{∧}$ and $P_o$ the following holds true:</p>
-        <p>$$(P-P_o)·n↖{∧}=0$$</p>
-        <p>To get the ray-plane intersection point, we only need to substitute the parametric equation of the ray $\P = \O + d↖{∧}t$ into the above equation and solve it for $t$ :</p>
-        <p>$$(O + d↖{∧}t-P_o)·n↖{∧}=0$$ $$d↖{∧}t·n↖{∧} + (O -P_o)·n↖{∧}=0$$ $$t = {(P_o - O)·n↖{∧}} / {n↖{∧}·d↖{∧}}$$</p>
-        <p>As usual, we are interested in positive $t$ values only. If $t$ is zero (or very close to zero), then there is no intersection because the ray is parallel with the plane, either away from it or exactly coinciding with it.</p>
-        <h2 id="in-the-next-episode">In the next episode…</h2>
-        <p>Believe it or not, that’s all we maths we need to implement a very simple ray tracer capable of rendering planes and spheres! In the next part, we’ll inspect some actual Nim code that generated this singular masterpiece of 80’s CGI art below. (Well, you gotta start somewhere, right?)</p>
-        <figure class="image">
-          <a class="largeimg" href="https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg" data-width="1200" data-height="800"><img src="https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg" alt="My lame first render" style="width: 80%"></a>
-          <figcaption style="width: 80%;">
-            This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing "engine"!
-          </figcaption>
-        </figure>
-        <hr>
-        <section class="links">
-          <h2 id="suggested-reading">Suggested reading</h2>
-          <ul class="compact">
-            <li>
-              <a href="http://www.scratchapixel.com/">Scratchapixel 2.0 – Learn Computer Graphics Programming from Scratch</a>
-            </li>
-          </ul>
-        </section>
-        <section class="comments">
-          <h2>Comments</h2><noscript>
-          <p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
-          <div id="disqus_thread"></div>
-          <script type="text/javascript">
-          var disqus_shortname = "johnnovak";
-          var disqus_identifier = "/2016/04/30/the-nim-raytracer-project-part-2-the-basics/";
-          var disqus_title = "The Nim Ray Tracer Project &ndash; Part 2: The Basics";
-          var disqus_url = "https://blog.johnnovak.net//2016/04/30/the-nim-raytracer-project-part-2-the-basics/";
 
-          (function() {
-          var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-          dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-          (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-          })();
-          </script>
-        </section>
-      </article>
+    <div role="main">
+
+
+
+<article class="post">
+  <header>
+    <h1><a href="https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/">The Nim Ray Tracer Project &ndash; Part 2: The Basics</a></h1>
+    <p class="date"><time datetime="2016-04-30">2016 Apr 30</time></p>
+  </header>
+
+  
+    <nav class="tags">
+      <ul>
+      
+        <li><a href="https://blog.johnnovak.net/tag/graphics/">graphics</a></li>
+      
+        <li><a href="https://blog.johnnovak.net/tag/ray tracing/">ray tracing</a></li>
+      
+        <li><a href="https://blog.johnnovak.net/tag/nim/">nim</a></li>
+      
+      </ul>
+    </nav>
+  
+
+  <p class="intro">[I have to tell that even after 34 years, <em>Brian Eno</em>’s ambient
+music is still so much better than 99.9999% of all recent electronic releases.
+Listening to <em>Ambient 4: On Land</em> from 1982; track #2 <em>The Lost Day</em> has
+a wonderfully creepy atmosphere…]</p>
+
+<p id="toc-header">Table of contents</p>
+
+<ul id="markdown-toc">
+  <li><a href="#the-basics" id="markdown-toc-the-basics">The Basics</a>    <ul>
+      <li><a href="#coordinate-system" id="markdown-toc-coordinate-system">Coordinate system</a></li>
+      <li><a href="#notation" id="markdown-toc-notation">Notation</a></li>
+      <li><a href="#transform-matrices" id="markdown-toc-transform-matrices">Transform matrices</a>        <ul>
+          <li><a href="#translation-and-scaling" id="markdown-toc-translation-and-scaling">Translation and scaling</a></li>
+          <li><a href="#rotation-around-a-given-axis" id="markdown-toc-rotation-around-a-given-axis">Rotation around a given axis</a></li>
+        </ul>
+      </li>
+      <li><a href="#calculating-primary-rays" id="markdown-toc-calculating-primary-rays">Calculating primary rays</a></li>
+      <li><a href="#ray-sphere-intersection" id="markdown-toc-ray-sphere-intersection">Ray-sphere intersection</a></li>
+      <li><a href="#ray-plane-intersection" id="markdown-toc-ray-plane-intersection">Ray-plane intersection</a></li>
+    </ul>
+  </li>
+  <li><a href="#in-the-next-episode" id="markdown-toc-in-the-next-episode">In the next episode…</a></li>
+  <li><a href="#suggested-reading" id="markdown-toc-suggested-reading">Suggested reading</a></li>
+</ul>
+
+<h2 id="the-basics">The Basics</h2>
+
+<p>Hello again! In the <a href="/2016/04/28/the-nim-raytracer-project-part-1-introduction/">initial
+post</a> of this
+series I talked about ray tracing in general and my reasons for writing my own
+ray tracing renderer in the most awesome <a href="http://nim-lang.org/">Nim</a> language.
+Before writing any code though, in this part we’ll examine the basic maths
+required for such a renderer.</p>
+
+<p>Most of this stuff is a distilled version of the information contained in the
+excellent <a href="http://www.scratchapixel.com/">Scratchapixel 2.0 – Learn Computer Graphics Programming from
+Scratch</a> learning resource, which I highly
+recommend to all graphics programming enthusiasts. There’s absolutely zero
+point in recreating the superb explanations from those lessons here, so just
+go and read the original materials if you’re interested.</p>
+
+<p>My only problem with Scratchapixel was that while the content is generally of
+very high quality, the mathematical notation they use is sometimes a bit
+sloppy and a few formulas are actually incorrect (just a <em>very few</em>, to be
+fair). I tried to supplement Scratchapixel with other random learning
+materials found on the Internet but that also proved to be problematic because
+of the slightly different notational conventions and assumptions of different
+authors (e.g. some people assume a right-handed while others a left-handed
+coordinate system, maths folks like their z-axis to point upwards, but in
+computer graphics that’s usually the y-axis and the z-axis points towards the
+viewer, then there’s the difference between row and column vector notation and
+so on).  While these differences might be laughably trivial to a mathematician
+or to someone who is already pretty familiar with the subject, they can surely
+confuse the hell out of a newcomer, like myself (or maybe I just get confused
+too easily, that might very well be the case…).</p>
+
+<p>I’m not exactly the biggest fan of littering the source code with page-long
+explanatory comments  either, so all my development notes will end up in these
+blog posts. That way I will have at least a remote chance of understanding
+what the hell I was doing here a couple of years down the track, and maybe
+others will find my development diary also useful (or amusing, depending on
+their perspective…).</p>
+
+<p>Alright, let’s get down to business!</p>
+
+<h3 id="coordinate-system">Coordinate system</h3>
+
+<p>We are going to use a <a href="https://en.wikipedia.org/wiki/Cartesian_coordinate_system#In_three_dimensions">right-handed Cartesian coordinate system
+</a>
+to represents objects in our 3D world, where the <em>y-axis</em> points up, the
+<em>x-axis</em> to the right and the <em>z-axis</em> “outward”. In right-handed coordinate
+systems, positive rotation is
+<a href="https://www.evl.uic.edu/ralph/508S98/coordinates.html">counter-clockwise</a>
+about the axis of rotation.</p>
+
+<figure class="image">
+  
+  <object data="/files/2016-04-30/coordinate-system.svg" type="image/svg+xml" style="width: 100%"></object>
+  
+
+  
+    
+    <figcaption style=" text-align: center;">Figure 1 &mdash; The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.</figcaption>
+  
+</figure>
+
+<p>The choice of coordinate system handedness is nothing more than a convention:
+DirectX, Unity, Maya and Pixar’s RenderMan use left-handed coordinate systems,
+while OpenGL, <a href="http://www.pbrt.org/">pbrt</a> and most other 3D modelling
+software are right-handed. For our purposes, compatibility with OpenGL and
+pbrt are the most important. Also, right-handed coordinate systems are the
+norm in mathematics, which will also make life a bit easier.</p>
+
+<h3 id="notation">Notation</h3>
+
+<p>As I mentioned, the aim is to use a consistent mathematical notation throughout
+the whole series, so let’s define that first!</p>
+
+<p>$$\cl"ma-legend-align"{\table
+f, \text"scalar";
+P, \text"point";
+(P_x, P_y, P_z), \text"point (by coordinates)";
+\AB, \text"segment";
+v↖{→}, \text"vector";
+⟨\v_\x, \v_\y, \v_\z⟩, \text"vector (by coordinates)";
+n↖{∧}, \text"unit vector)";
+{‖v↖{→}‖}, \text"magnitude (length) of vector";
+a↖{→}·b↖{→}, \text"dot product";
+a↖{→}×b↖{→}, \text"cross product";
+\bo M, \text"matrix";
+}$$</p>
+
+<p>Column notation is used for vectors:</p>
+
+<p>$$ v↖{→}=[\table x; y; z; w; ] $$</p>
+
+<p class="note">If the formulas look like crap in your browser, that means it
+sadly doesn’t support MathML. Solution? Use a better browser, like
+<a href="https://www.mozilla.org/en-US/firefox/new/">Firefox</a>.</p>
+
+<h3 id="transform-matrices">Transform matrices</h3>
+
+<p>All the matrix stuff will be eventually handled by a <a href="https://github.com/stavenko/nim-glm">matrix
+library</a> written by someone else, but
+it’s still useful to know how these transforms look like in our right-handed
+coordinate system (for example, for performance purposes we might hand-code
+some optimised versions of these transforms later).</p>
+
+<h4 id="translation-and-scaling">Translation and scaling</h4>
+
+<p>$$\bo T=[\table
+1, 0, 0, t_x;
+0, 1, 0, t_y;
+0, 0, 1, t_z;
+0, 0, 0, 1;
+]
+\;\;\;\;\;\;\bo S=[\table
+s_x,   0,   0, 0;
+  0, s_y,   0, 0;
+  0,   0, s_z, 0;
+  0,   0,   0, 1;
+]$$</p>
+
+<h4 id="rotation-around-a-given-axis">Rotation around a given axis</h4>
+
+<p>$$\bo R_\x=[\table
+1,      0,       0, 0;
+0, \cos θ, -\sin θ, 0;
+0, \sin θ,  \cos θ, 0;
+0,      0,       0, 1;
+]
+\;\;\;\;\;\;\bo R_\y=[\table
+ \cos θ, 0, \sin θ, 0;
+      0, 1,      0, 0;
+-\sin θ, 0, \cos θ, 0;
+      0, 0,      0, 1;
+]$$</p>
+
+<p>$$\bo R_\z=[\table
+\cos θ, -\sin θ, 0, 0;
+\sin θ,  \cos θ, 0, 0;
+     0,       0, 1, 0;
+     0,       0, 0, 1;
+]$$</p>
+
+<h3 id="calculating-primary-rays">Calculating primary rays</h3>
+
+<p>Let $(P_x, P_y)$ be the <strong>pixel coordinates</strong> of a pixel of the final image,
+$w$ and $h$ the width and the height of the image in pixels and $r = w / h$
+the image aspect ratio.</p>
+
+<figure class="image">
+  
+  <object data="/files/2016-04-30/mappings.svg" type="image/svg+xml" style="width: 100%"></object>
+  
+
+  
+    
+    <figcaption style=" width: 100%; text-align: center;">Figure 2 &mdash; The relationships between the raster, NDC and screen spaces.</figcaption>
+  
+</figure>
+
+<p>We have to shoot the rays through the middle of the pixels, thus the $(R_x,
+R_y)$ <strong>raster coordinates</strong> of a given pixel are as follows:</p>
+
+<p>$$\cl"ma-join-align"{\table
+R_x ,= P_x + 0.5;
+R_y ,= P_y + 0.5;
+}$$</p>
+
+<p>From this follows the formula for calculating the $(N_x, N_y)$
+<strong>normalised device coordinates (NDC)</strong>:</p>
+
+<p>$$\cl"ma-join-align"{\table
+N_x ,= R_x / w r;
+N_y ,= R_y / h;
+}$$</p>
+
+<p>And finally the $(S_x, S_y)$ <strong>screen coordinates</strong>:</p>
+
+<p>$$\cl"ma-join-align"{\table
+S_x ,= 2 N_x - r;
+S_y ,= -(2 N_y - 1)
+}$$</p>
+
+<p>To simplify the calculations, let the image plane be -1 distance away from the
+origin on the z-axis and let $α$ be the <strong>vertical field of view
+(FOV)</strong> of the camera. From Figure 3 it can be seen that by default the field
+of view is 90° (because $\tan 90° / 2 = \tan 45° = 1 = \BC $), and
+the length of $\BC$ is actually the $f$ <strong>field of view factor</strong> of the
+camera.</p>
+
+<figure class="image">
+  
+  <object data="/files/2016-04-30/fov.svg" type="image/svg+xml" style="width: 100%"></object>
+  
+
+  
+    
+    <figcaption style=" width: 100%; text-align: center;">Figure 3 &mdash; Calculating the vertical field of view (FOV) factor.</figcaption>
+  
+</figure>
+
+<p>$$\tan α / 2 = \BC / \AB = \BC / 1$$
+$$\BC = \tan α / 2 = f$$</p>
+
+<p>To obtain the desired field of view, the image surface has to be scaled by
+the field of view factor (this is akin to zooming with a traditional camera
+lens). Thus we yield the screen coordinates normalised by the field
+of view factor:</p>
+
+<p>$$\cl"ma-join-align"{\table
+S_x ,= (2 N_x - r) f;
+S_y ,= -(2 N_y - 1) f;
+}$$</p>
+
+<p>After substitutions, the final transform from pixel coordinates to screen
+coordinates looks like this:</p>
+
+<p>$$\cl"ma-join-align"{\table
+S_x ,= ({2 (P_x + 0.5) r} / w - r) f;
+S_y ,= (1 - {2 (P_y + 0.5)} / h) f;
+}$$</p>
+
+<p>So for each pixel $(P_x, P_y)$ in the image we can now calculate the
+corresponding screen coordinates $(S_x, S_y)$ we’ll need to shoot the
+primary rays through. Since the camera is at the origin, the direction vector
+$d↖{∧}$ of the ray corresponding to pixel $(P_x, P_y)$ is simply the vector
+$⟨S_x, S_y⟩$ normalised:</p>
+
+<p>$$ d↖{∧} = ⟨S_x, S_y⟩ / {‖⟨S_x, S_y⟩‖}$$</p>
+
+<p>As the last step, we’ll need to multiply the resulting direction vector
+$d↖{∧}$ and the camera position $O$ (which is at the origin by default) with
+the $\bo C$ camera-to-world transform matrix:</p>
+
+<p>$$ d_{\w}↖{∧} = \bo C d↖{∧}$$
+$$ O_{\w} = \bo C O$$</p>
+
+<p>Note that assuming 4-component vectors and a 4x4 transform matrix that is used
+for both translation and rotation, the above will only work correctly if the
+fourth $w$ component of the direction vector $d↖{∧}$ is set to 0, and the $w$
+component of the point $O$ is set to 1. Remember that the camera position is
+at the origin before the transform, so $O$ will be always equal to this:</p>
+
+<p>$$ O=[\table 0; 0; 0; 1; ] $$</p>
+
+<h3 id="ray-sphere-intersection">Ray-sphere intersection</h3>
+
+<p>The implicit equation of a <strong>sphere</strong> with centre point $C$ and radius $r$:</p>
+
+<p>$$(x-C_x)^2 + (y-C_y)^2 + (z-C_z)^2 = r^2$$</p>
+
+<p>The parametric equation of a <strong>half-open line segment</strong> (the ray, in our
+case), where $\O$ is the starting point, $d↖{∧}$ the direction vector and $P$
+a point on the segment for any $t≧0$:</p>
+
+<p>$$P = O + d↖{∧}t$$</p>
+
+<p>Written component-wise:</p>
+
+<p>$$P_x = O_x + d_xt $$
+$$P_y = O_y + d_yt $$
+$$P_z = O_z + d_zt $$</p>
+
+<p>To get the ray-sphere intersection points, we’ll need to substitute $P_x$,
+$P_y$ and $P_z$ into the equation of the sphere:</p>
+
+<p>$$(O_x + d_xt - C_x)^2 + (O_y + d_yt-C_y)^2 + (O_z + d_zt-C_z)^2 = r^2$$</p>
+
+<p>The first parenthesised expression can be expanded like this:</p>
+
+<p>$$\cl"ma-join-align"{\table
+(O_x + d_xt - C_x)^2 ,= O_x^2 + O_x d_xt - O_xC_x + d_xtO_x + d_x^2t^2 - d_xtC_x - C_xO_x - C_xd_xt + C_x^2;
+ ,= O_x^2 + 2O_x d_xt - 2O_xC_x + d_x^2t^2 - 2C_x d_xt + C_x^2;
+ ,= d_x^2t^2 + (2O_x d_x - 2C_x d_x)t + (O_x^2 - 2O_xC_x + C_x^2);
+ ,= d_x^2t^2 + (2d_x(O_x- C_x))t + (O_x - C_x)^2;
+}$$</p>
+
+<p>The remaining two expressions can be expanded in a similar way, so the final
+equation will have the form of a quadratic equation $ at^2 + bt + c = 0$,
+where:</p>
+
+<p>$$\cl"ma-join-align"{\table
+a ,= d_x^2 + d_y^2 + d_z^2;
+b ,= 2 (d_x(O_x - C_x) + d_y(O_y - C_y) + d_z(O_z - C_z));
+c ,= (O_x - C_x)^2 + (O_y - C_y)^2 + (O_z - C_z)^2;
+}$$</p>
+
+<p>First the discriminant $\Δ$ needs to be calculated. If $\Δ &lt; 0$, the
+ray does not intersect the sphere; if $\Δ = 0$, the ray touches the sphere
+(one intersection point); and if $\Δ &gt; 0$, it intersects the sphere at
+two points. The equation can be solved for $t$ by applying the following
+formula that takes care of the <a href="https://en.wikipedia.org/wiki/Loss_of_significance#A_better_algorithm">loss of
+significance</a>
+floating-point problem:</p>
+
+<p>$$\Δ = b^2-4ac$$</p>
+
+<p>$$t_1 = {-b-\sgn(b)√\Δ} / {4a}\;\;\;,\;\;\;t_2 = c/{a t_1}$$</p>
+
+<h3 id="ray-plane-intersection">Ray-plane intersection</h3>
+
+<p>A <strong>plane</strong> can be defined by a normal vector $n↖{∧}$ and a point $P_o$,
+where $n↖{∧}$ represents the orientation of the plane and $P_o$ how far away
+the plane is from the origin. We know that the dot product of two vectors is
+zero only if they are perpendicular to each other, from which follows that for
+every point $\P$ that lies on the plane defined by $n↖{∧}$ and $P_o$ the
+following holds true:</p>
+
+<p>$$(P-P_o)·n↖{∧}=0$$</p>
+
+<p>To get the ray-plane intersection point, we only need to substitute the
+parametric equation of the ray $\P = \O + d↖{∧}t$ into the above equation and
+solve it for $t$ :</p>
+
+<p>$$(O + d↖{∧}t-P_o)·n↖{∧}=0$$
+$$d↖{∧}t·n↖{∧} + (O -P_o)·n↖{∧}=0$$
+$$t = {(P_o - O)·n↖{∧}} / {n↖{∧}·d↖{∧}}$$</p>
+
+<p>As usual, we are interested in positive $t$ values only. If $t$ is zero (or
+very close to zero), then there is no intersection because the ray is parallel
+with the plane, either away from it or exactly coinciding with it.</p>
+
+<h2 id="in-the-next-episode">In the next episode…</h2>
+
+<p>Believe it or not, that’s all we maths we need to implement a very simple
+ray tracer capable of rendering planes and spheres! In the next part, we’ll
+inspect some actual Nim code that generated this singular masterpiece of 80’s
+CGI art below. (Well, you gotta start somewhere, right?)</p>
+
+<figure class="image">
+  
+    
+      <a class="largeimg" href="https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg" data-width="1200" data-height="800">
+        <img src="https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg" alt="My lame first render" style="width: 80%" />
+      </a>
+    
+  
+
+  
+    
+    <figcaption style=" width: 80%;">This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing "engine"!</figcaption>
+  
+</figure>
+
+<hr />
+
+<section class="links">
+
+  <h2 id="suggested-reading">Suggested reading</h2>
+
+  <ul class="compact">
+    <li><a href="http://www.scratchapixel.com/">Scratchapixel 2.0 – Learn Computer Graphics Programming from
+Scratch</a></li>
+  </ul>
+
+</section>
+
+
+  <section class="comments">
+
+  <h2>Comments</h2>
+
+  <noscript><p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "johnnovak";
+    var disqus_identifier = "/2016/04/30/the-nim-raytracer-project-part-2-the-basics/";
+    var disqus_title = "The Nim Ray Tracer Project &ndash; Part 2: The Basics";
+    var disqus_url = "https://blog.johnnovak.net//2016/04/30/the-nim-raytracer-project-part-2-the-basics/";
+
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+
+</section>
+
+</article>
+
+
+
     </div>
   </div>
 </body>
 </html>
+
+
+
