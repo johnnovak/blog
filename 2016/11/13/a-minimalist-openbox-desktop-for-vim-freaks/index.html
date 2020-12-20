@@ -88,8 +88,10 @@ muscles twitches? Is breaking out the arrow keys with a screwdriver among the
 first few things you do on a new computer (after swapping Caps Lock with
 Left Ctrl, of course)? Then welcome, you’re among friends here.</p>
 
-<p class="intro bottom-separator">UPDATE 2020-05-11: Updated for instructions for Crunchbang++ 10 (based on
+<p class="intro">UPDATE 2020-05-11: Updated instructions for Crunchbang++ 10 (based on
 Debian 10).</p>
+
+<p class="intro bottom-separator">UPDATE 2020-12-20: Tips on avoiding fullscreen/SVGA related problems on reboot.</p>
 
 <p id="toc-header">Table of contents</p>
 
@@ -634,11 +636,17 @@ apps.</p>
 </ul>
 
 <p>We’ll need to create a new VM with <em>Debian (64-bit)</em> selected as the guest
-operating system type.  I’m on an Intel i7 4790k 4.0 GHz with 16 gigs of RAM,
-so I just allocated 4 CPU cores and 4 gigs to the new VM and created a 40 GB
+operating system type.  I’m on an Intel i7 4790k 4.0 GHz with 32 gigs of RAM,
+so I just allocated 4 CPU cores and 4 gigs to the new VM, and created a 40 GB
 dynamic storage on an SSD partition (recommended). Pretty standard stuff, but
 make sure that <em>Enable PAE/NX System</em> is checked under <em>System / Processor
 / Extended Features</em>, otherwise the installer will fail.</p>
+
+<p>It is important to select <em>VBoxSVGA</em> instead of the recommended <em>VMSVGA</em> under
+<em>Display/ Graphics Controller</em>. Failing to do so will result in all sorts of
+problems after installing the guest additions and rebooting once or twice
+(e.g. black screen after reboot, defaulting to 640x480 and getting flooded
+with error notifications, etc.)</p>
 
 <p>From this point it’s easy sailing—just insert the ISO and proceed with the
 install. I recommend using the text mode installer because the GUI one hung at

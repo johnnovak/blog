@@ -2162,8 +2162,10 @@ muscles twitches? Is breaking out the arrow keys with a screwdriver among the
 first few things you do on a new computer (after swapping Caps Lock with
 Left Ctrl, of course)? Then welcome, you’re among friends here.&lt;/p&gt;
 
-&lt;p class=&quot;intro bottom-separator&quot;&gt;UPDATE 2020-05-11: Updated for instructions for Crunchbang++ 10 (based on
+&lt;p class=&quot;intro&quot;&gt;UPDATE 2020-05-11: Updated instructions for Crunchbang++ 10 (based on
 Debian 10).&lt;/p&gt;
+
+&lt;p class=&quot;intro bottom-separator&quot;&gt;UPDATE 2020-12-20: Tips on avoiding fullscreen/SVGA related problems on reboot.&lt;/p&gt;
 
 &lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
 
@@ -2708,11 +2710,17 @@ apps.&lt;/p&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;We’ll need to create a new VM with &lt;em&gt;Debian (64-bit)&lt;/em&gt; selected as the guest
-operating system type.  I’m on an Intel i7 4790k 4.0 GHz with 16 gigs of RAM,
-so I just allocated 4 CPU cores and 4 gigs to the new VM and created a 40 GB
+operating system type.  I’m on an Intel i7 4790k 4.0 GHz with 32 gigs of RAM,
+so I just allocated 4 CPU cores and 4 gigs to the new VM, and created a 40 GB
 dynamic storage on an SSD partition (recommended). Pretty standard stuff, but
 make sure that &lt;em&gt;Enable PAE/NX System&lt;/em&gt; is checked under &lt;em&gt;System / Processor
 / Extended Features&lt;/em&gt;, otherwise the installer will fail.&lt;/p&gt;
+
+&lt;p&gt;It is important to select &lt;em&gt;VBoxSVGA&lt;/em&gt; instead of the recommended &lt;em&gt;VMSVGA&lt;/em&gt; under
+&lt;em&gt;Display/ Graphics Controller&lt;/em&gt;. Failing to do so will result in all sorts of
+problems after installing the guest additions and rebooting once or twice
+(e.g. black screen after reboot, defaulting to 640x480 and getting flooded
+with error notifications, etc.)&lt;/p&gt;
 
 &lt;p&gt;From this point it’s easy sailing—just insert the ISO and proceed with the
 install. I recommend using the text mode installer because the GUI one hung at
