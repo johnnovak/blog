@@ -26,6 +26,8 @@ table { margin: 2em auto; border-collapse: collapse; font-size: 15px; line-heigh
 
 table.nopadleft td, table.nopadleft th { padding-left: 0; }
 
+table code { font-size: 90%; }
+
 tr { vertical-align: top; }
 
 tr.sep td { border-top: 2px solid #ccc !important; }

@@ -7,6 +7,725 @@
         <atom:link href="https://blog.johnnovak.net/feed.xml" rel="self" type="application/rss+xml" />
         
             <item>
+                <title>Nim Apocrypha, Vol. I</title>
+                <description>
+&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
+
+&lt;ul id=&quot;markdown-toc&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;#intro&quot; id=&quot;markdown-toc-intro&quot;&gt;Intro&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#i--the-not-so-obvious&quot; id=&quot;markdown-toc-i--the-not-so-obvious&quot;&gt;I — The Not-So-Obvious&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#1--reducing-executable-size-by-stripping-debug-symbols&quot; id=&quot;markdown-toc-1--reducing-executable-size-by-stripping-debug-symbols&quot;&gt;1   Reducing executable size by stripping debug symbols&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#2--release-builds-with-exception-logging&quot; id=&quot;markdown-toc-2--release-builds-with-exception-logging&quot;&gt;2   Release builds with exception logging&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#3--switching-to-arcorc&quot; id=&quot;markdown-toc-3--switching-to-arcorc&quot;&gt;3   Switching to ARC/ORC&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#4--executable-icons-on-windows-mingw&quot; id=&quot;markdown-toc-4--executable-icons-on-windows-mingw&quot;&gt;4   Executable icons on Windows (MinGW)&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#5--debug-echo-in-windows-gui-programs-mingw&quot; id=&quot;markdown-toc-5--debug-echo-in-windows-gui-programs-mingw&quot;&gt;5   Debug echo in Windows GUI programs (MinGW)&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#ii--the-hidden&quot; id=&quot;markdown-toc-ii--the-hidden&quot;&gt;II — The Hidden&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#6--using-keyword&quot; id=&quot;markdown-toc-6--using-keyword&quot;&gt;6   ‘using’ keyword&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#7--opening-urls-in-the-default-browser&quot; id=&quot;markdown-toc-7--opening-urls-in-the-default-browser&quot;&gt;7   Opening URLs in the default browser&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#8--cross-platform-home-and-config-directories&quot; id=&quot;markdown-toc-8--cross-platform-home-and-config-directories&quot;&gt;8   Cross-platform home and config directories&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#9--debug-dumping-expressions&quot; id=&quot;markdown-toc-9--debug-dumping-expressions&quot;&gt;9   Debug dumping expressions&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#10--measuring-elapsed-time&quot; id=&quot;markdown-toc-10--measuring-elapsed-time&quot;&gt;10   Measuring elapsed time&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#11--dealing-with-openarrays&quot; id=&quot;markdown-toc-11--dealing-with-openarrays&quot;&gt;11   Dealing with openarrays&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#iii--the-crafty&quot; id=&quot;markdown-toc-iii--the-crafty&quot;&gt;III — The Crafty&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#12--easy-pointer-manipulations&quot; id=&quot;markdown-toc-12--easy-pointer-manipulations&quot;&gt;12   Easy pointer manipulations&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#13--taming-circular-type-dependencies&quot; id=&quot;markdown-toc-13--taming-circular-type-dependencies&quot;&gt;13   Taming circular type dependencies&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#14--with-macro&quot; id=&quot;markdown-toc-14--with-macro&quot;&gt;14   ‘with’ macro&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;#15--aliases&quot; id=&quot;markdown-toc-15--aliases&quot;&gt;15   Aliases&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#iv--the-grand-finale&quot; id=&quot;markdown-toc-iv--the-grand-finale&quot;&gt;IV — The Grand Finale&lt;/a&gt;    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;#16--saving-memory-by-object-field-reordering&quot; id=&quot;markdown-toc-16--saving-memory-by-object-field-reordering&quot;&gt;16   Saving memory by object field reordering&lt;/a&gt;        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;#the-enigma&quot; id=&quot;markdown-toc-the-enigma&quot;&gt;The Enigma&lt;/a&gt;&lt;/li&gt;
+          &lt;li&gt;&lt;a href=&quot;#the-explanation&quot; id=&quot;markdown-toc-the-explanation&quot;&gt;The Explanation&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;#outro&quot; id=&quot;markdown-toc-outro&quot;&gt;Outro&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;Greetings fellow Nim adventurers! Below you will find 16 handy Nim tips
+&amp;amp; tricks I came across while developing a medium-sized GUI program this year,
+&lt;a href=&quot;https://github.com/johnnovak/gridmonger&quot;&gt;Gridmonger&lt;/a&gt;
+(&lt;a href=&quot;https://github.com/johnnovak/koi&quot;&gt;and&lt;/a&gt;
+&lt;a href=&quot;https://github.com/johnnovak/nim-riff&quot;&gt;related&lt;/a&gt;
+&lt;a href=&quot;https://github.com/johnnovak/nim-binstreams&quot;&gt;libraries&lt;/a&gt;).  Some of them are
+about less known or undocumented Nim features or standard library functions,
+a few are workarounds for some rough edges of the language, and there’s also
+a handful of useful techniques I read about in forums or have invented on my
+own.&lt;/p&gt;
+
+&lt;p&gt;All tips are for Nim 1.4.2 and beyond, and most are applicable to the
+C backend. I hope you’ll find something useful here that will make your time
+with Nim more enjoyable and productive!&lt;/p&gt;
+
+&lt;h2 id=&quot;i--the-not-so-obvious&quot;&gt;I — The Not-So-Obvious&lt;/h2&gt;
+
+&lt;h3 id=&quot;1--reducing-executable-size-by-stripping-debug-symbols&quot;&gt;1   Reducing executable size by stripping debug symbols&lt;/h3&gt;
+
+&lt;p&gt;Nim touts itself as a language capable of generating small native binaries.
+But just naively compiling some program with &lt;code class=&quot;highlighter-rouge&quot;&gt;nim c -d:release&lt;/code&gt; and looking at
+the file sizes will make you wonder about the validity of that claim!&lt;/p&gt;
+
+&lt;p&gt;A release build of &lt;a href=&quot;https://github.com/johnnovak/gridmonger&quot;&gt;Gridmonger&lt;/a&gt;
+weighs around 12 megs. Anything but small, if you ask me!&lt;sup id=&quot;fnref:small&quot; role=&quot;doc-noteref&quot;&gt;&lt;a href=&quot;#fn:small&quot; class=&quot;footnote&quot;&gt;1&lt;/a&gt;&lt;/sup&gt; Sure, it
+statically links &lt;a href=&quot;https://github.com/johnnovak/nim-glfw&quot;&gt;GLFW&lt;/a&gt; and
+&lt;a href=&quot;https://github.com/johnnovak/nim-nanovg&quot;&gt;NanoVG&lt;/a&gt; and a bunch of other Nim
+libraries, but to put things into perspective, &lt;a href=&quot;https://reaper.fm/&quot;&gt;REAPER&lt;/a&gt; (a
+highly-advanced and complex DAW written in C/C++) is about the same size at
+~13 megs! Surely, my program is much simpler than REAPER, so what’s going on
+here?&lt;/p&gt;
+
+&lt;p&gt;It turns out that gcc debug symbols are included in Nim binaries by default,
+which can account for a quite substantial 2-to 5-fold size increase! Luckily,
+we can remove them easily with the &lt;code class=&quot;highlighter-rouge&quot;&gt;strip&lt;/code&gt; command which comes with gcc.&lt;/p&gt;
+
+&lt;p&gt;How about trying to optimise for a small executable with &lt;code class=&quot;highlighter-rouge&quot;&gt;--opt:size&lt;/code&gt;?  Sure,
+that would yield about 30% smaller binaries, but at the expense of some
+potential runtime performance loss. So while it might not always be the best
+option, but you can always it &lt;em&gt;and&lt;/em&gt; strip the debug symbols for even bigger
+savings.&lt;/p&gt;
+
+&lt;p&gt;Finally, if you’re hell-bent on producing smallest possible binary,
+compressing it with an executable packer like &lt;a href=&quot;https://upx.github.io/&quot;&gt;UPX&lt;/a&gt;
+could be just the ticket.&lt;/p&gt;
+
+&lt;p&gt;The below table summarises my findings with some concrete data:&lt;/p&gt;
+
+&lt;figure&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;2&quot; style=&quot;width: 40%&quot;&gt;Compiler flags&lt;/th&gt;
+      &lt;th rowspan=&quot;2&quot; style=&quot;width: 15%&quot;&gt;File&lt;/th&gt;
+      &lt;th colspan=&quot;2&quot; style=&quot;width: 45%; text-align: center&quot;&gt;Binary size&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;width: 25%; text-align: right&quot;&gt;Bytes&lt;/th&gt;
+      &lt;th style=&quot;width: 20%; text-align: right&quot;&gt;Ratio&lt;/th&gt;
+    &lt;/tr&gt;
+
+    &lt;tr&gt;
+      &lt;td rowspan=&quot;3&quot;&gt;&lt;code&gt;-d:release&lt;br /&gt;--gc:arc --deepCopy:on&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;original&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;12,177,797&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.00&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stripped&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;2,269,696&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.18&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;compressed&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;806,912&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.07&lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr class=&quot;sep&quot;&gt;
+      &lt;td rowspan=&quot;3&quot;&gt;&lt;code&gt;-d:release --opt:size&lt;br /&gt;--gc:arc --deepCopy:on&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;original&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;7,959,126&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.00&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stripped&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1,655,296&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.21&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;compresed&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;623,104&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.08&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+
+  &lt;figcaption&gt;Table 1 — Comparison of compiled executable sizes for Gridmonger
+  (with and without debug symbols, and without debug symbols and compressed
+  with UPX) &lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;I had repeated the experiment with the following minimal Nim program:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;I'm small!&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;figure&gt;
+  &lt;table&gt;
+    &lt;tr&gt;
+      &lt;th rowspan=&quot;2&quot; style=&quot;width: 40%&quot;&gt;Compiler flags&lt;/th&gt;
+      &lt;th rowspan=&quot;2&quot; style=&quot;width: 15%&quot;&gt;File&lt;/th&gt;
+      &lt;th colspan=&quot;2&quot; style=&quot;width: 45%; text-align: center&quot;&gt;Binary size&lt;/th&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;th style=&quot;width: 25%; text-align: right&quot;&gt;Bytes&lt;/th&gt;
+      &lt;th style=&quot;width: 20%; text-align: right&quot;&gt;Ratio&lt;/th&gt;
+    &lt;/tr&gt;
+
+    &lt;tr class=&quot;sep&quot;&gt;
+      &lt;td rowspan=&quot;3&quot;&gt;&lt;code&gt;-d:release&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;original&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;125,068&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.00&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stripped&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;73,728&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.59&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;compresed&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;31,232&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.25&lt;/td&gt;
+    &lt;/tr&gt;
+
+    &lt;tr class=&quot;sep&quot;&gt;
+      &lt;td rowspan=&quot;3&quot;&gt;&lt;code&gt;-d:release --opt:size&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;original&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;87,812&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;1.00&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stripped&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;36,352&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.41&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;compresed&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18,944&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;0.22&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/table&gt;
+
+  &lt;figcaption&gt;Table 2 — Comparison of compiled executable sizes for a minimal
+  Nim program (with and without debug symbols, and without debug symbols and
+  compressed with UPX)&lt;/figcaption&gt;
+&lt;/figure&gt;
+
+&lt;p&gt;It is important to note that the presence of debug symbols in a binary &lt;em&gt;does
+not&lt;/em&gt; affect its runtime performance whatsoever. This is because debug symbols
+are not even loaded into memory during normal use, only when debugging. So
+really it only affects the space the executable takes up on disk.&lt;/p&gt;
+
+&lt;p&gt;In case you’re wondering, you’ll still get nice Nim stack traces with
+a stripped binary if you compiled it with &lt;code class=&quot;highlighter-rouge&quot;&gt;-d:debug&lt;/code&gt; or &lt;code class=&quot;highlighter-rouge&quot;&gt;--stacktrace=on
+--linetrace=on&lt;/code&gt; (more on that in the next tip).&lt;/p&gt;
+
+&lt;h3 id=&quot;2--release-builds-with-exception-logging&quot;&gt;2   Release builds with exception logging&lt;/h3&gt;
+
+&lt;p&gt;Creating a release build with &lt;code class=&quot;highlighter-rouge&quot;&gt;-d:release&lt;/code&gt; gives you a speed boost, but at
+the price of turning off stack traces (among other things). This can be a problem
+if you’re trying to implement a crash-reporting mechanism for end-users,
+which involves surrounding your main method with a &lt;code class=&quot;highlighter-rouge&quot;&gt;try/except&lt;/code&gt; block and
+writing exceptions with stack traces to a log file.&lt;/p&gt;
+
+&lt;p&gt;Luckily, you don’t need to ship debug builds to your users just to be able to
+do that; you can still use &lt;code class=&quot;highlighter-rouge&quot;&gt;-d:release&lt;/code&gt; to get most optimisation benefits
+while turning stack traces back on with &lt;code class=&quot;highlighter-rouge&quot;&gt;--stacktrace=on --linetrace=on&lt;/code&gt;. The
+performance of the resulting binary might be a bit slower, but you know, life
+is all about the right trade-offs.&lt;/p&gt;
+
+&lt;h3 id=&quot;3--switching-to-arcorc&quot;&gt;3   Switching to ARC/ORC&lt;/h3&gt;
+
+&lt;p&gt;Nim defaults to the &lt;code class=&quot;highlighter-rouge&quot;&gt;refc&lt;/code&gt; garbage collector (deferred reference counting with
+a mark &amp;amp; sweep phase for cycle collection), which works very well, even for
+soft-realtime requirements. But did you know that there has been a brand new
+GC introduced in 1.2.x that offers reduced memory footprint and even better
+performance in most cases?&lt;/p&gt;
+
+&lt;p&gt;This is ARC, the fully deterministic Automatic Reference Counting garbage
+collector. Switching to ARC is as easy as supplying the &lt;code class=&quot;highlighter-rouge&quot;&gt;--gc:arc&lt;/code&gt; option to
+the compiler. It’s a drop-in replacement for most programs. Depending on your
+program, you might want to use it with the &lt;code class=&quot;highlighter-rouge&quot;&gt;--deepcopy:on
+--hint[Performance]:off&lt;/code&gt; options.&lt;/p&gt;
+
+&lt;p&gt;ARC has many other benefits, including hard realtime support, shared heaps
+between threads, and simplifying the C FFI.  Mind you, ARC cannot handle
+cyclic data structures. But it has a big brother called ORC, which adds support
+for that.&lt;/p&gt;
+
+&lt;p&gt;You can learn more about ARC and ORC in this &lt;a href=&quot;https://nim-lang.org/blog/2020/10/15/introduction-to-arc-orc-in-nim.html&quot;&gt;excellent blog
+post&lt;/a&gt;
+on the Nim website.&lt;/p&gt;
+
+&lt;h3 id=&quot;4--executable-icons-on-windows-mingw&quot;&gt;4   Executable icons on Windows (MinGW)&lt;/h3&gt;
+
+&lt;p&gt;Setting the icon for Windows executables is probably easier with Visual
+Studio, but anyhow, here are the instructions for gcc/MinGW that I’m using.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;First, you’ll need to generate an &lt;code class=&quot;highlighter-rouge&quot;&gt;.ico&lt;/code&gt; file that contains your icon image
+in multiple resolutions. There’s lots of online tools for that, and there’s
+also ImageMagick—this is outside the scope of this article.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Once you have your image, you’ll need to create a resource definition &lt;code class=&quot;highlighter-rouge&quot;&gt;.rc&lt;/code&gt;
+file that references your icon file. I used &lt;code class=&quot;highlighter-rouge&quot;&gt;appicon&lt;/code&gt; here for the ID, but
+you can use any other string, it doesn’t matter:&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; appicon ICON &quot;gridmonger.ico&quot;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The next step is to create the resource object file from the &lt;code class=&quot;highlighter-rouge&quot;&gt;.rc&lt;/code&gt; file
+(&lt;code class=&quot;highlighter-rouge&quot;&gt;windres&lt;/code&gt; is included in MinGW):&lt;/p&gt;
+
+    &lt;div class=&quot;highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; windres gridmonger.rc -O coff -o gridmonger.res
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Finally, we need to instruct the compiler to link the resource file
+into our program:&lt;/p&gt;
+
+    &lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;k&quot;&gt;when&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;defined&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;windows&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;link&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;icons/gridmonger.res&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;5--debug-echo-in-windows-gui-programs-mingw&quot;&gt;5   Debug echo in Windows GUI programs (MinGW)&lt;/h3&gt;
+
+&lt;p&gt;This will be a rather short one but it took me a while to figure it out. It
+turns out that when you link against the Windows libraries by passing
+&lt;code class=&quot;highlighter-rouge&quot;&gt;-mwindows&lt;/code&gt; to the linker (&lt;code class=&quot;highlighter-rouge&quot;&gt;-L:-mwindows&lt;/code&gt;), you won’t be able to print stuff
+the console with &lt;code class=&quot;highlighter-rouge&quot;&gt;echo&lt;/code&gt; anymore.&lt;/p&gt;
+
+&lt;p&gt;“But this is a useless tip, of course you need to link against the Windows
+libs in a GUI program!”, I hear you say. Well, not necessarily. In GLFW apps,
+for example, you can get away with not linking against the Windows libs in
+many cases. For instance, in Gridmonger I only need &lt;code class=&quot;highlighter-rouge&quot;&gt;-mwindows&lt;/code&gt; so I can open
+the standard open and save system dialogs. In my debug builds, I don’t link
+against the Windows libs and I conditionally turn the calls to the dialog
+functions to no-ops, and then I can do my debug printing to the console.&lt;/p&gt;
+
+&lt;h2 id=&quot;ii--the-hidden&quot;&gt;II — The Hidden&lt;/h2&gt;
+
+&lt;h3 id=&quot;6--using-keyword&quot;&gt;6   ‘using’ keyword&lt;/h3&gt;
+
+&lt;p&gt;The
+&lt;a href=&quot;https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement&quot;&gt;using&lt;/a&gt;
+keyword is a very useful, but often forgotten language feature. It helps to
+cut down on redundancy when creating method call style APIs, or when passing
+context objects around.&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Without `using`&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getFloor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Level&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Natural&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppContext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Floor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setFloor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Level&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Natural&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Floor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppContext&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# With `using`&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Level&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;using&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppContext&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;getFloor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Natural&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Floor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;setFloor&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;l&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Natural&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Floor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;...&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;7--opening-urls-in-the-default-browser&quot;&gt;7   Opening URLs in the default browser&lt;/h3&gt;
+
+&lt;p&gt;Did you know that the standard library has
+a &lt;a href=&quot;https://nim-lang.org/docs/browsers.html&quot;&gt;browsers&lt;/a&gt; module for the sole
+purpose of opening URLs in the OS default browser in a cross-platform way?
+In fact, I’ve been using Nim for 4 years and I’ve learned about this just
+recently!&lt;/p&gt;
+
+&lt;p&gt;This is very handy if you want to navigate the user to a program’s website
+from a desktop app, or to open local HTML documentation.&lt;/p&gt;
+
+&lt;h3 id=&quot;8--cross-platform-home-and-config-directories&quot;&gt;8   Cross-platform home and config directories&lt;/h3&gt;
+
+&lt;p&gt;Similarly, &lt;a href=&quot;https://nim-lang.org/docs/os.html#getHomeDir&quot;&gt;getHomeDir()&lt;/a&gt; and
+&lt;a href=&quot;https://nim-lang.org/docs/os.html#getConfigDir&quot;&gt;getConfigDir()&lt;/a&gt; from the
+&lt;a href=&quot;https://nim-lang.org/docs/os.html&quot;&gt;os&lt;/a&gt; module are super handy if you need to
+handle configuration files or program data in a cross-platform way.&lt;/p&gt;
+
+&lt;h3 id=&quot;9--debug-dumping-expressions&quot;&gt;9   Debug dumping expressions&lt;/h3&gt;
+
+&lt;p&gt;However sophisticated modern development tools might be, just echoing stuff to
+the console is still one of the easiest and quickest ways to debug a program.
+But writing things like &lt;code class=&quot;highlighter-rouge&quot;&gt;echo &quot;foo: &quot;, foo&lt;/code&gt; for the hundredth time gets old
+really fast. The &lt;a href=&quot;https://nim-lang.org/docs/sugar.html#dump.m%2Cuntyped&quot;&gt;dump&lt;/a&gt;
+macro in the standard &lt;a href=&quot;https://nim-lang.org/docs/sugar.html&quot;&gt;sugar&lt;/a&gt; module
+helps with exactly that.&lt;/p&gt;
+
+&lt;p&gt;Make sure to check out the other useful additions the module introduces!&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sugar&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;42&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;frobnicate&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;7&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;dump&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;dump&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;dump&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# prints:&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# a = 42&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# s = frobnicate&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# a + x = 49&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;10--measuring-elapsed-time&quot;&gt;10   Measuring elapsed time&lt;/h3&gt;
+
+&lt;p&gt;Although you can use the regular &lt;a href=&quot;https://nim-lang.org/docs/times.html&quot;&gt;times&lt;/a&gt;
+module to measure elapsed time, to do it properly you really need a monotonic
+timer. Such a thing has been added to the standard library recently in the
+form of &lt;a href=&quot;https://nim-lang.org/docs/monotimes.html&quot;&gt;std/monotimes&lt;/a&gt;.&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;os&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;monotimes&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;times&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;proc &lt;/span&gt;&lt;span class=&quot;nf&quot;&gt;durationToFloatMillis&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Duration&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;float64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;inNanoseconds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;float64&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;1e-6&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t0&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getMonoTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# do something for a while&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;getMonoTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;t0&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;durationToFloatMillis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;11--dealing-with-openarrays&quot;&gt;11   Dealing with openarrays&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://nim-lang.org/docs/manual.html#types-open-arrays&quot;&gt;Openarrays&lt;/a&gt;
+are a handy Nim feature that allow you to write procedures that can accept
+either arrays or sequences through a unified &lt;code class=&quot;highlighter-rouge&quot;&gt;openArray&lt;/code&gt; type. What the
+manual forgets to tell you though is that there’s a bunch of overloaded 
+&lt;a href=&quot;https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint&quot;&gt;toOpenArray&lt;/a&gt;
+and
+&lt;a href=&quot;https://nim-lang.org/docs/system.html#toOpenArrayByte%2Ccstring%2Cint%2Cint&quot;&gt;toOpenArrayByte&lt;/a&gt;
+methods in the &lt;a href=&quot;https://nim-lang.org/docs/system.html&quot;&gt;system&lt;/a&gt; module to help
+create openarray “slices” from arrays, seqs, strings and (surprise!) other
+openarrays.&lt;/p&gt;
+
+&lt;p&gt;One particularly useful function is &lt;a href=&quot;https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint&quot;&gt;this
+one&lt;/a&gt;
+that operates on
+&lt;a href=&quot;https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint&quot;&gt;UncheckedArray&lt;/a&gt;s—this
+is very useful for treating blocks of memory from C libraries as
+openarrays in your Nim code.&lt;/p&gt;
+
+&lt;p&gt;Speaking of the system module, it’s full of useful stuff that’s not mentioned
+anywhere in the documentation. Make sure to go through the function list once
+in a while, I’ll guarantee you’ll find something of interest every time.&lt;/p&gt;
+
+&lt;h2 id=&quot;iii--the-crafty&quot;&gt;III — The Crafty&lt;/h2&gt;
+
+&lt;h3 id=&quot;12--easy-pointer-manipulations&quot;&gt;12   Easy pointer manipulations&lt;/h3&gt;
+
+&lt;p&gt;Sometimes you must resort to C-style pointer arithmetics (especially when
+interfacing with C libraries and data structures), and the type-safe nature of
+Nim doesn’t exactly make that easy. The following templates make such tasks
+a lot easier (of course, many other variants could be introduced; that’s an
+exercise for the reader).&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;+&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;offset&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;`&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ptr&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;):&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;cast&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;13--taming-circular-type-dependencies&quot;&gt;13   Taming circular type dependencies&lt;/h3&gt;
+
+&lt;p&gt;One of Nim’s Achilles’ heels is the relative inflexibility of the module
+system when dealing with circular type dependencies. In a project of
+sufficient complexity, where you break up your code into multiple submodules,
+you’ll hit this issue sooner or later almost invariably. &lt;a href=&quot;https://blog.johnnovak.net/2017/06/18/ao-the-beginning/#circular-type-dependencies&quot;&gt;Long story
+short&lt;/a&gt;,
+the best workaround is to create a &lt;code class=&quot;highlighter-rouge&quot;&gt;common&lt;/code&gt; module early on that
+contains all such circular type definitions. Then you can just include this
+common module in all other submodules.&lt;/p&gt;
+
+&lt;p&gt;The biggest drawback of this approach is that everything defined in common
+must be public. But hey, who told you that there’s anything perfect in this
+world?&lt;/p&gt;
+
+&lt;h3 id=&quot;14--with-macro&quot;&gt;14   ‘with’ macro&lt;/h3&gt;
+
+&lt;p&gt;The tiny &lt;a href=&quot;https://github.com/zevv/with&quot;&gt;with&lt;/a&gt; macro is super useful for
+reducing redundancy by lifting parts of an object or tuple into the
+current scope. Probably easier to show than to explain:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Widget&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;backgroundColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;foregroundColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;Window&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;inputField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Widget&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Without `with`&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainWindow&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Window&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mainWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inputField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;backgroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;black&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;mainWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inputField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;foregroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# Using `with`&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;inputField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;backgroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;black&quot;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;foregroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# You can nest it too!&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mainWindow&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Qux&quot;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;with&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;inputField&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;backgroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;black&quot;&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;foregroundColor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;red&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;15--aliases&quot;&gt;15   Aliases&lt;/h3&gt;
+
+&lt;p&gt;Even when armed with the above macro, often there’s a need to set up some
+aliases (references) to some parts of a nested object hierarchy to improve
+readability. This comes up quite often in real-world application and UI
+programming.  Consider the following:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AppContext&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;g_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;levels&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;g_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currLevel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setFloor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fEmpty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Now imagine that most of the program basically operates on this app context in
+some way or another. It all becomes horribly redundant and unreadable pretty
+quickly. And you can’t set up C++ style references because of Nim’s copy
+semantics (unless you keep using &lt;code class=&quot;highlighter-rouge&quot;&gt;ref object&lt;/code&gt;s everywhere, which is not always
+the best choice).&lt;/p&gt;
+
+&lt;p&gt;Alias template to the rescue!&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;alias&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;newName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;untyped&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;untyped&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;template&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;newName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;():&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;untyped&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;call&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;alias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;g_app&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;alias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;map&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;levels&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;doc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;currLevel&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;setFloor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;row&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;col&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;fEmpty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;That’s much more readable! (Of course, normally you would use those aliases
+more than just once or twice like in this simple example.)&lt;/p&gt;
+
+&lt;p&gt;Another option for introducing proper C++ style references is the recently
+added (and totally undocumented)
+&lt;a href=&quot;https://nim-lang.org/docs/decls.html#byaddr.t%2C%2C%2C&quot;&gt;byaddr&lt;/a&gt; pragma:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;std&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;decls&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;byaddr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.}&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;3&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# prints 3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;iv--the-grand-finale&quot;&gt;IV — The Grand Finale&lt;/h2&gt;
+
+&lt;h3 id=&quot;16--saving-memory-by-object-field-reordering&quot;&gt;16   Saving memory by object field reordering&lt;/h3&gt;
+
+&lt;p&gt;You should save the best for last, or so they say. Well, this one is about
+saving memory, big time! More experienced C/C++ programmers can go home now as
+they should know all about this already—the rest of the class stays.&lt;/p&gt;
+
+&lt;h4 id=&quot;the-enigma&quot;&gt;The Enigma&lt;/h4&gt;
+
+&lt;p&gt;Let’s say we have an object in our program to hold the properties of
+a cell of a large(ish) grid/matrix:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Being the sort of resource conscious developers we are, we are dutifully
+keeping an eye on our total memory footprint:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# prints 1&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# prints 250000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Nothing surprising here. Let’s add an enum to the mix:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;enum&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;East&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;West&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;North&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;South&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;
+ 
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# prints 2&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;500&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# prints 500000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Still completely uninteresting. Enums are represented by the smallest possible
+integer type, hence our enum is 1 byte long, which doubles our total memory
+requirements.&lt;/p&gt;
+
+&lt;p&gt;Okay, time to be a bit more adventurous! We’ll insert a string between the
+byte and the enum:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A Nim string is just a pointer to a sequence of characters, which means we’re
+expecting our object to grow by &lt;code class=&quot;highlighter-rouge&quot;&gt;sizeof(string) == sizeof(pointer) == 8&lt;/code&gt; bytes
+(on 64-bit). Right?  Right???!! I expect people who had been socialised on
+nice, cushy high-level languages to vehemently agree with me at this point.&lt;/p&gt;
+
+&lt;p&gt;So, again, &lt;code class=&quot;highlighter-rouge&quot;&gt;sizeof(Cell)&lt;/code&gt; will be 10 now, correct?&lt;/p&gt;
+
+&lt;p&gt;Yes?&lt;/p&gt;
+
+&lt;p&gt;&lt;img style=&quot;display: block&quot; src=&quot;https://i.giphy.com/media/QWqH7oRfHwVKwb8YDL/giphy.webp&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Let’s see if the machine agrees with us:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# prints 24&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# prints 6000000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;WAT???!!!!11&lt;/strong&gt; That’s &lt;strong&gt;2.4x the size&lt;/strong&gt; of what we expected!&lt;/p&gt;
+
+&lt;p&gt;&lt;img style=&quot;display: block&quot; src=&quot;https://i.giphy.com/media/Q7ozWVYCR0nyW2rvPW/giphy.webp&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Not exactly the answer we wanted, is it? In good old time-tested coder
+tradition, let’s start changing shit randomly in the hope of improving the
+situation somewhat!&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# prints 16&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;     &lt;span class=&quot;c&quot;&gt;# prints 400000&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Um, we just reduced our total memory footprint by 1/3 by putting the
+string first. WTF is going on here?&lt;/p&gt;
+
+&lt;h4 id=&quot;the-explanation&quot;&gt;The Explanation&lt;/h4&gt;
+
+&lt;p&gt;Nim objects compile down to C structs (with the C backend), which are governed
+by strictly defined ordering and memory alignment requirements in the
+standard. The exact story varies a bit on each CPU architecture, but on
+x86/x64 the following main rules hold true:&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Data types must be aligned according to their bit-width for optimal access.
+So 64-bit values must be aligned on 8-byte boundaries (addresses evenly
+divisible by 8), 32-bit values on
+4-byte boundaries, and so on.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Structs must be padded at the end so when they’re placed in contiguous
+arrays, all their members are aligned optimally as per the above. In
+practical terms this means that the total size of the struct is padded
+to the nearest integer multiple of the widest data type it contains.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;The compiler is not allowed to reorder struct fields under any circumstance
+(to optimise padding or for any other reason), the reason being that this
+would break a lot of low-level code.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Unaligned access is supported on x86/x64 (meaning it won’t crash the
+program), but at a significant performance penalty.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Another important piece of background information is that C99 stipulates that
+blocks of memory allocated with &lt;code class=&quot;highlighter-rouge&quot;&gt;malloc&lt;/code&gt; must be correctly aligned for any
+data type supported by the implementation. Hence, padding is never required
+before the first element of a struct. In practice, you can assume the
+allocated memory blocks are always 8-byte aligned on x86, and 16-bit aligned
+on x64, regardless of the OS.&lt;/p&gt;
+
+&lt;p&gt;So, armed with this arcane knowledge, it’s not too hard to figure out what’s
+going on:&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# worst case (string in the middle) - 24 bytes with padding&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# 1 byte + 7 pad bytes&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;       &lt;span class=&quot;c&quot;&gt;# 8 bytes (8-byte aligned)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# 1 byte + 7 pad bytes (to ensure that the next array&lt;/span&gt;
+                  &lt;span class=&quot;c&quot;&gt;# element is 8-byte aligned)&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# better (string at start) - 16 bytes with padding&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;       &lt;span class=&quot;c&quot;&gt;# 8 bytes (8-byte aligned because of malloc)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# 1 byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# 1 byte + 6 pad bytes (to ensure that the next array&lt;/span&gt;
+                  &lt;span class=&quot;c&quot;&gt;# element is 8-byte aligned)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;One interesting consequence of the padding requirements is that we might as
+well store something useful in those otherwise unused padding bytes (as long
+as we’re careful not to overshoot):&lt;/p&gt;
+
+&lt;div class=&quot;language-nim highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;type&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;object&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;s&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;string&lt;/span&gt;       &lt;span class=&quot;c&quot;&gt;# 8 bytes&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;byte&lt;/span&gt;         &lt;span class=&quot;c&quot;&gt;# 1 byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;d&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Direction&lt;/span&gt;    &lt;span class=&quot;c&quot;&gt;# 1 byte&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int16&lt;/span&gt;        &lt;span class=&quot;c&quot;&gt;# 2 bytes (offset 10, 2-byte aligned)&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int32&lt;/span&gt;        &lt;span class=&quot;c&quot;&gt;# 4 bytes (offset 12, 4-byte aligned)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Cell&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;c&quot;&gt;# still 16 bytes!&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Then there’s the &lt;a href=&quot;https://nim-lang.org/docs/manual.html#foreign-function-interface-packed-pragma&quot;&gt;packed
+pragma&lt;/a&gt;
+too that you can apply to objects to effectively disable padding, but this
+should be restricted to low-level code or situations where you must interface
+with C libraries because it doesn’t work that well with GC’d memory (the
+manual explains why this is so).&lt;/p&gt;
+
+&lt;p&gt;This is definitely a very interesting subject, check out the following
+articles if you would like to explore it further:&lt;/p&gt;
+
+&lt;ul class=&quot;compact&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;http://www.catb.org/esr/structure-packing/&quot;&gt;The Lost Art of Structure Packing&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://zevv.nl/nim-memory/&quot;&gt;The Nim memory model&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Data_structure_alignment&quot;&gt;Data structure alignment&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;So long folks, hope you found something interesting here. Wash your hands,
+wear face masks, don’t drink and drive during the festive season, and keep
+Nimming! (Is that even a word? I guess it is now…)&lt;/p&gt;
+&lt;div class=&quot;footnotes&quot; role=&quot;doc-endnotes&quot;&gt;
+  &lt;ol&gt;
+    &lt;li id=&quot;fn:small&quot; role=&quot;doc-endnote&quot;&gt;
+      &lt;p&gt;Unless if you’re one of those NodeJS wielding kids who thinks Electron is a good idea and the web is the ultimate application development platform… Ignorance is bliss! &lt;a href=&quot;#fnref:small&quot; class=&quot;reversefootnote&quot; role=&quot;doc-backlink&quot;&gt;&amp;#8617;&lt;/a&gt;&lt;/p&gt;
+    &lt;/li&gt;
+  &lt;/ol&gt;
+&lt;/div&gt;
+</description>
+                <pubDate>Mon, 21 Dec 2020 00:00:00 +1000</pubDate>
+                <link>https://blog.johnnovak.net/2020/12/21/nim-tips/</link>
+                <guid isPermaLink="true">https://blog.johnnovak.net/2020/12/21/nim-tips/</guid>
+            </item>
+        
+            <item>
                 <title>Raspbian Stretch home server setup</title>
                 <description>&lt;p class=&quot;intro&quot;&gt;UPDATE 2019-10-19: Added some warnings about the default exFAT cluster sizes.&lt;/p&gt;
 
@@ -5180,392 +5899,6 @@ the answer to everything.&lt;/figcaption&gt;
                 <pubDate>Sun, 29 May 2016 00:00:00 +1000</pubDate>
                 <link>https://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</link>
                 <guid isPermaLink="true">https://blog.johnnovak.net/2016/05/29/cross-platform-gui-trainwreck-2016-edition/</guid>
-            </item>
-        
-            <item>
-                <title>The Nim Ray Tracer Project &amp;ndash; Part 2: The Basics</title>
-                <description>&lt;p class=&quot;intro&quot;&gt;[I have to tell that even after 34 years, &lt;em&gt;Brian Eno&lt;/em&gt;’s ambient
-music is still so much better than 99.9999% of all recent electronic releases.
-Listening to &lt;em&gt;Ambient 4: On Land&lt;/em&gt; from 1982; track #2 &lt;em&gt;The Lost Day&lt;/em&gt; has
-a wonderfully creepy atmosphere…]&lt;/p&gt;
-
-&lt;p id=&quot;toc-header&quot;&gt;Table of contents&lt;/p&gt;
-
-&lt;ul id=&quot;markdown-toc&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;#the-basics&quot; id=&quot;markdown-toc-the-basics&quot;&gt;The Basics&lt;/a&gt;    &lt;ul&gt;
-      &lt;li&gt;&lt;a href=&quot;#coordinate-system&quot; id=&quot;markdown-toc-coordinate-system&quot;&gt;Coordinate system&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#notation&quot; id=&quot;markdown-toc-notation&quot;&gt;Notation&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#transform-matrices&quot; id=&quot;markdown-toc-transform-matrices&quot;&gt;Transform matrices&lt;/a&gt;        &lt;ul&gt;
-          &lt;li&gt;&lt;a href=&quot;#translation-and-scaling&quot; id=&quot;markdown-toc-translation-and-scaling&quot;&gt;Translation and scaling&lt;/a&gt;&lt;/li&gt;
-          &lt;li&gt;&lt;a href=&quot;#rotation-around-a-given-axis&quot; id=&quot;markdown-toc-rotation-around-a-given-axis&quot;&gt;Rotation around a given axis&lt;/a&gt;&lt;/li&gt;
-        &lt;/ul&gt;
-      &lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#calculating-primary-rays&quot; id=&quot;markdown-toc-calculating-primary-rays&quot;&gt;Calculating primary rays&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ray-sphere-intersection&quot; id=&quot;markdown-toc-ray-sphere-intersection&quot;&gt;Ray-sphere intersection&lt;/a&gt;&lt;/li&gt;
-      &lt;li&gt;&lt;a href=&quot;#ray-plane-intersection&quot; id=&quot;markdown-toc-ray-plane-intersection&quot;&gt;Ray-plane intersection&lt;/a&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#in-the-next-episode&quot; id=&quot;markdown-toc-in-the-next-episode&quot;&gt;In the next episode…&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;#suggested-reading&quot; id=&quot;markdown-toc-suggested-reading&quot;&gt;Suggested reading&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;the-basics&quot;&gt;The Basics&lt;/h2&gt;
-
-&lt;p&gt;Hello again! In the &lt;a href=&quot;/2016/04/28/the-nim-raytracer-project-part-1-introduction/&quot;&gt;initial
-post&lt;/a&gt; of this
-series I talked about ray tracing in general and my reasons for writing my own
-ray tracing renderer in the most awesome &lt;a href=&quot;http://nim-lang.org/&quot;&gt;Nim&lt;/a&gt; language.
-Before writing any code though, in this part we’ll examine the basic maths
-required for such a renderer.&lt;/p&gt;
-
-&lt;p&gt;Most of this stuff is a distilled version of the information contained in the
-excellent &lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel 2.0 – Learn Computer Graphics Programming from
-Scratch&lt;/a&gt; learning resource, which I highly
-recommend to all graphics programming enthusiasts. There’s absolutely zero
-point in recreating the superb explanations from those lessons here, so just
-go and read the original materials if you’re interested.&lt;/p&gt;
-
-&lt;p&gt;My only problem with Scratchapixel was that while the content is generally of
-very high quality, the mathematical notation they use is sometimes a bit
-sloppy and a few formulas are actually incorrect (just a &lt;em&gt;very few&lt;/em&gt;, to be
-fair). I tried to supplement Scratchapixel with other random learning
-materials found on the Internet but that also proved to be problematic because
-of the slightly different notational conventions and assumptions of different
-authors (e.g. some people assume a right-handed while others a left-handed
-coordinate system, maths folks like their z-axis to point upwards, but in
-computer graphics that’s usually the y-axis and the z-axis points towards the
-viewer, then there’s the difference between row and column vector notation and
-so on).  While these differences might be laughably trivial to a mathematician
-or to someone who is already pretty familiar with the subject, they can surely
-confuse the hell out of a newcomer, like myself (or maybe I just get confused
-too easily, that might very well be the case…).&lt;/p&gt;
-
-&lt;p&gt;I’m not exactly the biggest fan of littering the source code with page-long
-explanatory comments  either, so all my development notes will end up in these
-blog posts. That way I will have at least a remote chance of understanding
-what the hell I was doing here a couple of years down the track, and maybe
-others will find my development diary also useful (or amusing, depending on
-their perspective…).&lt;/p&gt;
-
-&lt;p&gt;Alright, let’s get down to business!&lt;/p&gt;
-
-&lt;h3 id=&quot;coordinate-system&quot;&gt;Coordinate system&lt;/h3&gt;
-
-&lt;p&gt;We are going to use a &lt;a href=&quot;https://en.wikipedia.org/wiki/Cartesian_coordinate_system#In_three_dimensions&quot;&gt;right-handed Cartesian coordinate system
-&lt;/a&gt;
-to represents objects in our 3D world, where the &lt;em&gt;y-axis&lt;/em&gt; points up, the
-&lt;em&gt;x-axis&lt;/em&gt; to the right and the &lt;em&gt;z-axis&lt;/em&gt; “outward”. In right-handed coordinate
-systems, positive rotation is
-&lt;a href=&quot;https://www.evl.uic.edu/ralph/508S98/coordinates.html&quot;&gt;counter-clockwise&lt;/a&gt;
-about the axis of rotation.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-  &lt;object data=&quot;/files/2016-04-30/coordinate-system.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
-  
-
-  
-    
-    &lt;figcaption style=&quot; text-align: center;&quot;&gt;Figure 1 &amp;mdash; The right-handed coordinate system used in our renderer. The circular arrow indicates the direction of positive rotation.&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;The choice of coordinate system handedness is nothing more than a convention:
-DirectX, Unity, Maya and Pixar’s RenderMan use left-handed coordinate systems,
-while OpenGL, &lt;a href=&quot;http://www.pbrt.org/&quot;&gt;pbrt&lt;/a&gt; and most other 3D modelling
-software are right-handed. For our purposes, compatibility with OpenGL and
-pbrt are the most important. Also, right-handed coordinate systems are the
-norm in mathematics, which will also make life a bit easier.&lt;/p&gt;
-
-&lt;h3 id=&quot;notation&quot;&gt;Notation&lt;/h3&gt;
-
-&lt;p&gt;As I mentioned, the aim is to use a consistent mathematical notation throughout
-the whole series, so let’s define that first!&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-legend-align&quot;{\table
-f, \text&quot;scalar&quot;;
-P, \text&quot;point&quot;;
-(P_x, P_y, P_z), \text&quot;point (by coordinates)&quot;;
-\AB, \text&quot;segment&quot;;
-v↖{→}, \text&quot;vector&quot;;
-⟨\v_\x, \v_\y, \v_\z⟩, \text&quot;vector (by coordinates)&quot;;
-n↖{∧}, \text&quot;unit vector)&quot;;
-{‖v↖{→}‖}, \text&quot;magnitude (length) of vector&quot;;
-a↖{→}·b↖{→}, \text&quot;dot product&quot;;
-a↖{→}×b↖{→}, \text&quot;cross product&quot;;
-\bo M, \text&quot;matrix&quot;;
-}$$&lt;/p&gt;
-
-&lt;p&gt;Column notation is used for vectors:&lt;/p&gt;
-
-&lt;p&gt;$$ v↖{→}=[\table x; y; z; w; ] $$&lt;/p&gt;
-
-&lt;p class=&quot;note&quot;&gt;If the formulas look like crap in your browser, that means it
-sadly doesn’t support MathML. Solution? Use a better browser, like
-&lt;a href=&quot;https://www.mozilla.org/en-US/firefox/new/&quot;&gt;Firefox&lt;/a&gt;.&lt;/p&gt;
-
-&lt;h3 id=&quot;transform-matrices&quot;&gt;Transform matrices&lt;/h3&gt;
-
-&lt;p&gt;All the matrix stuff will be eventually handled by a &lt;a href=&quot;https://github.com/stavenko/nim-glm&quot;&gt;matrix
-library&lt;/a&gt; written by someone else, but
-it’s still useful to know how these transforms look like in our right-handed
-coordinate system (for example, for performance purposes we might hand-code
-some optimised versions of these transforms later).&lt;/p&gt;
-
-&lt;h4 id=&quot;translation-and-scaling&quot;&gt;Translation and scaling&lt;/h4&gt;
-
-&lt;p&gt;$$\bo T=[\table
-1, 0, 0, t_x;
-0, 1, 0, t_y;
-0, 0, 1, t_z;
-0, 0, 0, 1;
-]
-\;\;\;\;\;\;\bo S=[\table
-s_x,   0,   0, 0;
-  0, s_y,   0, 0;
-  0,   0, s_z, 0;
-  0,   0,   0, 1;
-]$$&lt;/p&gt;
-
-&lt;h4 id=&quot;rotation-around-a-given-axis&quot;&gt;Rotation around a given axis&lt;/h4&gt;
-
-&lt;p&gt;$$\bo R_\x=[\table
-1,      0,       0, 0;
-0, \cos θ, -\sin θ, 0;
-0, \sin θ,  \cos θ, 0;
-0,      0,       0, 1;
-]
-\;\;\;\;\;\;\bo R_\y=[\table
- \cos θ, 0, \sin θ, 0;
-      0, 1,      0, 0;
--\sin θ, 0, \cos θ, 0;
-      0, 0,      0, 1;
-]$$&lt;/p&gt;
-
-&lt;p&gt;$$\bo R_\z=[\table
-\cos θ, -\sin θ, 0, 0;
-\sin θ,  \cos θ, 0, 0;
-     0,       0, 1, 0;
-     0,       0, 0, 1;
-]$$&lt;/p&gt;
-
-&lt;h3 id=&quot;calculating-primary-rays&quot;&gt;Calculating primary rays&lt;/h3&gt;
-
-&lt;p&gt;Let $(P_x, P_y)$ be the &lt;strong&gt;pixel coordinates&lt;/strong&gt; of a pixel of the final image,
-$w$ and $h$ the width and the height of the image in pixels and $r = w / h$
-the image aspect ratio.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-  &lt;object data=&quot;/files/2016-04-30/mappings.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 2 &amp;mdash; The relationships between the raster, NDC and screen spaces.&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;We have to shoot the rays through the middle of the pixels, thus the $(R_x,
-R_y)$ &lt;strong&gt;raster coordinates&lt;/strong&gt; of a given pixel are as follows:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-R_x ,= P_x + 0.5;
-R_y ,= P_y + 0.5;
-}$$&lt;/p&gt;
-
-&lt;p&gt;From this follows the formula for calculating the $(N_x, N_y)$
-&lt;strong&gt;normalised device coordinates (NDC)&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-N_x ,= R_x / w r;
-N_y ,= R_y / h;
-}$$&lt;/p&gt;
-
-&lt;p&gt;And finally the $(S_x, S_y)$ &lt;strong&gt;screen coordinates&lt;/strong&gt;:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-S_x ,= 2 N_x - r;
-S_y ,= -(2 N_y - 1)
-}$$&lt;/p&gt;
-
-&lt;p&gt;To simplify the calculations, let the image plane be -1 distance away from the
-origin on the z-axis and let $α$ be the &lt;strong&gt;vertical field of view
-(FOV)&lt;/strong&gt; of the camera. From Figure 3 it can be seen that by default the field
-of view is 90° (because $\tan 90° / 2 = \tan 45° = 1 = \BC $), and
-the length of $\BC$ is actually the $f$ &lt;strong&gt;field of view factor&lt;/strong&gt; of the
-camera.&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-  &lt;object data=&quot;/files/2016-04-30/fov.svg&quot; type=&quot;image/svg+xml&quot; style=&quot;width: 100%&quot;&gt;&lt;/object&gt;
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 100%; text-align: center;&quot;&gt;Figure 3 &amp;mdash; Calculating the vertical field of view (FOV) factor.&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;p&gt;$$\tan α / 2 = \BC / \AB = \BC / 1$$
-$$\BC = \tan α / 2 = f$$&lt;/p&gt;
-
-&lt;p&gt;To obtain the desired field of view, the image surface has to be scaled by
-the field of view factor (this is akin to zooming with a traditional camera
-lens). Thus we yield the screen coordinates normalised by the field
-of view factor:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-S_x ,= (2 N_x - r) f;
-S_y ,= -(2 N_y - 1) f;
-}$$&lt;/p&gt;
-
-&lt;p&gt;After substitutions, the final transform from pixel coordinates to screen
-coordinates looks like this:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-S_x ,= ({2 (P_x + 0.5) r} / w - r) f;
-S_y ,= (1 - {2 (P_y + 0.5)} / h) f;
-}$$&lt;/p&gt;
-
-&lt;p&gt;So for each pixel $(P_x, P_y)$ in the image we can now calculate the
-corresponding screen coordinates $(S_x, S_y)$ we’ll need to shoot the
-primary rays through. Since the camera is at the origin, the direction vector
-$d↖{∧}$ of the ray corresponding to pixel $(P_x, P_y)$ is simply the vector
-$⟨S_x, S_y⟩$ normalised:&lt;/p&gt;
-
-&lt;p&gt;$$ d↖{∧} = ⟨S_x, S_y⟩ / {‖⟨S_x, S_y⟩‖}$$&lt;/p&gt;
-
-&lt;p&gt;As the last step, we’ll need to multiply the resulting direction vector
-$d↖{∧}$ and the camera position $O$ (which is at the origin by default) with
-the $\bo C$ camera-to-world transform matrix:&lt;/p&gt;
-
-&lt;p&gt;$$ d_{\w}↖{∧} = \bo C d↖{∧}$$
-$$ O_{\w} = \bo C O$$&lt;/p&gt;
-
-&lt;p&gt;Note that assuming 4-component vectors and a 4x4 transform matrix that is used
-for both translation and rotation, the above will only work correctly if the
-fourth $w$ component of the direction vector $d↖{∧}$ is set to 0, and the $w$
-component of the point $O$ is set to 1. Remember that the camera position is
-at the origin before the transform, so $O$ will be always equal to this:&lt;/p&gt;
-
-&lt;p&gt;$$ O=[\table 0; 0; 0; 1; ] $$&lt;/p&gt;
-
-&lt;h3 id=&quot;ray-sphere-intersection&quot;&gt;Ray-sphere intersection&lt;/h3&gt;
-
-&lt;p&gt;The implicit equation of a &lt;strong&gt;sphere&lt;/strong&gt; with centre point $C$ and radius $r$:&lt;/p&gt;
-
-&lt;p&gt;$$(x-C_x)^2 + (y-C_y)^2 + (z-C_z)^2 = r^2$$&lt;/p&gt;
-
-&lt;p&gt;The parametric equation of a &lt;strong&gt;half-open line segment&lt;/strong&gt; (the ray, in our
-case), where $\O$ is the starting point, $d↖{∧}$ the direction vector and $P$
-a point on the segment for any $t≧0$:&lt;/p&gt;
-
-&lt;p&gt;$$P = O + d↖{∧}t$$&lt;/p&gt;
-
-&lt;p&gt;Written component-wise:&lt;/p&gt;
-
-&lt;p&gt;$$P_x = O_x + d_xt $$
-$$P_y = O_y + d_yt $$
-$$P_z = O_z + d_zt $$&lt;/p&gt;
-
-&lt;p&gt;To get the ray-sphere intersection points, we’ll need to substitute $P_x$,
-$P_y$ and $P_z$ into the equation of the sphere:&lt;/p&gt;
-
-&lt;p&gt;$$(O_x + d_xt - C_x)^2 + (O_y + d_yt-C_y)^2 + (O_z + d_zt-C_z)^2 = r^2$$&lt;/p&gt;
-
-&lt;p&gt;The first parenthesised expression can be expanded like this:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-(O_x + d_xt - C_x)^2 ,= O_x^2 + O_x d_xt - O_xC_x + d_xtO_x + d_x^2t^2 - d_xtC_x - C_xO_x - C_xd_xt + C_x^2;
- ,= O_x^2 + 2O_x d_xt - 2O_xC_x + d_x^2t^2 - 2C_x d_xt + C_x^2;
- ,= d_x^2t^2 + (2O_x d_x - 2C_x d_x)t + (O_x^2 - 2O_xC_x + C_x^2);
- ,= d_x^2t^2 + (2d_x(O_x- C_x))t + (O_x - C_x)^2;
-}$$&lt;/p&gt;
-
-&lt;p&gt;The remaining two expressions can be expanded in a similar way, so the final
-equation will have the form of a quadratic equation $ at^2 + bt + c = 0$,
-where:&lt;/p&gt;
-
-&lt;p&gt;$$\cl&quot;ma-join-align&quot;{\table
-a ,= d_x^2 + d_y^2 + d_z^2;
-b ,= 2 (d_x(O_x - C_x) + d_y(O_y - C_y) + d_z(O_z - C_z));
-c ,= (O_x - C_x)^2 + (O_y - C_y)^2 + (O_z - C_z)^2;
-}$$&lt;/p&gt;
-
-&lt;p&gt;First the discriminant $\Δ$ needs to be calculated. If $\Δ &amp;lt; 0$, the
-ray does not intersect the sphere; if $\Δ = 0$, the ray touches the sphere
-(one intersection point); and if $\Δ &amp;gt; 0$, it intersects the sphere at
-two points. The equation can be solved for $t$ by applying the following
-formula that takes care of the &lt;a href=&quot;https://en.wikipedia.org/wiki/Loss_of_significance#A_better_algorithm&quot;&gt;loss of
-significance&lt;/a&gt;
-floating-point problem:&lt;/p&gt;
-
-&lt;p&gt;$$\Δ = b^2-4ac$$&lt;/p&gt;
-
-&lt;p&gt;$$t_1 = {-b-\sgn(b)√\Δ} / {4a}\;\;\;,\;\;\;t_2 = c/{a t_1}$$&lt;/p&gt;
-
-&lt;h3 id=&quot;ray-plane-intersection&quot;&gt;Ray-plane intersection&lt;/h3&gt;
-
-&lt;p&gt;A &lt;strong&gt;plane&lt;/strong&gt; can be defined by a normal vector $n↖{∧}$ and a point $P_o$,
-where $n↖{∧}$ represents the orientation of the plane and $P_o$ how far away
-the plane is from the origin. We know that the dot product of two vectors is
-zero only if they are perpendicular to each other, from which follows that for
-every point $\P$ that lies on the plane defined by $n↖{∧}$ and $P_o$ the
-following holds true:&lt;/p&gt;
-
-&lt;p&gt;$$(P-P_o)·n↖{∧}=0$$&lt;/p&gt;
-
-&lt;p&gt;To get the ray-plane intersection point, we only need to substitute the
-parametric equation of the ray $\P = \O + d↖{∧}t$ into the above equation and
-solve it for $t$ :&lt;/p&gt;
-
-&lt;p&gt;$$(O + d↖{∧}t-P_o)·n↖{∧}=0$$
-$$d↖{∧}t·n↖{∧} + (O -P_o)·n↖{∧}=0$$
-$$t = {(P_o - O)·n↖{∧}} / {n↖{∧}·d↖{∧}}$$&lt;/p&gt;
-
-&lt;p&gt;As usual, we are interested in positive $t$ values only. If $t$ is zero (or
-very close to zero), then there is no intersection because the ray is parallel
-with the plane, either away from it or exactly coinciding with it.&lt;/p&gt;
-
-&lt;h2 id=&quot;in-the-next-episode&quot;&gt;In the next episode…&lt;/h2&gt;
-
-&lt;p&gt;Believe it or not, that’s all we maths we need to implement a very simple
-ray tracer capable of rendering planes and spheres! In the next part, we’ll
-inspect some actual Nim code that generated this singular masterpiece of 80’s
-CGI art below. (Well, you gotta start somewhere, right?)&lt;/p&gt;
-
-&lt;figure class=&quot;image&quot;&gt;
-  
-    
-      &lt;a class=&quot;largeimg&quot; href=&quot;https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg&quot; data-width=&quot;1200&quot; data-height=&quot;800&quot;&gt;
-        &lt;img src=&quot;https://blog.johnnovak.net/files/2016-04-30/lame-first-render.jpg&quot; alt=&quot;My lame first render&quot; style=&quot;width: 80%&quot; /&gt;
-      &lt;/a&gt;
-    
-  
-
-  
-    
-    &lt;figcaption style=&quot; width: 80%;&quot;&gt;This might look like total crap, but it's 16x MSAA anti-aliased, yo, and it was generated by first ray tracing &quot;engine&quot;!&lt;/figcaption&gt;
-  
-&lt;/figure&gt;
-
-&lt;hr /&gt;
-
-&lt;section class=&quot;links&quot;&gt;
-
-  &lt;h2 id=&quot;suggested-reading&quot;&gt;Suggested reading&lt;/h2&gt;
-
-  &lt;ul class=&quot;compact&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;http://www.scratchapixel.com/&quot;&gt;Scratchapixel 2.0 – Learn Computer Graphics Programming from
-Scratch&lt;/a&gt;&lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/section&gt;
-</description>
-                <pubDate>Sat, 30 Apr 2016 00:00:00 +1000</pubDate>
-                <link>https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</link>
-                <guid isPermaLink="true">https://blog.johnnovak.net/2016/04/30/the-nim-raytracer-project-part-2-the-basics/</guid>
             </item>
         
     </channel>
