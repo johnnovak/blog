@@ -1,731 +1,318 @@
-<!DOCTYPE html>
-<html class="no-js" lang="en">
-
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width; target-densityDpi=160; initial-scale=1; maximum-scale=1">
-  <meta name="description" content="Personal blog of John Novak">
-  <meta name="author" content="John Novak">
-  <meta name="Generator" content="Jekyll (https://jekyllrb.com/)">
-
-  <title>Nim performance tuning for the uninitiated</title>
-
-  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel="stylesheet"> 
-  <link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel="stylesheet">
-
-  <!--Source Sans Pro is required for the SVG images only -->
-  <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel="stylesheet">
-
-  <link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel="stylesheet">
-
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/blog.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/jqmath-0.4.3.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe.css">
-  <link rel="stylesheet" type="text/css" href="https://blog.johnnovak.net/css/photoswipe-default-skin/default-skin.css">
-
-  <script src="https://blog.johnnovak.net/js/lib/modernizr.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/lib/jquery-1.12.4.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/lib/jqmath-etc-0.4.6.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/lib/photoswipe-ui-default.min.js" charset="utf-8"></script>
-  <script src="https://blog.johnnovak.net/js/blog.js" charset="utf-8"></script>
-  <!-- <script>M.MathPlayer = false; M.trustHtml = true;</script> -->
-
-  <link rel="alternate" type="application/rss+xml" title="Personal blog of John Novak" href="https://blog.johnnovak.net/feed.xml">
-</head>
-
-<body>
-  <script src="https://blog.johnnovak.net/js/lib/respond.min.js"></script>
-
-  <div id="wrapper">
-
-    <header id="header">
-      <div id="header-bg"></div>
-      <a href="https://blog.johnnovak.net"><img id="jn-logo" src="https://blog.johnnovak.net/img/jn-logo.png" alt="John Novak" data-2x="https://blog.johnnovak.net/img/jn-logo@2x.png"></a>
-      <p class="tagline">Riding on the tail of the<br> Gaussian curve<br> since 1979</p>
-
-      <nav>
-        <ul>
-          <li><a href="https://blog.johnnovak.net/about/">About</a></li>
-          <li><a href="https://blog.johnnovak.net/archives/">Archives</a></li>
-          <li><a href="https://blog.johnnovak.net/tags/">Tags</a></li>
-          <li class="last"><a href="https://blog.johnnovak.net/feed.xml">Rss</a></li>
-        </ul>
-      </nav>
-    </header>
-
-    <div role="main">
-
-
-
-<article class="post">
-  <header>
-    <h1><a href="https://blog.johnnovak.net/2017/04/22/nim-performance-tuning-for-the-uninitiated/">Nim performance tuning for the uninitiated</a></h1>
-    <p class="date"><time datetime="2017-04-22">2017 Apr 22</time></p>
-  </header>
-
-  
-    <nav class="tags">
-      <ul>
-      
-        <li><a href="https://blog.johnnovak.net/tag/coding/">coding</a></li>
-      
-        <li><a href="https://blog.johnnovak.net/tag/nim/">nim</a></li>
-      
-        <li><a href="https://blog.johnnovak.net/tag/c++/">c++</a></li>
-      
-        <li><a href="https://blog.johnnovak.net/tag/performance/">performance</a></li>
-      
-      </ul>
-    </nav>
-  
-
-  <p class="intro">UPDATE 2017-06-04: Corrected some slight misinformation regarding
-link time optimisations and the {.inline.} pragma, some stylistic
-improvements, added more references.</p>
-
-<p id="toc-header">Table of contents</p>
-
-<ul id="markdown-toc">
-  <li><a href="#overview" id="markdown-toc-overview">Overview</a></li>
-  <li><a href="#first-attempts" id="markdown-toc-first-attempts">First attempts</a></li>
-  <li><a href="#test-setup" id="markdown-toc-test-setup">Test setup</a></li>
-  <li><a href="#round-1--nim-vs-c" id="markdown-toc-round-1--nim-vs-c">Round 1 — Nim vs C++</a>    <ul>
-      <li><a href="#0-c" id="markdown-toc-0-c">0. C++</a>        <ul>
-          <li><a href="#memory-layout" id="markdown-toc-memory-layout">Memory layout</a></li>
-          <li><a href="#inspecting-the-assembly-output" id="markdown-toc-inspecting-the-assembly-output">Inspecting the assembly output</a></li>
-        </ul>
-      </li>
-      <li><a href="#1-nim--using-glm" id="markdown-toc-1-nim--using-glm">1. Nim — using GLM</a></li>
-      <li><a href="#2-nim--custom-vector-class-object-refs" id="markdown-toc-2-nim--custom-vector-class-object-refs">2. Nim — custom vector class (object refs)</a></li>
-      <li><a href="#3-nim--custom-vector-class-objects" id="markdown-toc-3-nim--custom-vector-class-objects">3. Nim — custom vector class (objects)</a></li>
-      <li><a href="#4-nim--vector-module" id="markdown-toc-4-nim--vector-module">4. Nim — vector module</a></li>
-      <li><a href="#5-nim--vector-module-with-inlines" id="markdown-toc-5-nim--vector-module-with-inlines">5. Nim — vector module (with inlines)</a></li>
-    </ul>
-  </li>
-  <li><a href="#round-2--nim-vs-java-javascript--python" id="markdown-toc-round-2--nim-vs-java-javascript--python">Round 2 — Nim vs Java, JavaScript &amp; Python</a>    <ul>
-      <li><a href="#jit-warmup" id="markdown-toc-jit-warmup">JIT warmup</a></li>
-    </ul>
-  </li>
-  <li><a href="#conclusion" id="markdown-toc-conclusion">Conclusion</a></li>
-  <li><a href="#does-it-all-matter" id="markdown-toc-does-it-all-matter">Does it all matter?</a></li>
-  <li><a href="#further-links-of-interest" id="markdown-toc-further-links-of-interest">Further links of interest</a></li>
-</ul>
-
-<h2 id="overview">Overview</h2>
-
-<p>This post documents the trials and tribulations I encountered during my foray
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Nim performance tuning for the uninitiated | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=http://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=http://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2017/04/22/nim-performance-tuning-for-the-uninitiated/>Nim performance tuning for the uninitiated</a></h1><p class=date><time datetime=2017-04-22>2017 Apr 22</time></p></header><nav class=tags><ul><li><a href=/tags/coding/>coding</a></li><li><a href=/tags/nim/>nim</a></li><li><a href=/tags/c++/>c++</a></li><li><a href=/tags/performance/>performance</a></li></ul></nav><section class=intro><p><strong>UPDATE 2017-06-04:</strong> Corrected some slight misinformation regarding link
+time optimisations and the {.inline.} pragma, some stylistic improvements,
+added more references.</p></section><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#overview>Overview</a></li><li><a href=#first-attempts>First attempts</a></li><li><a href=#test-setup>Test setup</a></li><li><a href=#round-1-----nim-vs-c>Round 1 &mdash; Nim vs C++</a><ul><li><a href=#0-c>0. C++</a></li><li><a href=#1-nim-----using-glm>1. Nim &mdash; using GLM</a></li><li><a href=#2-nim-----custom-vector-class-object-refs>2. Nim &mdash; custom vector class (object refs)</a></li><li><a href=#3-nim-----custom-vector-class-objects>3. Nim &mdash; custom vector class (objects)</a></li><li><a href=#4-nim-----vector-module>4. Nim &mdash; vector module</a></li><li><a href=#5-nim-----vector-module-with-inlines>5. Nim &mdash; vector module (with inlines)</a></li></ul></li><li><a href=#round-2-----nim-vs-java-javascript--python>Round 2 &mdash; Nim vs Java, JavaScript & Python</a><ul><li><a href=#jit-warmup>JIT warmup</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#does-it-all-matter>Does it all matter?</a></li><li><a href=#further-links-of-interest>Further links of interest</a></li></ul></nav><h2 id=overview>Overview</h2><p>This post documents the trials and tribulations I encountered during my foray
 into the wonderful world of low-level performance optimisation. For those
 intimately familiar with modern optimising compilers and CPU architectures,
 this will be kindergarten stuff. Although I have done my share of low-level
 C and assembly coding in my high-spirited teenager years, that was more than
-20 years ago on a then-state-of-the-art 486 DX-2/66, so naturally it didn’t
+20 years ago on a then-state-of-the-art 486 DX-2/66, so naturally it didn&rsquo;t
 prevent me from running into some quite embarrassing mistakes as things are
-vastly different today, as we’ll shortly see…</p>
-
-<p>Some of you might know that I’m writing a <a href="/tag/ray%20tracing/">ray tracer</a>
-(veeeeeery slowly), so it’s no surprise that I’m quite a bit obsessed with raw
-numerical performance. Don’t bother with what people tell you about Moore’s
-Law, falling GFLOP prices, programmer productivity and the “evils” of
-optimisation—anybody who writes or uses ray-tracing software can tell you
-that <em>nothing</em> is ever fast enough for this task (we’ll come back to this at
+vastly different today, as we&rsquo;ll shortly see&mldr;</p><p>Some of you might know that I&rsquo;m writing a <a href=/tag/ray%20tracing/>ray tracer</a>
+(veeeeeery slowly), so it&rsquo;s no surprise that I&rsquo;m quite a bit obsessed with raw
+numerical performance. Don&rsquo;t bother with what people tell you about Moore&rsquo;s
+Law, falling GFLOP prices, programmer productivity and the &ldquo;evils&rdquo; of
+optimisation&mdash;anybody who writes or uses ray-tracing software can tell you
+that <em>nothing</em> is ever fast enough for this task (we&rsquo;ll come back to this at
 the end in more detail). The de facto language choice for writing such
 high-performance applications has always been C++, potentially with some
 assembly thrown in for good measure. One of the main reasons why I have chosen
 Nim for this project was that it promises C-level performance without having
 to resort to any weird tricks (and, of course, it prevents me from having to
-use C++). I have a very annoying habit that I don’t just believe other
-people’s statements unless I can verify them myself, so I thought it was high
-time to put Nim’s efficiency claims to test… which, as we’ll see, led me
-into some trouble.</p>
-
-<h2 id="first-attempts">First attempts</h2>
-
-<p>The whole performance test idea came up when I was implementing the
+use C++). I have a very annoying habit that I don&rsquo;t just believe other
+people&rsquo;s statements unless I can verify them myself, so I thought it was high
+time to put Nim&rsquo;s efficiency claims to test&mldr; which, as we&rsquo;ll see, led me
+into some trouble.</p><h2 id=first-attempts>First attempts</h2><p>The whole performance test idea came up when I was implementing the
 ray-triangle intersection routine in my ray tracer. My plan was simple:
-implement the same algorithm in C++ and Nim and measure if there’s any
+implement the same algorithm in C++ and Nim and measure if there&rsquo;s any
 performance penalty for using Nim. Theoretically, there would be very little
 to no difference in runtime speed as Nim code gets transformed to plain
-C first, which then gets run through the same optimising C++ compiler.  I was
+C first, which then gets run through the same optimising C++ compiler. I was
 a bit unsure though if Nim objects would map directly to C structs and what
-magnitude of performance degradation (if any) would the GC introduce.</p>
-
-<p>As my first slightly misguided attempt I tried to execute the intersection
+magnitude of performance degradation (if any) would the GC introduce.</p><p>As my first slightly misguided attempt I tried to execute the intersection
 routine with the same static input a few million times, then calculate an
 average intersections per second figure from that. To my greatest shock, the
-C++ version measured to be about 40-50 times faster!</p>
-
-<p>Now, there were a couple of serious problems with this naive approach.
-Firstly, I used a simple direct implementation of the <a href="https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm">Möller–Trumbore
+C++ version measured to be about 40-50 times faster!</p><p>Now, there were a couple of serious problems with this naive approach.
+Firstly, I used a simple direct implementation of the <a href=https://en.wikipedia.org/wiki/M%C3%B6ller%E2%80%93Trumbore_intersection_algorithm>Möller–Trumbore
 intersection
 algorithm</a>.
 Notice that the algorithm can terminate early in multiple places? Therefore,
 it would make much more sense to test with a dataset large and varied enough
 so that the different execution paths would be exercised with roughly the same
 probability, allowing for a meaningful average to be calculated for the whole
-algorithm. Secondly—and this is the worse problem!—by using static data
-defined at the time of compilation, we’re giving the compiler a free license
+algorithm. Secondly&mdash;and this is the worse problem!&mdash;by using static data
+defined at the time of compilation, we&rsquo;re giving the compiler a free license
 to optimise the whole code away and just replace it with a constant! This
-might come as a surprise to some—and it certainly <em>did</em> surprise me!—but
+might come as a surprise to some&mdash;and it certainly <em>did</em> surprise me!&mdash;but
 it turns out that modern optimising compilers like <strong>gcc</strong> and <strong>clang</strong> are
-<em>really</em> good at <a href="https://en.wikipedia.org/wiki/Constant_folding">constant
-folding</a>!</p>
-
-<p>So why don’t we just turn the compiler optimisations off for the tests then?
+<em>really</em> good at <a href=https://en.wikipedia.org/wiki/Constant_folding>constant
+folding</a>!</p><p>So why don&rsquo;t we just turn the compiler optimisations off for the tests then?
 Well, that would defeat the whole purpose of the performance measurements, so
-that’s out of the question. We must always use the optimised release builds
-for such tests.  But then how can we ever be certain that the compiler hasn’t
+that&rsquo;s out of the question. We must always use the optimised release builds
+for such tests. But then how can we ever be certain that the compiler hasn&rsquo;t
 pulled some tricks behind our backs, rendering the whole test scenario
-invalid?  Well, the only way to do that reliably is to inspect the final
+invalid? Well, the only way to do that reliably is to inspect the final
 output produced by the compiler, namely the resulting binary. Luckily, we
-don’t have to do exactly that, as there’s a second-best (and much more
+don&rsquo;t have to do exactly that, as there&rsquo;s a second-best (and much more
 convenient) option: most compilers can be instructed to emit the
 post-optimisation stage assembly sources that are used for generating the
-final binary.</p>
-
-<p>While this might sound a little intimidating for non-assembly programmers
+final binary.</p><p>While this might sound a little intimidating for non-assembly programmers
 (which is probably at least 99.9999% of all programmers in the world today), in
-practice we don’t need to be expert assembly coders to assert whether the
+practice we don&rsquo;t need to be expert assembly coders to assert whether the
 compiler has done what we wanted. Moreover, this is definitely a useful skill
-to have because sometimes we can “nudge” the compiler into the right direction
+to have because sometimes we can &ldquo;nudge&rdquo; the compiler into the right direction
 to come up with more efficient assembly-level structures by re-arranging the
 high-level code a bit and maybe adding a few inlining hints here and there.
 Again, the only foolproof way to see if such tricks have really worked is to
-inspect the assembly output.</p>
-
-<h2 id="test-setup">Test setup</h2>
-
-<p>The two most obvious solutions to prevent constant folding is to either load
+inspect the assembly output.</p><h2 id=test-setup>Test setup</h2><p>The two most obvious solutions to prevent constant folding is to either load
 the test data from a file or to generate it at runtime. I chose the latter
-because I’d have to write the test data generation code anyway, so why not do
-it at runtime then.</p>
-
-<p>The tests execute the following steps:</p>
-
-<ul>
-  <li>
-    <p>Precalculate <em>T</em> number of random triangles so that all points of 
-the triangles lie on the surface of the unit sphere.</p>
-  </li>
-  <li>
-    <p>Precalculate <em>R</em> number of random rays so that each ray goes through two
-points randomly selected on the surface of the unit sphere.</p>
-  </li>
-  <li>
-    <p>Intersect each ray with the whole set of triangles, so there will be <em>R</em>
-✕ <em>T</em> intersection tests in total.</p>
-  </li>
-</ul>
-
-<p>The only tricky thing is to make sure that the random points we pick on the
+because I&rsquo;d have to write the test data generation code anyway, so why not do
+it at runtime then.</p><p>The tests execute the following steps:</p><ul><li><p>Precalculate <em>T</em> number of random triangles so that all points of
+the triangles lie on the surface of the unit sphere.</p></li><li><p>Precalculate <em>R</em> number of random rays so that each ray goes through two
+points randomly selected on the surface of the unit sphere.</p></li><li><p>Intersect each ray with the whole set of triangles, so there will be <em>R</em>
+✕ <em>T</em> intersection tests in total.</p></li></ul><p>The only tricky thing is to make sure that the random points we pick on the
 sphere are uniformly distributed. A straightforward solution to this problem
-can be found <a href="https://math.stackexchange.com/a/1586185">here</a>.</p>
-
-<p>All tests were performed on a MacBook Pro (Mid 2014), 2.2 GHz Intel Core i7,
-16 GB RAM running OS X El Capitan 10.11.6.</p>
-
-<h2 id="round-1--nim-vs-c">Round 1 — Nim vs C++</h2>
-
-<h3 id="0-c">0. C++</h3>
-
-<p>The “gold standard” for our daring enterprise will be the performance of the
-single-threaded <a href="https://gist.github.com/bkaradzic/2e39896bc7d8c34e042b">orthodox
+can be found <a href=https://math.stackexchange.com/a/1586185>here</a>.</p><p>All tests were performed on a MacBook Pro (Mid 2014), 2.2 GHz Intel Core i7,
+16 GB RAM running OS X El Capitan 10.11.6.</p><h2 id=round-1-----nim-vs-c>Round 1 &mdash; Nim vs C++</h2><h3 id=0-c>0. C++</h3><p>The &ldquo;gold standard&rdquo; for our daring enterprise will be the performance of the
+single-threaded <a href=https://gist.github.com/bkaradzic/2e39896bc7d8c34e042b>orthodox
 C++</a> implementation.
 You can check out the source code
-<a href="https://github.com/johnnovak/raytriangle-test/blob/master/cpp/perftest.cpp">here</a>.
+<a href=https://github.com/johnnovak/raytriangle-test/blob/master/cpp/perftest.cpp>here</a>.
 As we can see in the results below, our testing method gives us a roughly 5%
-hit rate. The exact hit rate does not actually matter as long as it’s not too
-close to zero and if it hovers around the same value in all tests.</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+hit rate. The exact hit rate does not actually matter as long as it&rsquo;s not too
+close to zero and if it hovers around the same value in all tests.</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      4,994,583 ( 4.99%)
   Misses:                   95,005,417 (95.01%)
 
 Total time:                       1.93 seconds
 Millions of tests per second:    51.87
-</code></pre></div></div>
-
-<p>So ~51.9 millions of ray-triangle tests per second it is. I guess that’s not
+</code></pre><p>So ~51.9 millions of ray-triangle tests per second it is. I guess that&rsquo;s not
 too bad for a straightforward C implementation! It turns out that Nim can
-easily match that, but you have to know exactly what you’re doing to get
-there, as I’ll show below.</p>
-
-<h4 id="memory-layout">Memory layout</h4>
-
-<p>One very important thing to note is how the triangle data is laid out in
-memory. For every single ray we’re going to mow through all the triangles in
+easily match that, but you have to know exactly what you&rsquo;re doing to get
+there, as I&rsquo;ll show below.</p><h4 id=memory-layout>Memory layout</h4><p>One very important thing to note is how the triangle data is laid out in
+memory. For every single ray we&rsquo;re going to mow through all the triangles in
 a linear fashion, checking for intersections, so we must store the triangles
 contiguously in a big chunk of memory to best utilise the CPU data caches.
-This is straightforward to do in C:</p>
+This is straightforward to do in C:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=n>struct</span> <span class=n>Vec3</span>
+<span class=p>{</span>
+  <span class=kt>float</span> <span class=n>x</span><span class=p>;</span>
+  <span class=kt>float</span> <span class=n>y</span><span class=p>;</span>
+  <span class=kt>float</span> <span class=n>z</span><span class=p>;</span>
+<span class=p>};</span>
 
-<figure class="highlight"><pre><code class="language-cpp" data-lang="cpp"><span class="k">struct</span> <span class="nc">Vec3</span>
-<span class="p">{</span>
-  <span class="kt">float</span> <span class="n">x</span><span class="p">;</span>
-  <span class="kt">float</span> <span class="n">y</span><span class="p">;</span>
-  <span class="kt">float</span> <span class="n">z</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="n">Vec3</span> <span class="o">*</span><span class="nf">allocTriangles</span><span class="p">(</span><span class="kt">int</span> <span class="n">numTriangles</span><span class="p">)</span>
-<span class="p">{</span>
-  <span class="k">return</span> <span class="p">(</span><span class="n">Vec3</span> <span class="o">*</span><span class="p">)</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">Vec3</span><span class="p">)</span> <span class="o">*</span> <span class="n">numTriangles</span> <span class="o">*</span> <span class="mi">3</span><span class="p">);</span>
-<span class="p">}</span></code></pre></figure>
-
-<h4 id="inspecting-the-assembly-output">Inspecting the assembly output</h4>
-
-<p>Before progressing any further, let’s take a quick look at a typical number
+<span class=n>Vec3</span> <span class=o>*</span><span class=n>allocTriangles</span><span class=p>(</span><span class=kt>int</span> <span class=n>numTriangles</span><span class=p>)</span>
+<span class=p>{</span>
+  <span class=k>return</span> <span class=p>(</span><span class=n>Vec3</span> <span class=o>*</span><span class=p>)</span> <span class=n>malloc</span><span class=p>(</span><span class=n>sizeof</span><span class=p>(</span><span class=n>Vec3</span><span class=p>)</span> <span class=o>*</span> <span class=n>numTriangles</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>
+<span class=p>}</span></code></pre></div><h4 id=inspecting-the-assembly-output>Inspecting the assembly output</h4><p>Before progressing any further, let&rsquo;s take a quick look at a typical number
 crunching function in assembly form! This is the command to compile the C++
-source into the final executable:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>clang -std=c++11 -lm -O3 -o perftest perftest.cpp
-</code></pre></div></div>
-
-<p>And the command to emit the corresponding assembly output:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>clang -std=c++11 -S -O3 -o perftest.s perftest.cpp
-</code></pre></div></div>
-
-<p>Now we can do a full text search in the resulting <code class="highlighter-rouge">.s</code> file for the function
-we want to inspect (<code class="highlighter-rouge">rayTriangleIntersect</code> in this case). As I said, we don’t
-really need to understand assembly on a deep level for our purposes; it’s
+source into the final executable:</p><pre><code>clang -std=c++11 -lm -O3 -o perftest perftest.cpp
+</code></pre><p>And the command to emit the corresponding assembly output:</p><pre><code>clang -std=c++11 -S -O3 -o perftest.s perftest.cpp
+</code></pre><p>Now we can do a full text search in the resulting <code>.s</code> file for the function
+we want to inspect (<code>rayTriangleIntersect</code> in this case). As I said, we don&rsquo;t
+really need to understand assembly on a deep level for our purposes; it&rsquo;s
 enough to know that a healthy-looking number crunching function should
-resemble something like this:</p>
+resemble something like this:</p><div class=highlight><pre class=chroma><code class=language-asm data-lang=asm>    <span class=na>.globl</span>  <span class=no>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_</span>
+    <span class=na>.align</span>  <span class=mi>4</span><span class=p>,</span> <span class=mi>0x90</span>
+<span class=nl>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_:</span>   <span class=c># decorated function name
+</span><span class=c></span>    <span class=na>.cfi_startproc</span>            <span class=c># function starts here
+</span><span class=c></span>    <span class=no>pushq</span>   <span class=err>%</span><span class=no>rbp</span>              <span class=c># some init stuff
+</span><span class=c></span><span class=no>Ltmp15</span><span class=p>:</span>
+    <span class=na>.cfi_def_cfa_offset</span> <span class=mi>16</span>
+<span class=nl>Ltmp16:</span>
+    <span class=na>.cfi_offset</span> <span class=err>%</span><span class=no>rbp</span><span class=p>,</span> <span class=p>-</span><span class=mi>16</span>
+    <span class=nf>movq</span>    <span class=nv>%rsp</span><span class=p>,</span> <span class=nv>%rbp</span>
+<span class=nl>Ltmp17:</span>
+    <span class=na>.cfi_def_cfa_register</span> <span class=err>%</span><span class=no>rbp</span>
+    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rdx</span><span class=p>),</span> <span class=nv>%xmm14</span>
+    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rsi</span><span class=p>),</span> <span class=nv>%xmm15</span>
 
-<figure class="highlight"><pre><code class="language-asm" data-lang="asm">    .globl  __Z20rayTriangleIntersectP3RayP4Vec3S2_S2_
-    .align  4, 0x90
-__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_:   # decorated function name
-    .cfi_startproc            # function starts here
-    pushq   %rbp              # some init stuff
-Ltmp15:
-    .cfi_def_cfa_offset 16
-Ltmp16:
-    .cfi_offset %rbp, -16
-    movq    %rsp, %rbp
-Ltmp17:
-    .cfi_def_cfa_register %rbp
-    movq    (%rdx), %xmm14
-    movq    (%rsi), %xmm15
+    <span class=na>...</span>                       <span class=c># omitted
+</span><span class=c></span>
+    <span class=nf>mulss</span>   <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm11</span>
+    <span class=nf>movaps</span>  <span class=nv>%xmm1</span><span class=p>,</span> <span class=nv>%xmm2</span>
+    <span class=nf>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm2</span>
+    <span class=nf>subss</span>   <span class=nv>%xmm2</span><span class=p>,</span> <span class=nv>%xmm11</span>
+    <span class=nf>movaps</span>  <span class=nv>%xmm13</span><span class=p>,</span> <span class=nv>%xmm4</span>     <span class=c># actual function body
+</span><span class=c></span>    <span class=no>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm4</span>
+    <span class=nf>movaps</span>  <span class=nv>%xmm5</span><span class=p>,</span> <span class=nv>%xmm2</span>
+    <span class=nf>mulss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
+    <span class=nf>addss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
 
-    ...                       # omitted
-
-    mulss   %xmm6, %xmm11
-    movaps  %xmm1, %xmm2
-    mulss   %xmm0, %xmm2
-    subss   %xmm2, %xmm11
-    movaps  %xmm13, %xmm4     # actual function body
-    mulss   %xmm0, %xmm4
-    movaps  %xmm5, %xmm2
-    mulss   %xmm7, %xmm2
-    addss   %xmm7, %xmm2
-
-    ...                       # omitted
-
-    jmp LBB5_9                # some cleanup stuff
-LBB5_2:
-    movss   LCPI5_0(%rip), %xmm6
-    jmp LBB5_9
-LBB5_4:
-    movss   LCPI5_0(%rip), %xmm6
-    jmp LBB5_9
-LBB5_6:
-    movss   LCPI5_0(%rip), %xmm6
-LBB5_9:
-    movaps  %xmm6, %xmm0
-    popq    %rbp
-    retq
-    .cfi_endproc              # the end</code></pre></figure>
-
-<p>The init and cleanup stuff we’re not really interested about, but the fact
+    <span class=na>...</span>                       <span class=c># omitted
+</span><span class=c></span>
+    <span class=nf>jmp</span> <span class=no>LBB5_9</span>                <span class=c># some cleanup stuff
+</span><span class=c></span><span class=no>LBB5_2</span><span class=p>:</span>
+    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
+<span class=nl>LBB5_4:</span>
+    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
+<span class=nl>LBB5_6:</span>
+    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+<span class=nl>LBB5_9:</span>
+    <span class=nf>movaps</span>  <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm0</span>
+    <span class=nf>popq</span>    <span class=nv>%rbp</span>
+    <span class=nf>retq</span>
+    <span class=na>.cfi_endproc</span>              <span class=err>#</span> <span class=no>the</span> <span class=no>end</span></code></pre></div><p>The init and cleanup stuff we&rsquo;re not really interested about, but the fact
 that they are there is actually a good sign; this means that the compiler has
 not optimised away the whole function. The function body for numerical
 calculations involving floating point numbers will be basically lots of
-mucking around with the SSE registers<sup id="fnref:sse" role="doc-noteref"><a href="#fn:sse" class="footnote">1</a></sup> (XMM1 to XMM15). For those who
-have never seen assembly listings before, <code class="highlighter-rouge">movaps</code> moves values between
-registers, <code class="highlighter-rouge">mulss</code> multiplies two registers, <code class="highlighter-rouge">addss</code> adds them together and so
+mucking around with the SSE registers<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> (XMM1 to XMM15). For those who
+have never seen assembly listings before, <code>movaps</code> moves values between
+registers, <code>mulss</code> multiplies two registers, <code>addss</code> adds them together and so
 on. Even for a relatively short numerical function like ours, the function
-body will go on for pages. This is good, this is what we wanted—it looks
+body will go on for pages. This is good, this is what we wanted&mdash;it looks
 like we have the real function here, not just some constant folded version of
-it.</p>
-
-<p>For those wanting to delve further into the dark art of assembly programming,
+it.</p><p>For those wanting to delve further into the dark art of assembly programming,
 make sure to check out the two excellent articles in the further reading
-section at the end of the article.</p>
-
-<h3 id="1-nim--using-glm">1. Nim — using GLM</h3>
-
-<p>I started out with <a href="https://github.com/stavenko/nim-glm">nim-glm</a> in my ray
+section at the end of the article.</p><h3 id=1-nim-----using-glm>1. Nim &mdash; using GLM</h3><p>I started out with <a href=https://github.com/stavenko/nim-glm>nim-glm</a> in my ray
 tracer, which is more or less a port of the
-<a href="https://github.com/g-truc/glm">GLM</a> OpenGL mathematics library.  The
-<a href="https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest1.nim">original
+<a href=https://github.com/g-truc/glm>GLM</a> OpenGL mathematics library. The
+<a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest1.nim>original
 version</a>
-of the code used nim-glm’s <code class="highlighter-rouge">Vec3[float32]</code> type and its associated methods for
-vector operations.</p>
-
-<p>To my greatest shock, the performance of my initial Nim code was quite
+of the code used nim-glm&rsquo;s <code>Vec3[float32]</code> type and its associated methods for
+vector operations.</p><p>To my greatest shock, the performance of my initial Nim code was quite
 abysmal, barely 1-2 millions of tests per second! After much head scratching
 and debugging it turned out that nim-glm was the culprit: the vector component
 getter and setter methods were not inlined by the compiler. After a few
-strategically placed <a href="https://github.com/stavenko/nim-glm/commit/aebc0ee68f6d3ed5ccc4fcc89dd81716af708c6e">inline
+strategically placed <a href=https://github.com/stavenko/nim-glm/commit/aebc0ee68f6d3ed5ccc4fcc89dd81716af708c6e>inline
 pragmas</a>
 the situation got somewhat better, but still a 10-fold performance degradation
-compared to the C++ version:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+compared to the C++ version:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      4,703,478 ( 4.70%)
   Misses:                   95,296,522 (95.30%)
 
 Total time:                      19.86 seconds
 Millions of tests per second:     5.04
-</code></pre></div></div>
-
-<p>At this point I decided to give up on nim-glm altogether and write my own
+</code></pre><p>At this point I decided to give up on nim-glm altogether and write my own
 vector routines. The thing is, nim-glm is a fine <em>general purpose</em> vector
-maths library, but when it’s time to get into serious performance optimisation
+maths library, but when it&rsquo;s time to get into serious performance optimisation
 mode, you want complete control over the codebase, and using an external
-component that heavily uses macros is just asking for trouble.</p>
-
-<h3 id="2-nim--custom-vector-class-object-refs">2. Nim — custom vector class (object refs)</h3>
-
-<p>Okay, so using <a href="https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest2.nim#L3-L32">my own vector maths
+component that heavily uses macros is just asking for trouble.</p><h3 id=2-nim-----custom-vector-class-object-refs>2. Nim &mdash; custom vector class (object refs)</h3><p>Okay, so using <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest2.nim#L3-L32>my own vector maths
 code</a>
-resulted in some improvement, but not by much:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+resulted in some improvement, but not by much:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      5,718,606 ( 5.72%)
   Misses:                   94,281,394 (94.28%)
 
 Total time:                      11.41 seconds
 Millions of tests per second:     8.76
-</code></pre></div></div>
+</code></pre><p>What went wrong here? It turns out that for some reason I used object
+references instead of plain objects for my <code>Vec3</code> and <code>Ray</code> types:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Vec3</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
+  <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=kt>float32</span>
 
-<p>What went wrong here? It turns out that for some reason I used object
-references instead of plain objects for my <code class="highlighter-rouge">Vec3</code> and <code class="highlighter-rouge">Ray</code> types:</p>
-
-<figure class="highlight"><pre><code class="language-nimrod" data-lang="nimrod"><span class="k">type</span> <span class="n">Vec3</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-  <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="kt">float32</span>
-
-<span class="k">type</span> <span class="n">Ray</span> <span class="o">=</span> <span class="k">ref</span> <span class="k">object</span>
-  <span class="n">dir</span><span class="p">,</span> <span class="n">orig</span><span class="p">:</span> <span class="n">Vec3</span></code></pre></figure>
-
-<p>Inspecting the corresponding C code in the <code class="highlighter-rouge">nimcache</code> directory makes the
+<span class=k>type</span> <span class=n>Ray</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
+  <span class=n>dir</span><span class=p>,</span> <span class=n>orig</span><span class=p>:</span> <span class=n>Vec3</span></code></pre></div><p>Inspecting the corresponding C code in the <code>nimcache</code> directory makes the
 problem blatantly obvious (I cleaned up the generated symbol names for
-clarity):</p>
+clarity):</p><div class=highlight><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>Vec3ObjectType</span> <span class=p>{</span>
+  <span class=n>NF32</span> <span class=n>x</span><span class=p>;</span>
+  <span class=n>NF32</span> <span class=n>y</span><span class=p>;</span>
+  <span class=n>NF32</span> <span class=n>z</span><span class=p>;</span>
+<span class=p>};</span>
 
-<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">Vec3ObjectType</span> <span class="p">{</span>
-  <span class="n">NF32</span> <span class="n">x</span><span class="p">;</span>
-  <span class="n">NF32</span> <span class="n">y</span><span class="p">;</span>
-  <span class="n">NF32</span> <span class="n">z</span><span class="p">;</span>
-<span class="p">};</span>
+<span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
+  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>dir</span><span class=p>;</span>    <span class=c1>// indirection!
+</span><span class=c1></span>  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>orig</span><span class=p>;</span>   <span class=c1>// indirection!
+</span><span class=c1></span><span class=p>};</span>
 
-<span class="k">struct</span> <span class="n">RayObjectType</span> <span class="p">{</span>
-  <span class="n">Vec3ObjectType</span><span class="o">*</span> <span class="n">dir</span><span class="p">;</span>    <span class="c1">// indirection!</span>
-  <span class="n">Vec3ObjectType</span><span class="o">*</span> <span class="n">orig</span><span class="p">;</span>   <span class="c1">// indirection!</span>
-<span class="p">};</span>
+<span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
+  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
+  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// indirection! (array of pointers)
+</span><span class=c1></span><span class=p>};</span>
 
-<span class="k">struct</span> <span class="n">SeqVec3Type</span> <span class="p">{</span>
-  <span class="n">TGenericSeq</span> <span class="n">Sup</span><span class="p">;</span>
-  <span class="n">Vec3ObjectType</span><span class="o">*</span> <span class="n">data</span><span class="p">[</span><span class="n">SEQ_DECL_SIZE</span><span class="p">];</span>  <span class="c1">// indirection! (array of pointers)</span>
-<span class="p">};</span>
-
-<span class="n">SeqVec3Type</span><span class="o">*</span> <span class="n">vertices</span><span class="p">;</span></code></pre></figure>
-
-<p>So instead of having a contiguous block of triangle data, we ended up with
+<span class=n>SeqVec3Type</span><span class=o>*</span> <span class=n>vertices</span><span class=p>;</span></code></pre></div><p>So instead of having a contiguous block of triangle data, we ended up with
 a contiguous block of <em>pointers</em> to each of the points making up the
 triangles. This has disastrous performance implications: all the points are
 randomly scattered around in memory so the cache utilisation will be really
-terrible as it is evident from the results.</p>
-
-<h3 id="3-nim--custom-vector-class-objects">3. Nim — custom vector class (objects)</h3>
-
-<p>Fortunately, <a href="https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest3.nim#L3-L7">the
+terrible as it is evident from the results.</p><h3 id=3-nim-----custom-vector-class-objects>3. Nim &mdash; custom vector class (objects)</h3><p>Fortunately, <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest3.nim#L3-L7>the
 fix</a>
-is very simple; we only need to remove the <code class="highlighter-rouge">ref</code> keywords:</p>
+is very simple; we only need to remove the <code>ref</code> keywords:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Vec3</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>,</span> <span class=n>z</span><span class=o>*</span><span class=p>:</span> <span class=kt>float32</span>
 
-<figure class="highlight"><pre><code class="language-nimrod" data-lang="nimrod"><span class="k">type</span> <span class="n">Vec3</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
-  <span class="n">x</span><span class="o">*</span><span class="p">,</span> <span class="n">y</span><span class="o">*</span><span class="p">,</span> <span class="n">z</span><span class="o">*</span><span class="p">:</span> <span class="kt">float32</span>
+<span class=k>type</span> <span class=n>Ray</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>dir</span><span class=o>*</span><span class=p>,</span> <span class=n>orig</span><span class=o>*</span><span class=p>:</span> <span class=n>Vec3</span></code></pre></div><p>This will make the resulting type definitions be in line with our original C++
+code:</p><div class=highlight><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
+  <span class=n>Vec3ObjectType</span> <span class=n>dir</span><span class=p>;</span>
+  <span class=n>Vec3ObjectType</span> <span class=n>orig</span><span class=p>;</span>
+<span class=p>};</span>
 
-<span class="k">type</span> <span class="n">Ray</span><span class="o">*</span> <span class="o">=</span> <span class="k">object</span>
-  <span class="n">dir</span><span class="o">*</span><span class="p">,</span> <span class="n">orig</span><span class="o">*</span><span class="p">:</span> <span class="n">Vec3</span></code></pre></figure>
-
-<p>This will make the resulting type definitions be in line with our original C++
-code:</p>
-
-<figure class="highlight"><pre><code class="language-c" data-lang="c"><span class="k">struct</span> <span class="n">RayObjectType</span> <span class="p">{</span>
-  <span class="n">Vec3ObjectType</span> <span class="n">dir</span><span class="p">;</span>
-  <span class="n">Vec3ObjectType</span> <span class="n">orig</span><span class="p">;</span>
-<span class="p">};</span>
-
-<span class="k">struct</span> <span class="n">SeqVec3Type</span> <span class="p">{</span>
-  <span class="n">TGenericSeq</span> <span class="n">Sup</span><span class="p">;</span>
-  <span class="n">Vec3ObjectType</span> <span class="n">data</span><span class="p">[</span><span class="n">SEQ_DECL_SIZE</span><span class="p">];</span>  <span class="c1">// array of structs</span>
-<span class="p">};</span></code></pre></figure>
-
-<p>And the moment of truth:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+<span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
+  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
+  <span class=n>Vec3ObjectType</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// array of structs
+</span><span class=c1></span><span class=p>};</span></code></pre></div><p>And the moment of truth:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      5,206,370 ( 5.21%)
   Misses:                   94,793,630 (94.79%)
 
 Total time:                       1.96 seconds
 Millions of tests per second:    50.93
-</code></pre></div></div>
-
-<p>Awww yeah! This is basically the same performance we had with the C++ version.
+</code></pre><p>Awww yeah! This is basically the same performance we had with the C++ version.
 Comparing the assembly outputs of the Nim and C++ versions (exercise to the
 reader) reveals that they are basically the same, which is no great surprise
-as ultimately we’re using the same compiler to generate the binaries.</p>
-
-<h3 id="4-nim--vector-module">4. Nim — vector module</h3>
-
-<p>Alright, so time to extract the vector maths stuff into its <a href="https://github.com/johnnovak/raytriangle-test/blob/master/nim/vector.nim">own
+as ultimately we&rsquo;re using the same compiler to generate the binaries.</p><h3 id=4-nim-----vector-module>4. Nim &mdash; vector module</h3><p>Alright, so time to extract the vector maths stuff into its <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/vector.nim>own
 module</a>.
-Pretty trivial task, right? Let’s run the tests again:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+Pretty trivial task, right? Let&rsquo;s run the tests again:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      5,237,698 ( 5.24%)
   Misses:                   94,762,302 (94.76%)
 
 Total time:                       2.89 seconds
 Millions of tests per second:    34.55
-</code></pre></div></div>
-
-<p>Shit, what went wrong here?</p>
-
-<p>To figure this out, we’ll need to understand how the Nim compiler works.
+</code></pre><p>Shit, what went wrong here?</p><p>To figure this out, we&rsquo;ll need to understand how the Nim compiler works.
 First Nim generates a single C file for every module in the project, then from
 that point everything gets compiled and linked as if it were a regular
 C codebase (which technically it is): C files get compiled into objects files
 which then get linked together into the final binary. Inlining functions
 across objects files at link time is generally not performed by default by
 most compilers, and although gcc and clang can be instructed to do link time
-optimisations (LTO) by specifying the <code class="highlighter-rouge">-flto</code> flag, Nim doesn’t use this flag
+optimisations (LTO) by specifying the <code>-flto</code> flag, Nim doesn&rsquo;t use this flag
 by default. Therefore, if we want to inline functions across module boundaries
-in a robust way—even when LTO is turned off—we need to explicitly tell the
-Nim compiler about it with the <code class="highlighter-rouge">{.inline.}</code> pragma. This pragma will force the
+in a robust way&mdash;even when LTO is turned off&mdash;we need to explicitly tell the
+Nim compiler about it with the <code>{.inline.}</code> pragma. This pragma will force the
 inlining of the functions decorated with it into all generated C files where
-the functions are referenced on the Nim compiler (preprocessor) level.</p>
-
-<h3 id="5-nim--vector-module-with-inlines">5. Nim — vector module (with inlines)</h3>
-
-<p>Fixing this is very easy; as explained above, we’ll just need to <a href="https://github.com/johnnovak/raytriangle-test/blob/master/nim/vectorfast.nim">decorate
+the functions are referenced on the Nim compiler (preprocessor) level.</p><h3 id=5-nim-----vector-module-with-inlines>5. Nim &mdash; vector module (with inlines)</h3><p>Fixing this is very easy; as explained above, we&rsquo;ll just need to <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/vectorfast.nim>decorate
 every
 method</a>
-in our module with <code class="highlighter-rouge">{.inline.}</code> pragmas. For example:</p>
-
-<figure class="highlight"><pre><code class="language-nimrod" data-lang="nimrod"><span class="k">proc </span><span class="nf">`-`</span><span class="o">*</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">Vec3</span><span class="p">):</span> <span class="n">Vec3</span> <span class="p">{.</span><span class="n">inline</span><span class="p">.}</span> <span class="o">=</span>
-  <span class="n">result</span> <span class="o">=</span> <span class="n">vec3</span><span class="p">(</span><span class="n">a</span><span class="p">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">y</span><span class="p">,</span> <span class="n">a</span><span class="p">.</span><span class="n">z</span> <span class="o">-</span> <span class="n">b</span><span class="p">.</span><span class="n">z</span><span class="p">)</span></code></pre></figure>
-
-<p>And we’re done, the performance of version 3 has been restored:</p>
-
-<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Total intersection tests:  100,000,000
+in our module with <code>{.inline.}</code> pragmas. For example:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>proc </span><span class=nf>`-`</span><span class=o>*</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>:</span> <span class=n>Vec3</span><span class=p>):</span> <span class=n>Vec3</span> <span class=p>{.</span><span class=n>inline</span><span class=p>.}</span> <span class=o>=</span>
+  <span class=n>result</span> <span class=o>=</span> <span class=n>vec3</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>x</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>x</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>y</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>y</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>z</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>z</span><span class=p>)</span></code></pre></div><p>And we&rsquo;re done, the performance of version 3 has been restored:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      4,640,926 ( 4.64%)
   Misses:                   95,359,074 (95.36%)
 
 Total time:                       1.96 seconds
 Millions of tests per second:    51.12
-</code></pre></div></div>
-
-<h2 id="round-2--nim-vs-java-javascript--python">Round 2 — Nim vs Java, JavaScript &amp; Python</h2>
-
-<p>At this point I was really curious how some other languages I use
-regularly would stack up against our current benchmarks kings (look, there’s
-even a crown in the <a href="https://nim-lang.org/">Nim logo</a>, surely that can’t be
-just a coincidence!). I didn’t try to do any nasty tricks to increase
+</code></pre><h2 id=round-2-----nim-vs-java-javascript--python>Round 2 &mdash; Nim vs Java, JavaScript & Python</h2><p>At this point I was really curious how some other languages I use
+regularly would stack up against our current benchmarks kings (look, there&rsquo;s
+even a crown in the <a href=https://nim-lang.org/>Nim logo</a>, surely that can&rsquo;t be
+just a coincidence!). I didn&rsquo;t try to do any nasty tricks to increase
 performance in any of these tests (e.g. using simple arrays of primitives
 instead of objects in Java); I just did a straightforward idiomatic port in
-each case (you can check out the code <a href="https://github.com/johnnovak/raytriangle-test">here</a>). Let’s see the final results:</p>
-
-<figure style="width: 100%">
-
-<table>
-  <tr>
-    <th>Language</th>
-    <th>Version</th>
-    <th style="text-align: center">Mtests/s</th>
-    <th style="text-align: center">Rel. performance</th>
-    <th style="text-align: center">Total time (s)</th>
-  </tr>
-  <tr style="font-weight: bold">
-    <td>C++</td>
-    <td>Apple LLVM 7.3.0</td>
-    <td style="text-align: center">51.9</td>
-    <td style="text-align: center">1.00x</td>
-    <td style="text-align: center">1.93</td>
-  </tr>
-  <tr style="font-weight: bold">
-    <td>Nim</td>
-    <td>0.16.1</td>
-    <td style="text-align: center">51.1</td>
-    <td style="text-align: center">0.98x</td>
-    <td style="text-align: center">1.96</td>
-  </tr>
-  <tr>
-    <td>Java</td>
-    <td>Oracle JVM 1.8.0_112-b16</td>
-    <td style="text-align: center">31.3</td>
-    <td style="text-align: center">0.60x</td>
-    <td style="text-align: center">3.20</td>
-  </tr>
-  <tr>
-    <td>JavaScript</td>
-    <td>NodeJS 4.4.7</td>
-    <td style="text-align: center">29.2</td>
-    <td style="text-align: center">0.56x</td>
-    <td style="text-align: center">3.43</td>
-  </tr>
-  <tr>
-    <td>PyPy</td>
-    <td>2.7.13</td>
-    <td style="text-align: center">10.5</td>
-    <td style="text-align: center">0.20x</td>
-    <td style="text-align: center">9.51</td>
-  </tr>
-  <tr>
-    <td>CPython2</td>
-    <td>2.7.13</td>
-    <td style="text-align: center">0.20</td>
-    <td style="text-align: center">0.004x</td>
-    <td style="text-align: center">508.68</td>
-  </tr>
-  <tr>
-    <td>CPython3</td>
-    <td>3.5.2</td>
-    <td style="text-align: center">0.15</td>
-    <td style="text-align: center">0.003x</td>
-    <td style="text-align: center">673.66</td>
-  </tr>
-</table>
-
-<figcaption>Table 1 — Performance comparison of different language
-implementations of the Möller–Trumbore intersection algorithm executing 100M
-ray-triangle intersections.
-</figcaption>
-
-</figure>
-
-<p>I was quite disappointed with the Java results at only 60% of the performance
-of C++/Nim. JavaScript, on the other hand, did surprise me a lot; it’s
+each case (you can check out the code <a href=https://github.com/johnnovak/raytriangle-test>here</a>). Let&rsquo;s see the final results:</p><figure style=width:100%><table><tr><th>Language</th><th>Version</th><th style=text-align:center>Mtests/s</th><th style=text-align:center>Rel. performance</th><th style=text-align:center>Total time (s)</th></tr><tr style=font-weight:700><td>C++</td><td>Apple LLVM 7.3.0</td><td style=text-align:center>51.9</td><td style=text-align:center>1.00x</td><td style=text-align:center>1.93</td></tr><tr style=font-weight:700><td>Nim</td><td>0.16.1</td><td style=text-align:center>51.1</td><td style=text-align:center>0.98x</td><td style=text-align:center>1.96</td></tr><tr><td>Java</td><td>Oracle JVM 1.8.0_112-b16</td><td style=text-align:center>31.3</td><td style=text-align:center>0.60x</td><td style=text-align:center>3.20</td></tr><tr><td>JavaScript</td><td>NodeJS 4.4.7</td><td style=text-align:center>29.2</td><td style=text-align:center>0.56x</td><td style=text-align:center>3.43</td></tr><tr><td>PyPy</td><td>2.7.13</td><td style=text-align:center>10.5</td><td style=text-align:center>0.20x</td><td style=text-align:center>9.51</td></tr><tr><td>CPython2</td><td>2.7.13</td><td style=text-align:center>0.20</td><td style=text-align:center>0.004x</td><td style=text-align:center>508.68</td></tr><tr><td>CPython3</td><td>3.5.2</td><td style=text-align:center>0.15</td><td style=text-align:center>0.003x</td><td style=text-align:center>673.66</td></tr></table><figcaption>Table 1 — Performance comparison of different language implementations of
+the Möller–Trumbore intersection algorithm executing 100M ray-triangle
+intersections.</figcaption></figure><p>I was quite disappointed with the Java results at only 60% of the performance
+of C++/Nim. JavaScript, on the other hand, did surprise me a lot; it&rsquo;s
 basically on par with the performance of Java. I expected much less numerical
 performance from JavaScript! Taking into consideration that JavaScript has
 only doubles while in Java I was able to switch to floats for a slight
 performance bump makes this result even more impressive. Another surprise was
 that running the tests as standalone programs with NodeJS or in a browser
 (Chrome and Firefox was tested) yielded basically the same results. (Of
-course, all this doesn’t make JavaScript suddenly a good language, but it’s
-good to know that at least it’s not horribly slow!)</p>
-
-<p>The CPython figures are, however, rather pathetic. I like Python a lot, it’s
-one of my favourite languages, but it’s clearly in no way suited to numerical
-computing (note we’re talking about the core language here, not
-<a href="http://www.numpy.org/">NumPy</a> and such). Fortunately, PyPy brings the
+course, all this doesn&rsquo;t make JavaScript suddenly a good language, but it&rsquo;s
+good to know that at least it&rsquo;s not horribly slow!)</p><p>The CPython figures are, however, rather pathetic. I like Python a lot, it&rsquo;s
+one of my favourite languages, but it&rsquo;s clearly in no way suited to numerical
+computing (note we&rsquo;re talking about the core language here, not
+<a href=https://www.numpy.org/>NumPy</a> and such). Fortunately, PyPy brings the
 performance back from absolutely abysmal (0.4% of the speed of the C code) to
 quite reasonable for a dynamic interpreted language (20% of the C code).
-That’s an impressive <em>~50x speedup (!)</em> achieved by just switching from
-CPython to PyPy!  Interestingly, CPython3 is about 30% slower than CPython2 in
-these tests.  I don’t know if this a general trend with CPython3’s
-performance, but it’s discouraging, to say the least…</p>
-
-<h3 id="jit-warmup">JIT warmup</h3>
-
-<p>There’s another thing to note that can confuse rookie benchmarkers and has
+That&rsquo;s an impressive <em>~50x speedup (!)</em> achieved by just switching from
+CPython to PyPy! Interestingly, CPython3 is about 30% slower than CPython2 in
+these tests. I don&rsquo;t know if this a general trend with CPython3&rsquo;s
+performance, but it&rsquo;s discouraging, to say the least&mldr;</p><h3 id=jit-warmup>JIT warmup</h3><p>There&rsquo;s another thing to note that can confuse rookie benchmarkers and has
 implications on runtime performance, namely that JIT compiled languages need
-a “warm up” period before they can reach peak performance. In our current
-benchmark, that’s Java, JavaScript and PyPy (CPython employs no JIT
+a &ldquo;warm up&rdquo; period before they can reach peak performance. In our current
+benchmark, that&rsquo;s Java, JavaScript and PyPy (CPython employs no JIT
 whatsoever). While the performance of C++ and Nim scale linearly with the size
 of the dataset, for JITed languages the performance is roughly a logarithmic
-function of the dataset size, as summarised by the below table:</p>
-
-<figure style="width: 75%; margin-left: auto; margin-right: auto;">
-
-<table>
-  <tr>
-    <th>Language</th>
-    <th style="text-align: right"># of tests</th>
-    <th style="text-align: right">Mtests/s</th>
-    <th style="text-align: center">Rel. performance</th>
-  </tr>
-
-  <tr>
-    <td rowspan="4">Java</td>
-    <td style="text-align: right">100K</td>
-    <td style="text-align: right">11.1</td>
-    <td style="text-align: center">0.21x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">1M</td>
-    <td style="text-align: right">25.7</td>
-    <td style="text-align: center">0.49x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">10M</td>
-    <td style="text-align: right">37.4</td>
-    <td style="text-align: center">0.72x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">100M</td>
-    <td style="text-align: right">31.3</td>
-    <td style="text-align: center">0.60x</td>
-  </tr>
-
-  <tr>
-    <td rowspan="4">JavaScript</td>
-    <td style="text-align: right">100K</td>
-    <td style="text-align: right">9.0</td>
-    <td style="text-align: center">0.17x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">1M</td>
-    <td style="text-align: right">20.5</td>
-    <td style="text-align: center">0.39x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">10M</td>
-    <td style="text-align: right">29.7</td>
-    <td style="text-align: center">0.57x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">100M</td>
-    <td style="text-align: right">29.2</td>
-    <td style="text-align: center">0.56x</td>
-  </tr>
-
-  <tr>
-    <td rowspan="4">PyPy</td>
-    <td style="text-align: right">100K</td>
-    <td style="text-align: right">1.0</td>
-    <td style="text-align: center">0.02x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">1M</td>
-    <td style="text-align: right">3.8</td>
-    <td style="text-align: center">0.07x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">10M</td>
-    <td style="text-align: right">9.2</td>
-    <td style="text-align: center">0.18x</td>
-  </tr>
-  <tr>
-    <td style="text-align: right">100M</td>
-    <td style="text-align: right">10.5</td>
-    <td style="text-align: center">0.20x</td>
-  </tr>
-</table>
-
-<figcaption>Table 2 — JIT warmup characteristics of different runtimes;
-relative performance is relative to the performance of the C++
-implementation.
-</figcaption>
-
-</figure>
-
-<h2 id="conclusion">Conclusion</h2>
-
-<p>Unsurprisingly, Nim is capable of reaching C/C++ performance when you know
-what you’re doing. Because there’s an extra layer of indirection when using
+function of the dataset size, as summarised by the below table:</p><figure style=max-width:550px;margin-left:auto;margin-right:auto><table><tr><th>Language</th><th style=text-align:right># of tests</th><th style=text-align:right>Mtests/s</th><th style=text-align:center>Rel. performance</th></tr><tr><td rowspan=4>Java</td><td style=text-align:right>100K</td><td style=text-align:right>11.1</td><td style=text-align:center>0.21x</td></tr><tr><td style=text-align:right>1M</td><td style=text-align:right>25.7</td><td style=text-align:center>0.49x</td></tr><tr><td style=text-align:right>10M</td><td style=text-align:right>37.4</td><td style=text-align:center>0.72x</td></tr><tr><td style=text-align:right>100M</td><td style=text-align:right>31.3</td><td style=text-align:center>0.60x</td></tr><tr><td rowspan=4>JavaScript</td><td style=text-align:right>100K</td><td style=text-align:right>9.0</td><td style=text-align:center>0.17x</td></tr><tr><td style=text-align:right>1M</td><td style=text-align:right>20.5</td><td style=text-align:center>0.39x</td></tr><tr><td style=text-align:right>10M</td><td style=text-align:right>29.7</td><td style=text-align:center>0.57x</td></tr><tr><td style=text-align:right>100M</td><td style=text-align:right>29.2</td><td style=text-align:center>0.56x</td></tr><tr><td rowspan=4>PyPy</td><td style=text-align:right>100K</td><td style=text-align:right>1.0</td><td style=text-align:center>0.02x</td></tr><tr><td style=text-align:right>1M</td><td style=text-align:right>3.8</td><td style=text-align:center>0.07x</td></tr><tr><td style=text-align:right>10M</td><td style=text-align:right>9.2</td><td style=text-align:center>0.18x</td></tr><tr><td style=text-align:right>100M</td><td style=text-align:right>10.5</td><td style=text-align:center>0.20x</td></tr></table><figcaption>Table 2 — JIT warmup characteristics of different runtimes; relative
+performance is relative to the performance of the C++ implementation.</figcaption></figure><h2 id=conclusion>Conclusion</h2><p>Unsurprisingly, Nim is capable of reaching C/C++ performance when you know
+what you&rsquo;re doing. Because there&rsquo;s an extra layer of indirection when using
 Nim (Nim source code needs to be translated to C first) and Nim in general is
-further from the “metal” than C (in other words, it’s more high-level and less
+further from the &ldquo;metal&rdquo; than C (in other words, it&rsquo;s more high-level and less
 of a portable assembly language like C), one needs to be careful. But the most
 important thing to note is that Nim <em>allows</em> the programmer to take control
 over low-level details such as memory layout when necessary. This is in stark
@@ -733,172 +320,52 @@ contrast with other high-level languages such as Java, Python and JavaScript
 which do not give the programmer this freedom. Having said that, the
 aforementioned languages have fared quite admirably in the benchmarks,
 JavaScript being the biggest surprise with a numerical performance on par with
-Java.</p>
-
-<p>The greatest lesson for me in this experiment was that with modern compilers
+Java.</p><p>The greatest lesson for me in this experiment was that with modern compilers
 and CPU architectures a naive approach to benchmarking is almost always bound
 to fail. For performance critical applications one must establish a suite of
-robust automated performance tests and run them periodically as it’s very easy
+robust automated performance tests and run them periodically as it&rsquo;s very easy
 to introduce quite severe performance degradations even with the most innocent
 looking refactorings (e.g. think of the inlining problem after we extracted
 the vector operations into a module). Without a systematic approach to
 performance regression testing, such problems can be quite frustrating and
 time consuming to locate and fix (or even just detect, in case on non-trivial
-applications!). Also, when benchmarking there’s nothing like inspecting the
-actual assembly output; that’s the only foolproof way to catch the compiler
-red-handed at optimising away your test code.</p>
-
-<h2 id="does-it-all-matter">Does it all matter?</h2>
-
-<p>I already hear some people repeating the common wisdom that hardware is cheap,
+applications!). Also, when benchmarking there&rsquo;s nothing like inspecting the
+actual assembly output; that&rsquo;s the only foolproof way to catch the compiler
+red-handed at optimising away your test code.</p><h2 id=does-it-all-matter>Does it all matter?</h2><p>I already hear some people repeating the common wisdom that hardware is cheap,
 programmers (and their time) are expensive, and with so much power to spare on
 modern CPUs, all this micro-optimisation exercise is just waste of time,
-right?  Well, that depends. I tend to agree that performance is not so
+right? Well, that depends. I tend to agree that performance is not so
 critical for lots (maybe even the majority) of programming tasks and in those
 cases it makes sense (commercially, at least) to optimise for programmer
-productivity by using a high-level language<sup id="fnref:nim" role="doc-noteref"><a href="#fn:nim" class="footnote">2</a></sup> . But when speed matters,
-you are definitely going to hit a brick wall with a language that doesn’t make
-low-level optimisations possible.</p>
-
-<p>Let’s pretend for a moment that our relative performance results would be
+productivity by using a high-level language<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup> . But when speed matters,
+you are definitely going to hit a brick wall with a language that doesn&rsquo;t make
+low-level optimisations possible.</p><p>Let&rsquo;s pretend for a moment that our relative performance results would be
 valid for the entire ray-tracer (oversimplification, but not entirely
 impossible). Then if it would take 3 hours for the C and Nim implementations
 to render a single frame, the Java and JavaScript versions would require
 5 hours, the PyPy version 15 hours, and finally the CPython implementations
 <em>over 30 and 40 days (!)</em> for versions 2 and 3, respectively. Java and
-JavaScript seem to be worthy contenders at first—until we start looking into
+JavaScript seem to be worthy contenders at first&mdash;until we start looking into
 taking advantage of multiple CPU cores and SIMD instructions. Only Java, C/C++
 and Nim have proper multi-threading support, so assuming 4 CPU cores (fairly
 typical nowadays) and a very conservative 2x speedup by introducing
 multi-threading, the performance gap widens. From our list of languages only
 Nim and C/C++ make utilising SIMD instructions possible, so assuming another
 2x speed bump thanks to this (again, staying quite conservative), the final
-figures would look like this:</p>
-
-<table style="width: 80%">
-  <tr>
-    <th>Language</th>
-    <th>Time to render a single frame</th>
-    <th>Relative performance</th>
-  </tr>
-  <tr>
-    <td>Nim / C++</td>
-    <td>45 minutes</td>
-    <td>1.00x</td>
-  </tr>
-  <tr>
-    <td>Java</td>
-    <td>2 hours 30 minutes</td>
-    <td>0.30x</td>
-  </tr>
-  <tr>
-    <td>JavaScript</td>
-    <td>5 hours</td>
-    <td>0.15x</td>
-  </tr>
-  <tr>
-    <td>PyPy</td>
-    <td>15 hours</td>
-    <td>0.05x</td>
-  </tr>
-  <tr>
-    <td>CPython2</td>
-    <td>30 days</td>
-    <td>0.001x</td>
-  </tr>
-  <tr>
-    <td>CPython3</td>
-    <td>40 days</td>
-    <td>0.0008x</td>
-  </tr>
-</table>
-
-<p>This is actually more in-line with real-life experience; a well-optimised C++
+figures would look like this:</p><table style=max-width:550px><tr><th>Language</th><th>Time to render a single frame</th><th>Relative performance</th></tr><tr><td>Nim / C++</td><td>45 minutes</td><td>1.00x</td></tr><tr><td>Java</td><td>2 hours 30 minutes</td><td>0.30x</td></tr><tr><td>JavaScript</td><td>5 hours</td><td>0.15x</td></tr><tr><td>PyPy</td><td>15 hours</td><td>0.05x</td></tr><tr><td>CPython2</td><td>30 days</td><td>0.001x</td></tr><tr><td>CPython3</td><td>40 days</td><td>0.0008x</td></tr></table><p>This is actually more in-line with real-life experience; a well-optimised C++
 renderer can easily outperform a similarly well-optimised Java implementation
-by a factor of 2 to 3, and JavaScript and Python basically don’t even have
+by a factor of 2 to 3, and JavaScript and Python basically don&rsquo;t even have
 a chance. As I said, this is not a Python bashing contest, I really like the
 language and use it all the time for writing scripts and small tools, but one
-needs to have a solid understanding of the limitations of one’s tools and
-sometime do a reality check… I always find it amusing when people attempt to
-“defend” their favourite inefficient high-level languages by saying that
+needs to have a solid understanding of the limitations of one&rsquo;s tools and
+sometime do a reality check&mldr; I always find it amusing when people attempt to
+&ldquo;defend&rdquo; their favourite inefficient high-level languages by saying that
 algorithmic optimisations are the most important. Well, of course, no sane
 person would argue with that! But if you took the same optimal algorithm and
 implemented it in a language that offered greater low-level control over the
 hardware (well, or had multi-threading and SIMD support <em>at all</em>), it is not
-unrealistic for the performance gain factor to be in the 2 to 1000 range!</p>
-
-<p>As for myself, I will happily continue using Nim, safe in the knowledge that
-I won’t hit an insurmountable brick wall in the future, because whatever is
-possible in C in terms of performance, there’s a way to replicate that in Nim
+unrealistic for the performance gain factor to be in the 2 to 1000 range!</p><p>As for myself, I will happily continue using Nim, safe in the knowledge that
+I won&rsquo;t hit an insurmountable brick wall in the future, because whatever is
+possible in C in terms of performance, there&rsquo;s a way to replicate that in Nim
 too, and with careful coding the runtime efficiency of both languages can be
-virtually identical.</p>
-
-<hr class="noline" />
-
-<section class="links">
-
-  <h2 id="further-links-of-interest">Further links of interest</h2>
-
-  <ul class="compact">
-    <li>
-      <p><a href="https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html">Gwynne Raskind — Disassembling the Assembly, Part 1</a></p>
-    </li>
-    <li>
-      <p><a href="https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html">Gwynne Raskind — Disassembling the Assembly, Part 2</a></p>
-    </li>
-    <li>
-      <p><a href="https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/">Andreas on Coding — Optimizable Code</a></p>
-    </li>
-    <li>
-      <p><a href="http://www.dataorienteddesign.com/dodmain/dodmain.html">Richard Fabian — Data-Oriented Design</a></p>
-    </li>
-    <li>
-      <p><a href="https://godbolt.org/">Compiler Explorer</a></p>
-    </li>
-  </ul>
-
-</section>
-<div class="footnotes" role="doc-endnotes">
-  <ol>
-    <li id="fn:sse" role="doc-endnote">
-      <p>The <a href="https://en.wikipedia.org/wiki/SSE2">SSE2</a> instruction set was introduced in 2001 with the <a href="https://en.wikipedia.org/wiki/Pentium_4">Pentium 4</a>, so virtually every x86 family processor supports it today.  Note that this is 64-bit code, which you can easily spot because registers XMM8 through XMM15 are only available for 64-bit. <a href="#fnref:sse" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
-    </li>
-    <li id="fn:nim" role="doc-endnote">
-      <p>Not that I would consider Nim a low-level language, quite on the contrary! It’s as enjoyable and fast to code in Nim as in Python, but with the added benefit of type safety which is not a hassle thanks to Nim’s excellent type inference. I think of Nim as a high-level language with the <em>possibility</em> of going low-level when necessary, which is exactly what I want from a general purpose programming language. <a href="#fnref:nim" class="reversefootnote" role="doc-backlink">&#8617;</a></p>
-    </li>
-  </ol>
-</div>
-
-
-  <section class="comments">
-
-  <h2>Comments</h2>
-
-  <noscript><p id="no-disqus"><i>Please enable JavaScript to view the comments.</i></p></noscript>
-  <div id="disqus_thread"></div>
-  <script type="text/javascript">
-    var disqus_shortname = "johnnovak";
-    var disqus_identifier = "/2017/04/22/nim-performance-tuning-for-the-uninitiated/";
-    var disqus_title = "Nim performance tuning for the uninitiated";
-    var disqus_url = "https://blog.johnnovak.net//2017/04/22/nim-performance-tuning-for-the-uninitiated/";
-
-    (function() {
-      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-    })();
-  </script>
-
-</section>
-
-</article>
-
-
-
-    </div>
-  </div>
-</body>
-</html>
-
-
-
+virtually identical.</p><hr><section class=links><h2 id=further-links-of-interest>Further links of interest</h2><ul><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 1</a></p></li><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 2</a></p></li><li><p><a href=https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/>Andreas on Coding &mdash; Optimizable Code</a></p></li><li><p><a href=https://www.dataorienteddesign.com/dodbook/>Richard Fabian &mdash; Data-Oriented Design</a></p></li><li><p><a href=https://godbolt.org/>Compiler Explorer</a></p></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>The <a href=https://en.wikipedia.org/wiki/SSE2>SSE2</a> instruction set was introduced in 2001 with the <a href=https://en.wikipedia.org/wiki/Pentium_4>Pentium 4</a>, so virtually every x86 family processor supports it today. Note that this is 64-bit code, which you can easily spot because registers XMM8 through XMM15 are only available for 64-bit.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>Not that I would consider Nim a low-level language, quite on the contrary! It&rsquo;s as enjoyable and fast to code in Nim as in Python, but with the added benefit of type safety which is not a hassle thanks to Nim&rsquo;s excellent type inference. I think of Nim as a high-level language with the <em>possibility</em> of going low-level when necessary, which is exactly what I want from a general purpose programming language.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body></html>

@@ -1,0 +1,320 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Nim Apocrypha, Vol. I | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=http://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=http://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2020/12/21/nim-apocrypha-vol.-i/>Nim Apocrypha, Vol. I</a></h1><p class=date><time datetime=2020-12-21>2020 Dec 21</time></p></header><nav class=tags><ul><li><a href=/tags/coding/>coding</a></li><li><a href=/tags/nim/>nim</a></li></ul></nav><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#intro>Intro</a></li><li><a href=#i-----the-not-so-obvious>I &mdash; The Not-So-Obvious</a><ul><li><a href=#1-nbsp-reducing-executable-size-by-stripping-debug-symbols>1   Reducing executable size by stripping debug symbols</a></li><li><a href=#2-nbsp-release-builds-with-exception-logging>2   Release builds with exception logging</a></li><li><a href=#3-nbsp-switching-to-arcorc>3   Switching to ARC/ORC</a></li><li><a href=#4-nbsp-executable-icons-on-windows-mingw>4   Executable icons on Windows (MinGW)</a></li><li><a href=#5-nbsp-debug-echo-in-windows-gui-programs-mingw>5   Debug echo in Windows GUI programs (MinGW)</a></li></ul></li><li><a href=#ii-----the-hidden>II &mdash; The Hidden</a><ul><li><a href=#6-nbsp-using-keyword>6   &lsquo;using&rsquo; keyword</a></li><li><a href=#7-nbsp-opening-urls-in-the-default-browser>7   Opening URLs in the default browser</a></li><li><a href=#8-nbsp-cross-platform-home-and-config-directories>8   Cross-platform home and config directories</a></li><li><a href=#9-nbsp-debug-dumping-expressions>9   Debug dumping expressions</a></li><li><a href=#10-nbsp-measuring-elapsed-time>10   Measuring elapsed time</a></li><li><a href=#11-nbsp-dealing-with-openarrays>11   Dealing with openarrays</a></li></ul></li><li><a href=#iii-----the-crafty>III &mdash; The Crafty</a><ul><li><a href=#12-nbsp-easy-pointer-manipulations>12   Easy pointer manipulations</a></li><li><a href=#13-nbsp-taming-circular-type-dependencies>13   Taming circular type dependencies</a></li><li><a href=#14-nbsp-with-macro>14   &lsquo;with&rsquo; macro</a></li><li><a href=#15-nbsp-aliases>15   Aliases</a></li></ul></li><li><a href=#iv-----the-grand-finale>IV &mdash; The Grand Finale</a><ul><li><a href=#16-nbsp-saving-memory-by-object-field-reordering>16   Saving memory by object field reordering</a></li></ul></li><li><a href=#outro>Outro</a></li></ul></nav><h2 id=intro>Intro</h2><p>Greetings fellow Nim adventurers! Below you will find 16 handy Nim tips
+& tricks I came across while developing a medium-sized GUI program this year,
+<a href=https://github.com/johnnovak/gridmonger>Gridmonger</a>
+(<a href=https://github.com/johnnovak/koi>and</a>
+<a href=https://github.com/johnnovak/nim-riff>related</a>
+<a href=https://github.com/johnnovak/nim-binstreams>libraries</a>). Some of them are
+about less known or undocumented Nim features or standard library functions,
+a few are workarounds for some rough edges of the language, and there&rsquo;s also
+a handful of useful techniques I read about in forums or have invented on my
+own.</p><p>All tips are for Nim 1.4.2 and beyond, and most are applicable to the
+C backend. I hope you&rsquo;ll find something useful here that will make your time
+with Nim more enjoyable and productive!</p><h2 id=i-----the-not-so-obvious>I &mdash; The Not-So-Obvious</h2><h3 id=1-nbsp-reducing-executable-size-by-stripping-debug-symbols>1   Reducing executable size by stripping debug symbols</h3><p>Nim touts itself as a language capable of generating small native binaries.
+But just naively compiling some program with <code>nim c -d:release</code> and looking at
+the file sizes will make you wonder about the validity of that claim!</p><p>A release build of <a href=https://github.com/johnnovak/gridmonger>Gridmonger</a>
+weighs around 12 megs. Anything but small, if you ask me!<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup> Sure, it
+statically links <a href=https://github.com/johnnovak/nim-glfw>GLFW</a> and
+<a href=https://github.com/johnnovak/nim-nanovg>NanoVG</a> and a bunch of other Nim
+libraries, but to put things into perspective, <a href=https://reaper.fm/>REAPER</a> (a
+highly-advanced and complex DAW written in C/C++) is about the same size at
+~13 megs! Surely, my program is much simpler than REAPER, so what&rsquo;s going on
+here?</p><p>It turns out that gcc debug symbols are included in Nim binaries by default,
+which can account for a quite substantial 2-to 5-fold size increase! Luckily,
+we can remove them easily with the <code>strip</code> command which comes with gcc.</p><p>How about trying to optimise for a small executable with <code>--opt:size</code>? Sure,
+that would yield about 30% smaller binaries, but at the expense of some
+potential runtime performance loss. So while it might not always be the best
+option, but you can always it <em>and</em> strip the debug symbols for even bigger
+savings.</p><p>Finally, if you&rsquo;re hell-bent on producing smallest possible binary,
+compressing it with an executable packer like <a href=https://upx.github.io/>UPX</a>
+could be just the ticket.</p><p>The below table summarises my findings with some concrete data:</p><figure><table><tr><th rowspan=2 style=width:40%>Compiler flags</th><th rowspan=2 style=width:15%>File</th><th colspan=2 style=width:45%;text-align:center>Binary size</th></tr><tr><th style=width:25%;text-align:right>Bytes</th><th style=width:20%;text-align:right>Ratio</th></tr><tr><td rowspan=3><code>-d:release<br>--gc:arc --deepCopy:on</code></td><td>original</td><td style=text-align:right>12,177,797</td><td style=text-align:right>1.00</td></tr><tr><td>stripped</td><td style=text-align:right>2,269,696</td><td style=text-align:right>0.18</td></tr><tr><td>compressed</td><td style=text-align:right>806,912</td><td style=text-align:right>0.07</td></tr><tr class=sep><td rowspan=3><code>-d:release --opt:size<br>--gc:arc --deepCopy:on</code></td><td>original</td><td style=text-align:right>7,959,126</td><td style=text-align:right>1.00</td></tr><tr><td>stripped</td><td style=text-align:right>1,655,296</td><td style=text-align:right>0.21</td></tr><tr><td>compresed</td><td style=text-align:right>623,104</td><td style=text-align:right>0.08</td></tr></table><figcaption>Table 1 — Comparison of compiled executable sizes for Gridmonger
+(with and without debug symbols, and without debug symbols and compressed
+with UPX)</figcaption></figure><p>I had repeated the experiment with the following minimal Nim program:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=n>echo</span> <span class=s>&#34;I&#39;m small!&#34;</span>
+</code></pre></div><figure><table><tr><th rowspan=2 style=width:40%>Compiler flags</th><th rowspan=2 style=width:15%>File</th><th colspan=2 style=width:45%;text-align:center>Binary size</th></tr><tr><th style=width:25%;text-align:right>Bytes</th><th style=width:20%;text-align:right>Ratio</th></tr><tr class=sep><td rowspan=3><code>-d:release</code></td><td>original</td><td style=text-align:right>125,068</td><td style=text-align:right>1.00</td></tr><tr><td>stripped</td><td style=text-align:right>73,728</td><td style=text-align:right>0.59</td></tr><tr><td>compresed</td><td style=text-align:right>31,232</td><td style=text-align:right>0.25</td></tr><tr class=sep><td rowspan=3><code>-d:release --opt:size</code></td><td>original</td><td style=text-align:right>87,812</td><td style=text-align:right>1.00</td></tr><tr><td>stripped</td><td style=text-align:right>36,352</td><td style=text-align:right>0.41</td></tr><tr><td>compresed</td><td style=text-align:right>18,944</td><td style=text-align:right>0.22</td></tr></table><figcaption>Table 2 — Comparison of compiled executable sizes for a minimal
+Nim program (with and without debug symbols, and without debug symbols and
+compressed with UPX)</figcaption></figure><p>It is important to note that the presence of debug symbols in a binary <em>does
+not</em> affect its runtime performance whatsoever. This is because debug symbols
+are not even loaded into memory during normal use, only when debugging. So
+really it only affects the space the executable takes up on disk.</p><p>In case you&rsquo;re wondering, you&rsquo;ll still get nice Nim stack traces with
+a stripped binary if you compiled it with <code>-d:debug</code> or <code>--stacktrace=on --linetrace=on</code> (more on that in the next tip).</p><h3 id=2-nbsp-release-builds-with-exception-logging>2   Release builds with exception logging</h3><p>Creating a release build with <code>-d:release</code> gives you a speed boost, but at
+the price of turning off stack traces (among other things). This can be a problem
+if you&rsquo;re trying to implement a crash-reporting mechanism for end-users,
+which involves surrounding your main method with a <code>try/except</code> block and
+writing exceptions with stack traces to a log file.</p><p>Luckily, you don&rsquo;t need to ship debug builds to your users just to be able to
+do that; you can still use <code>-d:release</code> to get most optimisation benefits
+while turning stack traces back on with <code>--stacktrace=on --linetrace=on</code>. The
+performance of the resulting binary might be a bit slower, but you know, life
+is all about the right trade-offs.</p><h3 id=3-nbsp-switching-to-arcorc>3   Switching to ARC/ORC</h3><p>Nim defaults to the <code>refc</code> garbage collector (deferred reference counting with
+a mark & sweep phase for cycle collection), which works very well, even for
+soft-realtime requirements. But did you know that there has been a brand new
+GC introduced in 1.2.x that offers reduced memory footprint and even better
+performance in most cases?</p><p>This is ARC, the fully deterministic Automatic Reference Counting garbage
+collector. Switching to ARC is as easy as supplying the <code>--gc:arc</code> option to
+the compiler. It&rsquo;s a drop-in replacement for most programs. Depending on your
+program, you might want to use it with the <code>--deepcopy:on --hint[Performance]:off</code> options.</p><p>ARC has many other benefits, including hard realtime support, shared heaps
+between threads, and simplifying the C FFI. Mind you, ARC cannot handle
+cyclic data structures. But it has a big brother called ORC, which adds support
+for that.</p><p>You can learn more about ARC and ORC in this <a href=https://nim-lang.org/blog/2020/10/15/introduction-to-arc-orc-in-nim.html>excellent blog
+post</a>
+on the Nim website.</p><h3 id=4-nbsp-executable-icons-on-windows-mingw>4   Executable icons on Windows (MinGW)</h3><p>Setting the icon for Windows executables is probably easier with Visual
+Studio, but anyhow, here are the instructions for gcc/MinGW that I&rsquo;m using.</p><ol><li><p>First, you&rsquo;ll need to generate an <code>.ico</code> file that contains your icon image
+in multiple resolutions. There&rsquo;s lots of online tools for that, and there&rsquo;s
+also ImageMagick&mdash;this is outside the scope of this article.</p></li><li><p>Once you have your image, you&rsquo;ll need to create a resource definition <code>.rc</code>
+file that references your icon file. I used <code>appicon</code> here for the ID, but
+you can use any other string, it doesn&rsquo;t matter:</p><pre><code>appicon ICON &quot;gridmonger.ico&quot;
+</code></pre></li><li><p>The next step is to create the resource object file from the <code>.rc</code> file
+(<code>windres</code> is included in MinGW):</p><pre><code>windres gridmonger.rc -O coff -o gridmonger.res
+</code></pre></li><li><p>Finally, we need to instruct the compiler to link the resource file
+into our program:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>when</span> <span class=n>defined</span><span class=p>(</span><span class=n>windows</span><span class=p>):</span>
+  <span class=p>{.</span><span class=n>link</span><span class=p>:</span> <span class=s>&#34;icons/gridmonger.res&#34;</span><span class=p>.}</span>
+</code></pre></div></li></ol><h3 id=5-nbsp-debug-echo-in-windows-gui-programs-mingw>5   Debug echo in Windows GUI programs (MinGW)</h3><p>This will be a rather short one but it took me a while to figure it out. It
+turns out that when you link against the Windows libraries by passing
+<code>-mwindows</code> to the linker (<code>-L:-mwindows</code>), you won&rsquo;t be able to print stuff
+the console with <code>echo</code> anymore.</p><p>&ldquo;But this is a useless tip, of course you need to link against the Windows
+libs in a GUI program!&rdquo;, I hear you say. Well, not necessarily. In GLFW apps,
+for example, you can get away with not linking against the Windows libs in
+many cases. For instance, in Gridmonger I only need <code>-mwindows</code> so I can open
+the standard open and save system dialogs. In my debug builds, I don&rsquo;t link
+against the Windows libs and I conditionally turn the calls to the dialog
+functions to no-ops, and then I can do my debug printing to the console.</p><h2 id=ii-----the-hidden>II &mdash; The Hidden</h2><h3 id=6-nbsp-using-keyword>6   &lsquo;using&rsquo; keyword</h3><p>The
+<a href=https://nim-lang.org/docs/manual.html#statements-and-expressions-using-statement>using</a>
+keyword is a very useful, but often forgotten language feature. It helps to
+cut down on redundancy when creating method call style APIs, or when passing
+context objects around.</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=c># Without `using`</span>
+<span class=k>proc </span><span class=nf>getFloor</span><span class=o>*</span><span class=p>(</span><span class=n>l</span><span class=p>:</span> <span class=n>Level</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>:</span> <span class=n>Natural</span><span class=p>,</span> <span class=n>a</span><span class=p>:</span> <span class=kd>var</span> <span class=n>AppContext</span><span class=p>):</span> <span class=n>Floor</span> <span class=o>=</span> <span class=p>...</span>
+<span class=k>proc </span><span class=nf>setFloor</span><span class=o>*</span><span class=p>(</span><span class=n>l</span><span class=p>:</span> <span class=n>Level</span><span class=p>,</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>:</span> <span class=n>Natural</span><span class=p>,</span> <span class=n>f</span><span class=p>:</span> <span class=n>Floor</span><span class=p>,</span> <span class=n>a</span><span class=p>:</span> <span class=kd>var</span> <span class=n>AppContext</span><span class=p>)</span> <span class=o>=</span> <span class=p>...</span>
+
+<span class=c># With `using`</span>
+<span class=n>using</span> <span class=n>l</span><span class=p>:</span> <span class=n>Level</span>
+<span class=n>using</span> <span class=n>a</span><span class=p>:</span> <span class=kd>var</span> <span class=n>AppContext</span>
+
+<span class=k>proc </span><span class=nf>getFloor</span><span class=o>*</span><span class=p>(</span><span class=n>l</span><span class=p>;</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>:</span> <span class=n>Natural</span><span class=p>;</span> <span class=n>a</span><span class=p>):</span> <span class=n>Floor</span> <span class=o>=</span> <span class=p>...</span>
+<span class=k>proc </span><span class=nf>setFloor</span><span class=o>*</span><span class=p>(</span><span class=n>l</span><span class=p>;</span> <span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>:</span> <span class=n>Natural</span><span class=p>,</span> <span class=n>f</span><span class=p>:</span> <span class=n>Floor</span><span class=p>;</span> <span class=n>a</span><span class=p>)</span> <span class=o>=</span> <span class=p>...</span>
+</code></pre></div><h3 id=7-nbsp-opening-urls-in-the-default-browser>7   Opening URLs in the default browser</h3><p>Did you know that the standard library has
+a <a href=https://nim-lang.org/docs/browsers.html>browsers</a> module for the sole
+purpose of opening URLs in the OS default browser in a cross-platform way?
+In fact, I&rsquo;ve been using Nim for 4 years and I&rsquo;ve learned about this just
+recently!</p><p>This is very handy if you want to navigate the user to a program&rsquo;s website
+from a desktop app, or to open local HTML documentation.</p><h3 id=8-nbsp-cross-platform-home-and-config-directories>8   Cross-platform home and config directories</h3><p>Similarly, <a href=https://nim-lang.org/docs/os.html#getHomeDir>getHomeDir()</a> and
+<a href=https://nim-lang.org/docs/os.html#getConfigDir>getConfigDir()</a> from the
+<a href=https://nim-lang.org/docs/os.html>os</a> module are super handy if you need to
+handle configuration files or program data in a cross-platform way.</p><h3 id=9-nbsp-debug-dumping-expressions>9   Debug dumping expressions</h3><p>However sophisticated modern development tools might be, just echoing stuff to
+the console is still one of the easiest and quickest ways to debug a program.
+But writing things like <code>echo "foo: ", foo</code> for the hundredth time gets old
+really fast. The <a href=https://nim-lang.org/docs/sugar.html#dump.m%2Cuntyped>dump</a>
+macro in the standard <a href=https://nim-lang.org/docs/sugar.html>sugar</a> module
+helps with exactly that.</p><p>Make sure to check out the other useful additions the module introduces!</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kn>import</span> <span class=n>sugar</span>
+
+<span class=kd>var</span>
+  <span class=n>a</span> <span class=o>=</span> <span class=mi>42</span>
+  <span class=n>s</span> <span class=o>=</span> <span class=s>&#34;frobnicate&#34;</span>
+  <span class=n>x</span> <span class=o>=</span> <span class=mi>7</span>
+
+<span class=n>dump</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>
+<span class=n>dump</span><span class=p>(</span><span class=n>s</span><span class=p>)</span>
+<span class=n>dump</span><span class=p>(</span><span class=n>a</span> <span class=o>+</span> <span class=n>x</span><span class=p>)</span>
+
+<span class=c># prints:</span>
+<span class=c># a = 42</span>
+<span class=c># s = frobnicate</span>
+<span class=c># a + x = 49</span>
+</code></pre></div><h3 id=10-nbsp-measuring-elapsed-time>10   Measuring elapsed time</h3><p>Although you can use the regular <a href=https://nim-lang.org/docs/times.html>times</a>
+module to measure elapsed time, to do it properly you really need a monotonic
+timer. Such a thing has been added to the standard library recently in the
+form of <a href=https://nim-lang.org/docs/monotimes.html>std/monotimes</a>.</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kn>import</span> <span class=n>os</span>
+<span class=kn>import</span> <span class=n>std</span><span class=o>/</span><span class=n>monotimes</span>
+<span class=kn>import</span> <span class=n>times</span>
+
+<span class=k>proc </span><span class=nf>durationToFloatMillis</span><span class=o>*</span><span class=p>(</span><span class=n>d</span><span class=p>:</span> <span class=n>Duration</span><span class=p>):</span> <span class=kt>float64</span> <span class=o>=</span>
+  <span class=n>inNanoseconds</span><span class=p>(</span><span class=n>d</span><span class=p>).</span><span class=kt>float64</span> <span class=o>*</span> <span class=mf>1e-6</span>
+
+<span class=k>let</span> <span class=n>t0</span> <span class=o>=</span> <span class=n>getMonoTime</span><span class=p>()</span>
+<span class=n>sleep</span><span class=p>(</span><span class=mi>10</span><span class=p>)</span> <span class=c># do something for a while</span>
+<span class=k>let</span> <span class=n>d</span> <span class=o>=</span> <span class=n>getMonoTime</span><span class=p>()</span> <span class=o>-</span> <span class=n>t0</span>
+
+<span class=n>echo</span> <span class=n>durationToFloatMillis</span><span class=p>(</span><span class=n>d</span><span class=p>)</span>
+</code></pre></div><h3 id=11-nbsp-dealing-with-openarrays>11   Dealing with openarrays</h3><p><a href=https://nim-lang.org/docs/manual.html#types-open-arrays>Openarrays</a>
+are a handy Nim feature that allow you to write procedures that can accept
+either arrays or sequences through a unified <code>openArray</code> type. What the
+manual forgets to tell you though is that there&rsquo;s a bunch of overloaded
+<a href=https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint>toOpenArray</a>
+and
+<a href=https://nim-lang.org/docs/system.html#toOpenArrayByte%2Ccstring%2Cint%2Cint>toOpenArrayByte</a>
+methods in the <a href=https://nim-lang.org/docs/system.html>system</a> module to help
+create openarray &ldquo;slices&rdquo; from arrays, seqs, strings and (surprise!) other
+openarrays.</p><p>One particularly useful function is <a href=https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint>this
+one</a>
+that operates on
+<a href=https://nim-lang.org/docs/system.html#toOpenArray%2Cptr.UncheckedArray%5BT%5D%2Cint%2Cint>UncheckedArray</a>s&mdash;this
+is very useful for treating blocks of memory from C libraries as
+openarrays in your Nim code.</p><p>Speaking of the system module, it&rsquo;s full of useful stuff that&rsquo;s not mentioned
+anywhere in the documentation. Make sure to go through the function list once
+in a while, I&rsquo;ll guarantee you&rsquo;ll find something of interest every time.</p><h2 id=iii-----the-crafty>III &mdash; The Crafty</h2><h3 id=12-nbsp-easy-pointer-manipulations>12   Easy pointer manipulations</h3><p>Sometimes you must resort to C-style pointer arithmetics (especially when
+interfacing with C libraries and data structures), and the type-safe nature of
+Nim doesn&rsquo;t exactly make that easy. The following templates make such tasks
+a lot easier (of course, many other variants could be introduced; that&rsquo;s an
+exercise for the reader).</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>template</span> <span class=p>`</span><span class=o>++</span><span class=p>`</span><span class=o>[</span><span class=n>A</span><span class=o>]</span><span class=p>(</span><span class=n>a</span><span class=p>:</span> <span class=k>ptr</span> <span class=n>A</span><span class=p>,</span> <span class=n>offset</span><span class=p>:</span> <span class=kt>int</span><span class=p>):</span> <span class=k>ptr</span> <span class=n>A</span> <span class=o>=</span>
+  <span class=k>cast</span><span class=o>[</span><span class=k>ptr</span> <span class=n>A</span><span class=o>]</span><span class=p>(</span><span class=k>cast</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span><span class=p>(</span><span class=n>a</span><span class=p>)</span> <span class=o>+</span> <span class=n>offset</span><span class=p>)</span>
+
+<span class=k>template</span> <span class=p>`</span><span class=o>--</span><span class=p>`</span><span class=o>[</span><span class=n>A</span><span class=o>]</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>:</span> <span class=k>ptr</span> <span class=n>A</span><span class=p>):</span> <span class=kt>int</span> <span class=o>=</span>
+  <span class=k>cast</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span><span class=p>(</span><span class=n>a</span><span class=p>)</span> <span class=o>-</span> <span class=k>cast</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span><span class=p>(</span><span class=n>b</span><span class=p>)</span>
+</code></pre></div><h3 id=13-nbsp-taming-circular-type-dependencies>13   Taming circular type dependencies</h3><p>One of Nim&rsquo;s Achilles' heels is the relative inflexibility of the module
+system when dealing with circular type dependencies. In a project of
+sufficient complexity, where you break up your code into multiple submodules,
+you&rsquo;ll hit this issue sooner or later almost invariably. <a href=https://blog.johnnovak.net/2017/06/18/ao-the-beginning/#circular-type-dependencies>Long story
+short</a>,
+the best workaround is to create a <code>common</code> module early on that
+contains all such circular type definitions. Then you can just include this
+common module in all other submodules.</p><p>The biggest drawback of this approach is that everything defined in common
+must be public. But hey, who told you that there&rsquo;s anything perfect in this
+world?</p><h3 id=14-nbsp-with-macro>14   &lsquo;with&rsquo; macro</h3><p>The tiny <a href=https://github.com/zevv/with>with</a> macro is super useful for
+reducing redundancy by lifting parts of an object or tuple into the
+current scope. Probably easier to show than to explain:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kn>import</span> <span class=k>with</span>
+
+<span class=k>type</span>
+  <span class=n>Widget</span> <span class=o>=</span> <span class=k>object</span>
+    <span class=n>backgroundColor</span><span class=p>:</span> <span class=kt>string</span>
+    <span class=n>foregroundColor</span><span class=p>:</span> <span class=kt>string</span>
+
+  <span class=n>Window</span> <span class=o>=</span> <span class=k>object</span>
+    <span class=n>title</span><span class=p>:</span> <span class=kt>string</span>
+    <span class=n>inputField</span><span class=p>:</span> <span class=n>Widget</span>
+
+<span class=c># Without `with`</span>
+<span class=kd>var</span> <span class=n>mainWindow</span> <span class=o>=</span> <span class=n>Window</span><span class=p>()</span>
+<span class=n>mainWindow</span><span class=p>.</span><span class=n>inputField</span><span class=p>.</span><span class=n>backgroundColor</span> <span class=o>=</span> <span class=s>&#34;black&#34;</span>
+<span class=n>mainWindow</span><span class=p>.</span><span class=n>inputField</span><span class=p>.</span><span class=n>foregroundColor</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span>
+
+<span class=c># Using `with`</span>
+<span class=k>with</span> <span class=n>mainWindow</span><span class=p>.</span><span class=n>inputField</span><span class=p>:</span>
+  <span class=n>backgroundColor</span> <span class=o>=</span> <span class=s>&#34;black&#34;</span>
+  <span class=n>foregroundColor</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span>
+
+<span class=c># You can nest it too!</span>
+<span class=k>with</span> <span class=n>mainWindow</span><span class=p>:</span>
+  <span class=n>title</span> <span class=o>=</span> <span class=s>&#34;Qux&#34;</span>
+  <span class=k>with</span> <span class=n>inputField</span><span class=p>:</span>
+    <span class=n>backgroundColor</span> <span class=o>=</span> <span class=s>&#34;black&#34;</span>
+    <span class=n>foregroundColor</span> <span class=o>=</span> <span class=s>&#34;red&#34;</span>
+</code></pre></div><h3 id=15-nbsp-aliases>15   Aliases</h3><p>Even when armed with the above macro, often there&rsquo;s a need to set up some
+aliases (references) to some parts of a nested object hierarchy to improve
+readability. This comes up quite often in real-world application and UI
+programming. Consider the following:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kd>var</span> <span class=n>g_app</span><span class=p>:</span> <span class=n>AppContext</span>
+
+<span class=n>g_app</span><span class=p>.</span><span class=n>doc</span><span class=p>.</span><span class=n>map</span><span class=p>.</span><span class=n>levels</span><span class=o>[</span><span class=n>g_app</span><span class=p>.</span><span class=n>doc</span><span class=p>.</span><span class=n>currLevel</span><span class=o>]</span><span class=p>.</span><span class=n>setFloor</span><span class=p>(</span><span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>,</span> <span class=n>fEmpty</span><span class=p>)</span>
+</code></pre></div><p>Now imagine that most of the program basically operates on this app context in
+some way or another. It all becomes horribly redundant and unreadable pretty
+quickly. And you can&rsquo;t set up C++ style references because of Nim&rsquo;s copy
+semantics (unless you keep using <code>ref object</code>s everywhere, which is not always
+the best choice).</p><p>Alias template to the rescue!</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>template</span> <span class=n>alias</span><span class=o>*</span><span class=p>(</span><span class=n>newName</span><span class=p>:</span> <span class=n>untyped</span><span class=p>,</span> <span class=n>call</span><span class=p>:</span> <span class=n>untyped</span><span class=p>)</span> <span class=o>=</span>
+  <span class=k>template</span> <span class=n>newName</span><span class=p>():</span> <span class=n>untyped</span> <span class=o>=</span> <span class=n>call</span>
+
+<span class=n>alias</span><span class=p>(</span><span class=n>doc</span><span class=p>,</span> <span class=n>g_app</span><span class=p>.</span><span class=n>doc</span><span class=p>)</span>
+<span class=n>alias</span><span class=p>(</span><span class=n>map</span><span class=p>,</span> <span class=n>doc</span><span class=p>.</span><span class=n>map</span><span class=p>)</span>
+
+<span class=n>map</span><span class=p>.</span><span class=n>levels</span><span class=o>[</span><span class=n>doc</span><span class=p>.</span><span class=n>currLevel</span><span class=o>]</span><span class=p>.</span><span class=n>setFloor</span><span class=p>(</span><span class=n>row</span><span class=p>,</span> <span class=n>col</span><span class=p>,</span> <span class=n>fEmpty</span><span class=p>)</span>
+</code></pre></div><p>That&rsquo;s much more readable! (Of course, normally you would use those aliases
+more than just once or twice like in this simple example.)</p><p>Another option for introducing proper C++ style references is the recently
+added (and totally undocumented)
+<a href=https://nim-lang.org/docs/decls.html#byaddr.t%2C%2C%2C>byaddr</a> pragma:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kn>import</span> <span class=n>std</span><span class=o>/</span><span class=n>decls</span>
+
+<span class=kd>var</span> <span class=n>a</span> <span class=o>=</span> <span class=mi>5</span>
+<span class=kd>var</span> <span class=n>b</span> <span class=p>{.</span><span class=n>byaddr</span><span class=p>.}</span> <span class=o>=</span> <span class=n>a</span>
+
+<span class=n>b</span> <span class=o>=</span> <span class=mi>3</span>
+<span class=n>echo</span> <span class=n>a</span>  <span class=c># prints 3</span>
+</code></pre></div><h2 id=iv-----the-grand-finale>IV &mdash; The Grand Finale</h2><h3 id=16-nbsp-saving-memory-by-object-field-reordering>16   Saving memory by object field reordering</h3><p>You should save the best for last, or so they say. Well, this one is about
+saving memory, big time! More experienced C/C++ programmers can go home now as
+they should know all about this already&mdash;the rest of the class stays.</p><h4 id=the-enigma>The Enigma</h4><p>Let&rsquo;s say we have an object in our program to hold the properties of
+a cell of a large(ish) grid/matrix:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>
+</code></pre></div><p>Being the sort of resource conscious developers we are, we are dutifully
+keeping an eye on our total memory footprint:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>Cell</span><span class=p>)</span>  <span class=c># prints 1</span>
+
+<span class=kd>var</span> <span class=n>a</span><span class=p>:</span> <span class=kt>array</span><span class=o>[</span><span class=mi>500</span> <span class=o>*</span> <span class=mi>500</span><span class=p>,</span> <span class=n>Cell</span><span class=o>]</span>
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>     <span class=c># prints 250000</span>
+</code></pre></div><p>Nothing surprising here. Let&rsquo;s add an enum to the mix:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span>
+  <span class=n>Direction</span> <span class=o>=</span> <span class=k>enum</span>
+    <span class=n>East</span><span class=p>,</span> <span class=n>West</span><span class=p>,</span> <span class=n>North</span><span class=p>,</span> <span class=n>South</span>
+
+<span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>
+ 
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>Cell</span><span class=p>)</span>  <span class=c># prints 2</span>
+
+<span class=kd>var</span> <span class=n>a</span><span class=p>:</span> <span class=kt>array</span><span class=o>[</span><span class=mi>500</span> <span class=o>*</span> <span class=mi>500</span><span class=p>,</span> <span class=n>Cell</span><span class=o>]</span>
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>     <span class=c># prints 500000</span>
+</code></pre></div><p>Still completely uninteresting. Enums are represented by the smallest possible
+integer type, hence our enum is 1 byte long, which doubles our total memory
+requirements.</p><p>Okay, time to be a bit more adventurous! We&rsquo;ll insert a string between the
+byte and the enum:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>
+  <span class=n>s</span><span class=p>:</span> <span class=kt>string</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>
+</code></pre></div><p>A Nim string is just a pointer to a sequence of characters, which means we&rsquo;re
+expecting our object to grow by <code>sizeof(string) == sizeof(pointer) == 8</code> bytes
+(on 64-bit). Right? Right???!! I expect people who had been socialised on
+nice, cushy high-level languages to vehemently agree with me at this point.</p><p>So, again, <code>sizeof(Cell)</code> will be 10 now, correct?</p><p>Yes?</p><p><img src=img/lol-this-guy.webp alt="LOL THIS GUY"></p><p>Let&rsquo;s see if the machine agrees with us:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>Cell</span><span class=p>)</span>  <span class=c># prints 24</span>
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>     <span class=c># prints 6000000</span>
+</code></pre></div><p><strong>WAT???!!!!11</strong> That&rsquo;s <strong>2.4x the size</strong> of what we expected!</p><p><img src=img/spit.webp alt="Woman spitting out coffee"></p><p>Not exactly the answer we wanted, is it? In good old time-tested coder
+tradition, let&rsquo;s start changing shit randomly in the hope of improving the
+situation somewhat!</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>s</span><span class=p>:</span> <span class=kt>string</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>
+
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>Cell</span><span class=p>)</span>  <span class=c># prints 16</span>
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>a</span><span class=p>)</span>     <span class=c># prints 400000</span>
+</code></pre></div><p>Um, we just reduced our total memory footprint by 1/3 by putting the
+string first. WTF is going on here?</p><h4 id=the-explanation>The Explanation</h4><p>Nim objects compile down to C structs (with the C backend), which are governed
+by strictly defined ordering and memory alignment requirements in the
+standard. The exact story varies a bit on each CPU architecture, but on
+x86/x64 the following main rules hold true:</p><ul><li><p>Data types must be aligned according to their bit-width for optimal access.
+So 64-bit values must be aligned on 8-byte boundaries (addresses evenly
+divisible by 8), 32-bit values on
+4-byte boundaries, and so on.</p></li><li><p>Structs must be padded at the end so when they&rsquo;re placed in contiguous
+arrays, all their members are aligned optimally as per the above. In
+practical terms this means that the total size of the struct is padded
+to the nearest integer multiple of the widest data type it contains.</p></li><li><p>The compiler is not allowed to reorder struct fields under any circumstance
+(to optimise padding or for any other reason), the reason being that this
+would break a lot of low-level code.</p></li><li><p>Unaligned access is supported on x86/x64 (meaning it won&rsquo;t crash the
+program), but at a significant performance penalty.</p></li></ul><p>Another important piece of background information is that C99 stipulates that
+blocks of memory allocated with <code>malloc</code> must be correctly aligned for any
+data type supported by the implementation. Hence, padding is never required
+before the first element of a struct. In practice, you can assume the
+allocated memory blocks are always 8-byte aligned on x86, and 16-bit aligned
+on x64, regardless of the OS.</p><p>So, armed with this arcane knowledge, it&rsquo;s not too hard to figure out what&rsquo;s
+going on:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=c># worst case (string in the middle) - 24 bytes with padding</span>
+<span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>         <span class=c># 1 byte + 7 pad bytes</span>
+  <span class=n>s</span><span class=p>:</span> <span class=kt>string</span>       <span class=c># 8 bytes (8-byte aligned)</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>    <span class=c># 1 byte + 7 pad bytes (to ensure that the next array</span>
+                  <span class=c># element is 8-byte aligned)</span>
+
+<span class=c># better (string at start) - 16 bytes with padding</span>
+<span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>s</span><span class=p>:</span> <span class=kt>string</span>       <span class=c># 8 bytes (8-byte aligned because of malloc)</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>         <span class=c># 1 byte</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>    <span class=c># 1 byte + 6 pad bytes (to ensure that the next array</span>
+                  <span class=c># element is 8-byte aligned)</span>
+</code></pre></div><p>One interesting consequence of the padding requirements is that we might as
+well store something useful in those otherwise unused padding bytes (as long
+as we&rsquo;re careful not to overshoot):</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Cell</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+  <span class=n>s</span><span class=p>:</span> <span class=kt>string</span>       <span class=c># 8 bytes</span>
+  <span class=n>b</span><span class=p>:</span> <span class=n>byte</span>         <span class=c># 1 byte</span>
+  <span class=n>d</span><span class=p>:</span> <span class=n>Direction</span>    <span class=c># 1 byte</span>
+  <span class=n>x</span><span class=p>:</span> <span class=kt>int16</span>        <span class=c># 2 bytes (offset 10, 2-byte aligned)</span>
+  <span class=n>y</span><span class=p>:</span> <span class=kt>int32</span>        <span class=c># 4 bytes (offset 12, 4-byte aligned)</span>
+
+<span class=n>echo</span> <span class=n>sizeof</span><span class=p>(</span><span class=n>Cell</span><span class=p>)</span>  <span class=c># still 16 bytes!</span>
+</code></pre></div><p>Then there&rsquo;s the <a href=https://nim-lang.org/docs/manual.html#foreign-function-interface-packed-pragma>packed
+pragma</a>
+too that you can apply to objects to effectively disable padding, but this
+should be restricted to low-level code or situations where you must interface
+with C libraries because it doesn&rsquo;t work that well with GC&rsquo;d memory (the
+manual explains why this is so).</p><p>This is definitely a very interesting subject, check out the following
+articles if you would like to explore it further:</p><ul class=compact><li><a href=http://www.catb.org/esr/structure-packing/>The Lost Art of Structure Packing</a></li><li><a href=https://zevv.nl/nim-memory/>The Nim memory model</a></li><li><a href=https://en.wikipedia.org/wiki/Data_structure_alignment>Data structure alignment</a></li></ul><h2 id=outro>Outro</h2><p>So long folks, hope you found something interesting here. Wash your hands,
+wear face masks, don&rsquo;t drink and drive during the festive season, and keep
+Nimming! (Is that even a word? I guess it is now&mldr;)</p><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>Unless if you&rsquo;re one of those NodeJS wielding kids who thinks
+Electron is a good idea and the web is the ultimate application development
+platform&mldr; Ignorance is bliss!&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body></html>
