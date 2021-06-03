@@ -1,0 +1,176 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Raspbian Stretch home server setup | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=http://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=http://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2019/03/09/raspbian-stretch-home-server-setup/>Raspbian Stretch home server setup</a></h1><p class=date><time datetime=2019-03-09>2019 Mar 9</time></p></header><nav class=tags><ul><li><a href=/tags/linux/>linux</a></li><li><a href=/tags/raspberry-pi/>raspberry pi</a></li><li><a href=/tags/raspbian/>raspbian</a></li></ul></nav><section class=intro><p><strong>UPDATE 2019-10-19:</strong> Added some warnings about the default exFAT cluster
+sizes.</p><p><strong>UPDATE 2019-07-08:</strong> Added instructions on enabling exFAT support, made the
+fstab mounting command more robust, and added the <a href=#fixing-boot-problems-due-to-bad-fstab-file>Fixing boot problems due to
+bad fstab file</a> section.</p></section><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#installing-raspbian-scratch>Installing Raspbian Scratch</a></li><li><a href=#enabling-ssh-access>Enabling SSH access</a></li><li><a href=#enabling-vnc-access>Enabling VNC access</a></li><li><a href=#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd>Mounting an NTFS or exFAT formatted external USB HDD</a></li><li><a href=#setting-up-an-ftp-server>Setting up an FTP server</a></li><li><a href=#setting-up-deluge>Setting up Deluge</a><ul><li><a href=#installing-the-debian-jessie-version>Installing the Debian Jessie version</a></li><li><a href=#configuring-the-deluge-daemon-for-remote-access>Configuring the Deluge daemon for remote access</a></li><li><a href=#configuring-the-remote-thin-client>Configuring the remote thin client</a></li></ul></li></ul></nav><h2 id=introduction>Introduction</h2><p>Okay, so the Micro SD card in my trusty Raspberry Pi 2 <strike>torrent
+box</strike> home server finally bit the dust after three years of steady
+service, so I had to get a new one and reinstall everything from scratch (no
+pun intended), which I have documented in this post in detail. What we&rsquo;ll
+cover here is how to set up the Pi running <strong>Raspbian Scratch</strong> with SSH, VNC
+and FTP support, an external NTFS hard drive for storage, and the Deluge
+torrent client with remote access enabled&mdash;needless to say, strictly for
+downloading Linux ISO images only!</p><p>I have used a <strong>Raspberry Pi 2 B+</strong> with a USB WiFi dongle for the purpose of
+this exercise&mdash;in theory, the process should be the same for the Pi 3 with
+its built-in WiFi. A word of caution to younger players: buy a proper
+Raspberry-approved power source that&rsquo;s capable of providing stable 2.5A power;
+this will save you lots of headaches later on.</p><p>Also, a word of wisdom to my brothers and sisters: my broken 8 GB SanDisk card
+came with a 10-year warranty so I got a new 16 GB one for free! Always keep those
+receipts, guys! :)</p><p class=warning>These instructions are meant for a home server setup on a home network
+that&rsquo;s not reachable from the outside internet. In my case, the network the
+server is on is behind a second router, so I&rsquo;m not concerned with security
+issues too much. <strong>Don&rsquo;t blame me if you use these instructions to set up a
+public FTP or something and then you get hacked!</strong></p><h2 id=installing-raspbian-scratch>Installing Raspbian Scratch</h2><ol><li><p>Download the offline NOOBS installation zip file from
+<a href=https://www.raspberrypi.org/downloads/noobs/>here</a>.</p></li><li><p>Format a Micro SD card to FAT32 (I used the cheapest available SanDisk
+Ultra 16 GB, but my previous 8 GB SanDisk also worked fine. Some people
+reported problems with 32+ GB cards so going larger is not worth the
+trouble (and the price) if you&rsquo;re gonna use an external HDD for storage
+anyway).</p></li><li><p>Unzip the contents of the zip file to the root directory of the SD card.</p></li><li><p>Insert card into the Pi, hook up monitor & keyboard and turn it on to start
+the installation process. Choose Raspbian when prompted and follow the
+instructions.</p></li><li><p>On the first boot you&rsquo;ll be prompted to configure the WiFi access (if you
+have a Pi 2 with an USB WiFi adapter like me, or if you have a Pi 3), so
+have the WiFi password handy.</p></li></ol><h2 id=enabling-ssh-access>Enabling SSH access</h2><ol><li><p>Run <code>sudo raspi-config</code> and enable SSH access under <strong>5 Interface Options
+/ P2 SSH</strong>.</p></li><li><p>After this you can SSH into the Pi with <code>ssh pi@&lt;IP_ADDRESS></code> and entering
+the root password.</p></li></ol><h2 id=enabling-vnc-access>Enabling VNC access</h2><ol><li><p>Follow <a href=https://www.raspberrypi.org/documentation/remote-access/vnc/>these
+instructions</a>
+under the <strong>Enabling VNC server</strong> section.</p></li><li><p>Now you can use the <a href=https://www.realvnc.com/en/connect/download/viewer/>RealVNC
+Viewer</a> to connect to
+the Pi from another computer by entering its IP address (don&rsquo;t need the
+<code>:1</code> at the end).</p></li><li><p><em>(Optional)</em> If the Pi is not hooked up to a monitor, the VNC session will
+use the default resolution of 720x480. To change this, run <code>sudo raspi-config</code> and go to <strong>7 Advanced Options / A5 Resolution</strong> to set
+a higher screen resolution. You&rsquo;ll need to reboot with <code>sudo reboot</code> for
+the change to take effect.</p></li></ol><p>Alternative instructions about the whole setup can be found
+<a href=https://www.realvnc.com/en/connect/docs/raspberry-pi.html>here</a>.</p><h2 id=mounting-an-ntfs-or-exfat-formatted-external-usb-hdd>Mounting an NTFS or exFAT formatted external USB HDD</h2><p>When connecting the external USB drive, Raspbian will automatically mount it.
+Unfortunately, the default NTFS driver that comes with the OS can only mount
+NTFS partitions in read-only mode, so we&rsquo;ll need to install <strong>ntfs-3g</strong> to get
+full read-write access (but we&rsquo;ll unmount the partition first):</p><pre><code>sudo umount /media/pi/&lt;PARTITION_NAME&gt;
+sudo apt-get install ntfs-3g
+</code></pre><p>Similarly, FAT is supported out-of-the-box, but you&rsquo;ll need to install
+<strong>exfat-fuse</strong> to be able to mount exFAT partitions:</p><pre><code>sudo apt-get install exfat-fuse exfat-utils
+</code></pre><p class=note>If you&rsquo;re trying to format the disk to exFAT on Windows 7+, you&rsquo;ll quickly
+realise that you cannot select exFAT in the standard disk formatter GUI but
+only FAT and NTFS. The trick is to use the <code>format</code> command in the console
+(e.g. <code>format d: /fs:exfat</code>). You also might want to look into setting the
+cluster size manually (e.g. to 4Kib) as the defaults tend to be quite large
+(256KiB clusters for an 1TiB drive, for example, as summarised
+<a href=https://en.wikipedia.org/wiki/ExFAT#Technical_specialities>here</a>).</p><p>Let&rsquo;s check the list of available partitions; the disk we&rsquo;re looking for will
+be most likely <code>/dev/sda</code>:</p><pre><code>sudo fdisk -l
+</code></pre><p>Now we can test the new driver by mounting the partition manually under
+<code>/media/USBHDD1</code> (assuming the whole disk only contains a single NTFS
+partition):</p><pre><code>sudo mkdir /media/USBHDD1
+sudo mount -t auto /dev/sda1 /media/USBHDD1
+</code></pre><p>Copy some files to <code>/media/USBHDD1</code> to test that the write access works.</p><p>If everything went fine, we can mount the partition permanently by adding the
+following line to <code>/etc/fstab</code>:</p><pre><code>/dev/sda1   /media/USBHDD1   auto   defaults,noatime,nofail,x-systemd.device-timeout=10   0   0
+</code></pre><p>Reboot with <code>sudo reboot</code> to confirm that the partition gets mounted
+automatically.</p><p>Note that we&rsquo;re exercising some precaution here:</p><ul><li><p><code>nofail</code> means that the boot process
+will continue regardless whether the volume can be mounted or not. Without
+this we would end up in emergency mode if the volume could not be mounted
+for any reason, in which case refer to the <a href=#fixing-boot-problems-due-to-bad-fstab-file>Fixing boot problems due to bad
+fstab file</a> section for
+instructions on how to get out of this rather unfortunate situation. With
+<code>nofail</code> in place, the OS will at least boot normally so we can SSH/VNC into
+the box to rectify the situation more easily.</p></li><li><p><code>x-systemd.device-timeout</code> sets the wait timeout in seconds for the mount
+command; you might want to set this a bit higher for drives that take a while
+to spin up.</p></li></ul><h2 id=setting-up-an-ftp-server>Setting up an FTP server</h2><p>For FTP access, we&rsquo;ll use <strong>vsFTPd</strong> instead of the Raspbian default
+<strong>PureFTPd</strong>:</p><pre><code>sudo apt-get install vsftpd
+</code></pre><p>We&rsquo;ll be really unsophisticated here (another term for &ldquo;simple & easy&rdquo;) and
+just grant the root <code>pi</code> user read-write access to the whole external HDD.
+Edit <code>/etc/vsftpd.conf</code> and uncomment/add the following parameters:</p><pre><code>anonymous_enable=NO
+local_enable=YES
+write_enable=YES
+local_umask=022
+chroot_local_user=YES
+user_sub_token=$USER
+local_root=/media/USBHDD1
+allow_writeable_chroot=YES
+</code></pre><p>(Arguably, this is not as bad as it first seems because we&rsquo;re restricting
+access to <code>/media/USBHDD1</code> only with <code>chroot_local_user=YES</code>.)</p><p>Restart the FTP server for the changes to take effect:</p><pre><code>sudo service vsftpd restart
+</code></pre><p>Now you should be able to connect to the box with an FTP client using the <code>pi</code>
+user and the root password, and have full read-write access to the whole
+contents of USB HDD.</p><h2 id=setting-up-deluge>Setting up Deluge</h2><p>Apparently, <a href="https://forum.deluge-torrent.org/viewtopic.php?f=7&t=54869&p=227887">there are some
+issues</a>
+with the Deluge package that comes with Stretch. The reason is that it pulls
+down <strong>libtorrent 1.1.1.0</strong> as a dependency instead of the previously used
+<strong>1.0.11</strong>:</p><pre>
+  As many I moved to Stretch from a Debian Jessie with Deluged 1.3.15 and
+  libtorrent 1.0.11 installed, RPI3 is the hardware. I found a couple of
+  issues and report them here if useful for any of you.
+
+  Issue:
+  -Deluged CPU usage really higher than before
+  -Multi-tiers tracker torrents report "connection time out". A few are
+  working but the large majority stay in this state. This is identified for
+  trackers giving multiple tier 0 tracker addresses, e.g. IPTxxxxx
+  - Error in log
+</pre><p>Although I&rsquo;m on a different hardware (<a href=https://www.raspberrypi.org/products/raspberry-pi-2-model-b/>Raspberry
+2 B</a>), this
+seems like a software issue so I had decided not to experiment with the new
+package but use <a href="https://forum.deluge-torrent.org/viewtopic.php?f=7&t=54869&p=227887">this
+method</a>
+to revert to <strong>libtorrent 1.0.11</strong>.</p><h3 id=installing-the-debian-jessie-version>Installing the Debian Jessie version</h3><p>Edit <code>/etc/apt/sources.list</code> and add the below PPA and Jessie backports repos:</p><pre><code>deb http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb-src http://ppa.launchpad.net/deluge-team/ppa/ubuntu zesty main
+deb http://deb.debian.org/debian jessie-backports main contrib non-free
+</code></pre><p>Add PPA key:</p><pre><code>sudo apt-get install dirmngr
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 249AD24C
+</code></pre><p>Update package lists:</p><pre><code>sudo apt-get update
+</code></pre><p>Install Jessie version of <strong>libssl</strong>:</p><pre><code>sudo apt-get -t jessie-backports install libssl1.0.0
+</code></pre><p>Install <strong>Deluge</strong>, including the <strong>web</strong> and <strong>console</strong> modules:</p><pre><code>sudo apt-get install -t zesty libtorrent-rasterbar8 python-libtorrent
+sudo apt-get install -t zesty deluged deluge-web deluge-console
+</code></pre><p>Prevent <strong>libtorrent</strong> upgrade during the next OS upgrade:</p><pre><code>sudo apt-mark hold libtorrent-rasterbar8 python-libtorrent
+sudo apt-mark showhold
+</code></pre><h3 id=configuring-the-deluge-daemon-for-remote-access>Configuring the Deluge daemon for remote access</h3><p>Start the Deluge daemon then kill it immediately (we&rsquo;re just doing this so it
+creates the default configuration files on the first startup):</p><pre><code>deluged
+pkill deluged
+</code></pre><p>Edit <code>~/.config/deluge/auth</code> to set up the remote Deluge user. Delete the
+existing contents of the file and add a new line in the following format:</p><pre><code>username:password:level
+</code></pre><p>We&rsquo;ll use level 10, which gives full administrative acccess, so the new line
+will look something like this:</p><pre><code>pi:&lt;PASSWORD&gt;:10
+</code></pre><p>Let&rsquo;s start up the daemon again and enter the console:</p><pre><code>deluged
+deluge-console
+</code></pre><p>We&rsquo;ll make a configuration change to allow remote connections to the Deluge
+daemon and then we&rsquo;ll exit the console:</p><pre><code>config -s allow_remote True
+exit
+</code></pre><p>Restart the daemon so the changes will take effect:</p><pre><code>deluged
+pkill deluged
+</code></pre><h3 id=configuring-the-remote-thin-client>Configuring the remote thin client</h3><p>Create the following download locations on the USB HDD:</p><pre><code>mkdir /media/USBHDD1/downloads/completed
+mkdir /media/USBHDD1/downloads/downloading
+mkdir /media/USBHDD1/downloads/torrents
+mkdir /media/USBHDD1/downloads/watch
+</code></pre><p><a href=https://dev.deluge-torrent.org/wiki/Download>Download</a> and install the thin
+client, start it up and perform the following steps:</p><ol><li><p>Disable &ldquo;Classic Mode&rdquo; in <strong>Preferences / Interface</strong> then restart the client.</p></li><li><p>Add a new remote connection at startup (use the IP address of the Pi, the
+default port, and the username and password we set in the <code>auth</code> file). If
+all went well, the icon next to the connection should turn green.</p></li><li><p>Set the download locations in <strong>Preferences / Downloads</strong> to the directories
+we created:</p><figure class=image><img src=/2019/03/09/raspbian-stretch-home-server-setup/img/deluge-downloads-config.png alt="Deluge thin client downloads configuration" style=width:100%><figcaption style=width:100%><h3 id=configuring-the-webui>Configuring the WebUI</h3><p>Start the WebUI:</p><pre><code>deluge-web
+</code></pre><p>Open the WebUI in a browser:</p><pre><code>http://&lt;PI_IP_ADDRESS&gt;:8112/
+</code></pre><p>The default password is <code>deluge</code>. You&rsquo;ll be asked to change the password on
+the first login, so it&rsquo;s a good idea to just do that.</p><h3 id=setting-up-deluge-daemon-and-webui-to-start-automatically-on-boot>Setting up Deluge daemon and WebUI to start automatically on boot</h3><p>Edit <code>/etc/rc.local</code> and add the following two lines before the <code>exit 0</code>
+command:</p><pre><code>sudo -u pi /usr/bin/python /usr/bin/deluged &amp;
+sudo -u pi /usr/bin/python /usr/bin/deluge-web &amp;
+</code></pre><p>Reboot and test that you can still connect using both the thin client and the
+WebUI.</p><h2 id=fixing-boot-problems-due-to-bad-fstab-file>Fixing boot problems due to bad fstab file</h2><p>If there&rsquo;s an error in the <code>fstab</code> file and one of the partitions cannot be
+mounted, Raspbian will go into emergency mode at startup. This means you won&rsquo;t
+be able to access it externally via the network as loading the OS has been
+essentially aborted. So if you&rsquo;re suspecting this is the case, the only way to
+remedy the situation is to hook up the Pi to a monitor and a keyboard and
+follow the instructions below.</p><h3 id=confirming-the-issue>Confirming the issue</h3><p>The first step is to confirm the issue. Make sure you see something like this
+on the screen when attempting to boot up the device:</p><pre><code>You are in emergency mode. [lots of text, omitted...]
+
+Cannot open access to console, the root account is locked.
+See sulogin(8) man page for more details.
+
+Press Enter to continue.
+</code></pre><p>Pressing Enter would just reset the Pi and start the boot process again, so
+we&rsquo;ll need to do something else to get out of the reboot loop.</p><h3 id=editing-cmdlinetxt>Editing cmdline.txt</h3><p>Switch off the Pi and take out the SD card; we&rsquo;ll need to use another computer
+to append the following at the end of <code>cmdline.txt</code> on the boot partition of
+the SD card:</p><pre><code>init=/bin/sh
+</code></pre><p>This can be a bit problematic as I didn&rsquo;t have much luck with trying to get
+Windows to recognise the boot partition, so I had to use a Mac in the end
+(another Linux box would work too, of course). After this edit, you should be
+able to boot into a minimal shell environment.</p><h3 id=remounting-the-root-partition-in-read-write-mode>Remounting the root partition in read-write mode</h3><p>The next problem is that we need to remount the root partition in read-write
+mode, so we can fix the <code>fstab</code> file:</p><pre><code>mount -o remount,rw /
+</code></pre><h3 id=fixing-fstab>Fixing fstab</h3><p>Now we&rsquo;re on easy street, just edit <code>/etc/fstab</code> with <code>vi</code> or <code>nano</code> and
+comment out the problematic line. We&rsquo;ll also need to undo the changes we did
+to <code>cmdline.txt</code> on the second computer after this.</p><p>If you got it all right, you should be able to boot the Pi normally again.
+Then you can just <em>carefully</em> follow the <a href=#mounting-an-ntfs-or-exfat-formatted-external-usb-hdd>Mounting an NTFS or exFAT formatted
+external USB HDD</a>
+section again to correct the problematic mount command.</p><h2 id=in-closing>In closing</h2><p><em>[This last section isn&rsquo;t really warranted, but just finishing the
+post with some configuration steps didn&rsquo;t seem quite right&mldr;]</em></p><p>That&rsquo;s it folks, enjoy your shiny new 24/7 torrent box! Now go and download
+some Linux ISOs! ;)</p></figcaption></figure></li></ol><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body></html>

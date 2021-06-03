@@ -1,0 +1,320 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>A minimalist Openbox desktop for Vim freaks | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=http://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=http://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/>A minimalist Openbox desktop for Vim freaks</a></h1><p class=date><time datetime=2016-11-13>2016 Nov 13</time></p></header><nav class=tags><ul><li><a href=/tags/linux/>linux</a></li><li><a href=/tags/openbox/>openbox</a></li><li><a href=/tags/crunchbang++/>crunchbang++</a></li><li><a href=/tags/vim/>vim</a></li></ul></nav><section class=intro><p>Are you the sort of person who is looking for a Vim plugin for everything?
+Does having to reach out for the mouse sideways cause you involuntary facial
+muscles twitches? Is breaking out the arrow keys with a screwdriver among the
+first few things you do on a new computer (after swapping Caps Lock with
+Left Ctrl, of course)? Then welcome, you&rsquo;re among friends here.</p><p><strong>UPDATE 2020-05-11:</strong> Updated instructions for Crunchbang++ 10 (based on
+Debian 10).</p><p><strong>UPDATE 2020-12-20:</strong> Tips on avoiding fullscreen/SVGA related problems on
+reboot.</p></section><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#overview>Overview</a></li><li><a href=#philosophy--main-features>Philosophy & main features</a></li><li><a href=#some-implementation-details>Some implementation details</a><ul><li><a href=#navigation>Navigation</a></li><li><a href=#system-clipboard-support>System clipboard support</a></li><li><a href=#mouse-support>Mouse support</a></li><li><a href=#system-clipboard-support----summary>System clipboard support &ndash; Summary</a></li></ul></li><li><a href=#installation>Installation</a></li><li><a href=#on-first-boot>On first boot</a><ul><li><a href=#set-zsh-as-the-default-shell>Set zsh as the default shell</a></li><li><a href=#install-virtualbox-guest-additions>Install VirtualBox Guest Additions</a></li><li><a href=#perform-system-update>Perform system update</a></li><li><a href=#enable-autologin>Enable autologin</a></li><li><a href=#installing-powerline-fonts>Installing Powerline fonts</a></li><li><a href=#setting-the-right-wallpaper>Setting the <em>right</em> wallpaper</a></li></ul></li><li><a href=#further-reading>Further reading</a></li></ul></nav><h2 id=overview>Overview</h2><p>Now that we&rsquo;re done with the formalities and have dissuaded normal computer
+users and non-fanatical Vim aficionados from reading any further, let&rsquo;s get to
+the good stuff! I vastly prefer to use a Linux desktop for development and my
+trusty 32-bit Crunchbang Waldorf VM has just reached the end of its useful
+life because of my sudden realisation that I really need 64-bit support.
+I had spent a considerable time &ldquo;vimifying&rdquo; my old setup (more on that later),
+which, of course, I wanted to carry over to the new installation. This post
+documents all the hackery I needed to do on the stock install to achieve that.</p><p>We will use <a href=https://crunchbangplusplus.org/>Crunchbang++ 10</a> (or <code>#!++ 10</code>)
+64-bit as our starting point which is based on <a href=https://www.debian.org/>Debian 10
+&ldquo;Buster&rdquo;</a> stable. Why not use vanilla Debian instead?
+Because I really like the choices <a href=https://corenominal.org/about/>Philip
+Newborough</a> had made for the original
+Crunchbang series and it would be an awful lot of work to replicate them from
+scratch. Crunchbang is small, fast, stable and prioritises function over
+form&mdash;it&rsquo;s the perfect Openbox based system for a minimalist. Instead of
+reinventing everything, we will just make a few strategic tweaks here and
+there to make it more Vim friendly.</p><p>Why VM? Because I also do <a href=https://music.johnnovak.net/>music</a>, <a href=https://www.johnnovak.net/>graphics
+design</a> and
+<a href=https://photo.johnnovak.net/>photography</a>, and most creative apps on Linux
+just suck<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>, plus I don&rsquo;t like dual booting. The performance hit is
+negligible nowadays anyway on these new 4 or 8 core Intel i7 CPUs. But most
+of the instructions will be applicable to non-VM installs as well as I will
+always make it clear whether a particular step is VM specific or not.</p><p>The bulk of the information presented in this article is a distillation of
+ideas, tips and config snippets from various online sources far too numerous
+to mention (or even just remember). Still, the <a href=https://crunchbang.org/forums/>old Crunchbang
+forums</a> and the excellent <a href=https://wiki.archlinux.org/>ArchLinux
+wiki</a> definitely stand out as the two best
+sources of quality information on more arcane issues that you can&rsquo;t always
+figure out by reading the man pages alone.</p><h2 id=philosophy--main-features>Philosophy & main features</h2><p>Although I like the concept of tiling window managers, after analysing my
+common usage patterns I realised that they would be an overkill for my needs.
+Most of the time I just use tmux inside a maximised terminal window and I
+rarely use more than a single window per desktop. I like to put my browser
+windows (<del>Firefox with <a href=http://www.vimperator.org/vimperator>Vimperator</a></del><sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>)
+and PDF viewers (<a href=https://mupdf.com/>mupdf</a>) onto separate desktops, so I
+just need a way to quickly switch between them. Sometimes I need to view two
+vertically maximised windows side-by-side on the same desktop (e.g. a
+terminal and a PDF viewer), but that&rsquo;s pretty much it. Anything else is so
+infrequent and random that it can be just done easily with the mouse, which is
+less than 5% of the total use cases, so efficiency really doesn&rsquo;t matter
+there. The important thing is that 95% of the time I won&rsquo;t need to lift my
+fingers off the home row with this configuration!</p><p>So, with all this in mind, let&rsquo;s take a look at the main features
+on a high-level:</p><dl><dt>Minimal & highly functional interface</dt><dd>I find the default Crunchbang theme just perfect, so we will be building
+everything on top of that. The main components of the setup will be <em>Openbox</em>,
+<em>zsh</em>, <em>urxvt</em>, <em>tmux</em> and&mdash;of course&mdash;<em>Vim</em>.</dd><dt>Global Vim-style navigation</dt><dd>Seamless navigation between Vim splits and tmux panes, and a Vim-like way to
+switch between four virtual desktops.</dd><dt>System clipboard support</dt><dd>While Vim and tmux have their own internal clipboards, other GUI apps
+generally use the system clipboard, so we&rsquo;ll need to invent a sane mechanism
+to interoperate between them.</dd><dt>Mouse support</dt><dd>I don&rsquo;t use the mouse very much, but when I do, I want it to work correctly
+in tmux and Vim (e.g. changing focus, resizing panes, selecting & middle-click
+pasting text, etc.)</dd><dt>Unified colour scheme</dt><dd>I really like the <a href=https://github.com/jonathanfilip/vim-lucius>Lucius</a> Vim
+colour scheme (the default dark variant), so the whole setup will use Lucius
+dark colours consistently.</dd></dl><p>And now some screenshots, because everybody loves screenshots!</p><figure class=image><a class=largeimg href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop1.png data-width=1920 data-height=1080><img src=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop1-small.jpg alt="Figure 1 &mdash; urxvt + tmux + Vim. That&rsquo;s how I&rsquo;m spending way too much of my
+waking time inside a darkened room. The x86 assembly listing in the top
+right pane serves an important dual purpose: firstly, it is an attempt to
+make my programmer peers believe that I really know a lot about computers,
+and secondly, it distances me from JavaScript wielding hipsters." style=width:100%></a><figcaption style=width:100%>Figure 1 &mdash; urxvt + tmux + Vim. That&rsquo;s how I&rsquo;m spending way too much of my
+waking time inside a darkened room. The x86 assembly listing in the top
+right pane serves an important dual purpose: firstly, it is an attempt to
+make my programmer peers believe that I <em>really know a lot</em> about computers,
+and secondly, it distances me from JavaScript wielding hipsters.</figcaption></figure><figure class=image><a class=largeimg href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop2.png data-width=1920 data-height=1080><img src=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop2-small.jpg alt="Figure 2 &mdash; Another common use-case showcasing the window tiling
+functionality. Yes, the browser window shows the post you are reading right
+now (plus a Vimperator window, signalling my technical expertise to those
+in the know). Life is a big recursion, is it not? Also note the common
+staple of wannabe l33t Linux haxxorz, the Ubiquitous Tmux Clock™." style=width:100%></a><figcaption style=width:100%>Figure 2 &mdash; Another common use-case showcasing the window tiling
+functionality. Yes, the browser window shows the post you are reading right
+now (plus a Vimperator window, signalling my technical expertise to those
+<em>in the know</em>). Life is a big recursion, is it not? Also note the common
+staple of wannabe l33t Linux haxxorz, the <em>Ubiquitous Tmux Clock™</em>.</figcaption></figure><figure class=image><a class=largeimg href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop3.png data-width=1920 data-height=1080><img src=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/img/desktop3-small.jpg alt="Figure 3 &mdash; The obligatory &ldquo;just showing off&rdquo; screenshot because I like the
+number three. Thunar makes an appearance here too." style=width:100%></a><figcaption style=width:100%>Figure 3 &mdash; The obligatory &ldquo;just showing off&rdquo; screenshot because I like the
+number three. Thunar makes an appearance here too.</figcaption></figure><h2 id=some-implementation-details>Some implementation details</h2><p>In the following sub-sections we&rsquo;ll take a detailed look at some of the more
+difficult to configure features. I won&rsquo;t go through every single line in every
+config file because then I would be sitting here writing this article for the
+next two months&mldr; Just take a look at
+<a href=https://github.com/johnnovak/dotfiles>my dotfiles</a> if you&rsquo;re interested, or
+better yet, clone/download the repo and run <code>install.sh</code> to set it up on your
+system. The second part of this article provides detailed instructions on how
+to set up the whole thing from scratch into a new VirtualBox VM (mostly for my
+own reference, but perhaps others will find it useful too).</p><h3 id=navigation>Navigation</h3><h4 id=vim--tmux>Vim & tmux</h4><p>Seamless navigation among Vim splits and tmux panes is accomplished via the
+excellent <a href=https://github.com/christoomey/vim-tmux-navigator>Vim Tmux
+Navigator</a>. We&rsquo;ll just use
+the default settings that will use the shortcuts
+<kbd>Ctrl</kbd>+<kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd> to move
+between panes.</p><p>A side effect of this configuration is that we won&rsquo;t be able to use
+<kbd>Ctrl</kbd>+<kbd>L</kbd> to clear the terminal anymore. There&rsquo;s an easy
+workaround for that; we&rsquo;ll remap <kbd>Ctrl</kbd>+<kbd>L</kbd> to
+<kbd>&lt;Prefix></kbd>+<kbd>Ctrl</kbd>+<kbd>L</kbd> in the tmux config:</p><pre><code>bind C-l send-keys &quot;C-l&quot;
+</code></pre><h4 id=xmodmap>xmodmap</h4><p>Hey, wait a minute, chief! What&rsquo;s xmodmap doing here? xmodmap is a tool for
+modifying X keymaps and mouse button mappings. We are going to use it to
+differentiate between the left and right <kbd>Alt</kbd> modifiers when
+defining our Openbox shortcuts. I happened to come up with this bright idea of
+switching between desktops 1 to 4 with <kbd>R
+Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd> and to send the
+current window to another desktop with <kbd>L
+Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd>. Try them out,
+they&rsquo;re really comfortable and quick to use from the home row!</p><p>This is how our <code>~/.Xmodmap</code> file will look like. First, we&rsquo;ll need to map the
+keycode of <kbd>L Alt</kbd> to <code>Alt_L</code> and <kbd>R Alt</kbd> to <code>Hyper_R</code>.
+Why <code>Hyper_R</code> and not <code>Alt_R</code>? Well, because my keyboard happens to generate
+the keycode for <code>Hyper_R</code> when I press <kbd>R Alt</kbd>. To find out the exact
+keycode for your keyboard (it might be different), use the <code>xev</code> (X Event
+Viewer) utility.</p><pre><code>keycode 64 = Alt_L NoSymbol Alt_L
+keycode 108 = Hyper_R NoSymbol Hyper_R
+</code></pre><p>After this, we&rsquo;ll clear all existing modifier bindings and set our own. This
+is not strictly necessary as we&rsquo;re just setting the defaults again for most,
+but I find this method cleaner and easier to troubleshoot because then we can
+see all the modifier definitions in one place.</p><pre><code>clear Shift
+clear Control
+clear Mod1
+clear Mod2
+clear Mod3
+clear Mod4
+clear Mod5
+
+add Shift = Shift_L Shift_R
+add Control = Control_L Control_R
+add Mod1 = Alt_L
+add Mod2 = Num_Lock
+add Mod3 = Hyper_R
+add Mod4 = Super_L
+add Mod5 = ISO_Level3_Shift
+</code></pre><p>There&rsquo;s one very confusing and non-obvious thing about this config that I will
+illustrate with a concrete example. We are mapping <code>Hyper_R</code> to <code>Mod3</code>, yet in
+our Openbox config we won&rsquo;t be using <code>Mod3</code> for any of the keybindings, but
+just the hyper key directly (e.g. <code>H-j</code>, which stands for Hyper-j, which will
+be bound to <kbd>R Alt</kbd>+<kbd>J</kbd>). The logical conclusion would be
+that we won&rsquo;t need to bind anything to <code>Mod3</code> then. Not so! Due to the
+<a href="https://bugs.freedesktop.org/show_bug.cgi?id=926">extremely arcane ways</a> how
+applications need to communicate with the X server, Openbox can only get
+keydown events for a modifier key if it is bound to one of the <code>Mod*</code>
+modifiers. I&rsquo;m sure the real situation is even more messy and complicated than
+that, but this is all we need to know for our purposes.</p><p>One more thing, I like to switch <kbd>Caps Lock</kbd> with <kbd>L Ctrl</kbd>
+on all my computers, but we won&rsquo;t need to do that here because I&rsquo;m using
+<a href=https://sharpkeys.codeplex.com/>SharpKeys</a> on Windows for that purpose, and
+luckily the settings carry over to the guest VM.</p><h4 id=openbox>Openbox</h4><p>Ok, time to teach Openbox a few new tricks as well. Let&rsquo;s start with setting
+the number of desktops to four in <code>~/.config/openbox/rc.xml</code>:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;desktops&gt;</span>
+  <span class=nt>&lt;number&gt;</span>4<span class=nt>&lt;/number&gt;</span>
+  <span class=nt>&lt;firstdesk&gt;</span>1<span class=nt>&lt;/firstdesk&gt;</span>
+  <span class=nt>&lt;names&gt;</span>
+    <span class=nt>&lt;name&gt;</span>1<span class=nt>&lt;/name&gt;</span>
+    <span class=nt>&lt;name&gt;</span>2<span class=nt>&lt;/name&gt;</span>
+    <span class=nt>&lt;name&gt;</span>3<span class=nt>&lt;/name&gt;</span>
+    <span class=nt>&lt;name&gt;</span>4<span class=nt>&lt;/name&gt;</span>
+  <span class=nt>&lt;/names&gt;</span>
+  <span class=nt>&lt;popupTime&gt;</span>875<span class=nt>&lt;/popupTime&gt;</span>
+<span class=nt>&lt;/desktops&gt;</span></code></pre></div><p>Then we&rsquo;ll disable the window decorations for <code>urvxt</code> and <code>terminator</code> because
+they look much cooler that way:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;terminator&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
+<span class=nt>&lt;/application&gt;</span>
+<span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;urxvt&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
+<span class=nt>&lt;/application&gt;</span></code></pre></div><p>To recap, this is the final list of shortcuts for our Vim-style desktop (in
+addition to the standard stuff like <kbd>L Alt</kbd>+<kbd>Tab</kbd> to switch
+between windows, etc.):</p><table class=no-border><tr><td><kbd>Ctrl</kbd>+<kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td>Move between Vim splits & tmux panels</td></tr><tr><td><kbd>R Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd></td><td>Switch to desktop 1 to 4</td></tr><tr><td><kbd>L Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd></td><td>Send window to desktop 1 to 4</td></tr><tr><td><kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>;</kbd></td><td>Half-screen tile window</td></tr></table><p>The only thing left to do is to remap the existing keybindings in <code>rc.xml</code>.
+For example, this is how the desktop switching shortcuts look like. Note that
+we need to bind to <code>H-x</code> (Hyper + x) for the shortcut <kbd>R
+Alt</kbd>+<kbd>X</kbd>. Another interesting thing to note is that the key
+<kbd>;</kbd> (semicolon) has to be specified by its keycode (<code>47</code> decimal, <code>0x2f</code>
+hex). Again, <code>xev</code> is your friend to find out the keycode for a particular key.</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-j&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span>
+<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-k&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;to&gt;</span>2<span class=nt>&lt;/to&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span>
+<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-l&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;to&gt;</span>3<span class=nt>&lt;/to&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span>
+<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-0x2f&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;to&gt;</span>4<span class=nt>&lt;/to&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span></code></pre></div><p>The send to desktop bindings will be very similar. Here&rsquo;s the first one from
+which you can figure out the rest:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;A-j&#34;</span><span class=nt>&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;SendToDesktop&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span></code></pre></div><p>Finally, we&rsquo;ll just need to remap the existing window tiling shortcuts and
+we&rsquo;re done. Example for tile left:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;W-S-h&#34;</span><span class=nt>&gt;</span>    	# HalfLeftScreen
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;UnmaximizeFull&#34;</span><span class=nt>/&gt;</span>
+  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;MoveResizeTo&#34;</span><span class=nt>&gt;</span>
+    <span class=nt>&lt;x&gt;</span>0<span class=nt>&lt;/x&gt;</span>
+    <span class=nt>&lt;y&gt;</span>0<span class=nt>&lt;/y&gt;</span>
+    <span class=nt>&lt;height&gt;</span>100%<span class=nt>&lt;/height&gt;</span>
+    <span class=nt>&lt;width&gt;</span>50%<span class=nt>&lt;/width&gt;</span>
+  <span class=nt>&lt;/action&gt;</span>
+<span class=nt>&lt;/keybind&gt;</span></code></pre></div><h3 id=system-clipboard-support>System clipboard support</h3><p>Getting the shared system clipboard (X11 selections) to work consistently
+across different GUI and command line apps on Linux can undoubtedly be a hair
+loss-inducing experience. One of the sources of confusion is that we are
+usually dealing with two clipboard buffers in X11 (called <strong>selections</strong>), not
+just one like on Windows and OS X:</p><ul><li><p>First, there is the normal selection that most well-behaved GUI apps use for the
+<kbd>Ctrl</kbd>+<kbd>X</kbd><kbd>C</kbd><kbd>V</kbd> operations&mdash;this is officially
+referred to as the <strong>clipboard selection</strong>.</p></li><li><p>Then there&rsquo;s the oldschool
+<em>make-selection-with-mouse-and-paste-with-middle-click</em> variant, which is
+called the <strong>primary selection</strong>.<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup></p></li></ul><p>With bidirectional clipboard support enabled in VirtualBox, the Windows
+clipboard will seamlessly interoperate with X11 clipboard selection, so that
+is solved.</p><p>The problems start when we want to teach certain console apps like tmux and
+Vim, that have their own internal copy/paste buffers, to interoperate with the
+clipboard selection. But once we&rsquo;ve solved that, we have full clipboard
+interoperability across everything, so let&rsquo;s what&rsquo;s the best way to go about
+it.</p><h4 id=vim>Vim</h4><p>Teaching Vim how to do this is quite simple; we only need the following
+mappings in our <code>.vimrc</code>:</p><pre><code>vnoremap &lt;C-x&gt; &quot;+x
+vnoremap &lt;C-c&gt; &quot;+y
+noremap  &lt;C-v&gt; &quot;+gP
+inoremap &lt;C-v&gt; &lt;C-r&gt;+
+</code></pre><p>However, we have now just overridden the default <kbd>Ctrl</kbd>+<kbd>V</kbd>
+block selection shortcut. Let&rsquo;s remap it to <kbd>Ctrl</kbd>+<kbd>Q</kbd>
+instead (gVim on Windows does the same thing by default, by the way ):</p><pre><code>noremap &lt;C-q&gt; &lt;C-v&gt;
+</code></pre><p>This is almost good, but sadly it turns out that <kbd>Ctrl</kbd>+<kbd>Q</kbd>
+and <kbd>Ctrl</kbd>+<kbd>S</kbd> are reserved for an ancient terminal feature
+called <a href=https://en.wikipedia.org/wiki/Software_flow_control>flow control</a>. We
+definitely don&rsquo;t need that (well, you might, I don&rsquo;t), so let&rsquo;s reclaim these
+shortcuts and put them to a better use:</p><pre><code># reclaim Ctrl-S
+stty stop undef
+
+# reclaim Ctrl-Q
+stty start undef
+</code></pre><p>ALso, middle-click pasting into Vim works out of the box, so we&rsquo;re done.</p><h4 id=tmux>tmux</h4><p>The situation gets a bit trickier in the case of tmux, we&rsquo;ll need to resort to
+use an external command to get data in and out of the clipboard selection. All
+the following apply to tmux 2.8 or later, the solution was quite different with
+earlier versions.</p><p>The GTK+ clipboard manager <a href=https://github.com/CristianHenzel/ClipIt>ClipIt</a>
+included with Crunchbang has a command line interface that can interact with
+the system clipboard (in theory), however, I could never get it to work (and
+neither could others, according to the old Crunchbang forums.) So we&rsquo;ll need to
+grab another tool that does actually work, and the aptly titled <strong>xclip</strong>
+happens to just fit the bill:</p><pre><code>sudo apt-get install xclip
+</code></pre><p>We can now configure tmux to pipe our selection to xclip when we hit
+<kbd>Ctrl</kbd>+<kbd>C</kbd> in vi-copy mode:</p><pre><code>bind -T copy-mode-vi y send-keys -X copy-pipe-and-cancel &quot;xclip -i -sel clip&quot;
+</code></pre><p>And that&rsquo;s it, yanking some text with <code>y</code> will copy it into
+tmux&rsquo;s internal copy buffer <em>and</em> the clipboard selection as well from now
+on! <kbd>Ctrl</kbd>+<kbd>V</kbd> and <kbd>Ctrl</kbd>+<kbd>Insert</kbd> pastes
+the contents of the clipboard selection without us having to configure
+anything, so looks like we&rsquo;re done here! Yikes!</p><h3 id=mouse-support>Mouse support</h3><h4 id=vim-1>Vim</h4><p>Enabling mouse support in Vim is surprisingly easy:</p><pre><code>if has('mouse')
+  set mouse=a
+endif
+</code></pre><p>That&rsquo;s it! This will let us navigate and resize splits with the mouse and use
+the select/middle-click primary clipboard mechanism. Of course, you&rsquo;ll need
+a Vim version compiled with mouse support enabled for this (I recommend the
+kitchen-sink <code>vim-nox</code> package that contains support for basically all Vim
+features and several scripting languages).</p><h4 id=tmux-1>tmux</h4><p>In the more recent versions of tmux (2.8+), mouse support can be simply
+enabled with the following command:</p><pre><code>set -g mouse on
+</code></pre><p>Similarly to Vim, this will allow us to resize panes and select text with
+the mouse, and of course the middle-click paste selection will work too.</p><p>The usual <em>select-then-release-left-mouse-button</em> will copy the selection only
+into the internal tmux copy buffer; if we want it to be copied into the
+clipboard selection as well, we&rsquo;ll need to press and release <kbd>Y</kbd>
+<em>before</em> releasing the left mouse button.</p><p>The handling of primary selections is a bit quirky: to paste the contents of
+the primary selection into a tmux pane, we must hold <kbd>Shift</kbd> while
+middle-clicking. To make a primary selection, we must again hold
+<kbd>Shift</kbd> while click-dragging, but this unfortunately bypasses tmux
+altogether, so multiline selections with vertically split panes won&rsquo;t work
+very well (experiment with this a bit and you&rsquo;ll see what I mean). The
+workaround for this is to maximise the pane before making the selection. To
+the best of my knowledge, there are no better solutions for this at the
+moment. I don&rsquo;t use primary selections much though, so this is not a big deal
+for me personally.</p><h3 id=system-clipboard-support----summary>System clipboard support &ndash; Summary</h3><p>As a summary of the above, this table lists all the shortcuts we can use to
+interact with the system clipboard (X11 clipboard selection) in the various
+apps.</p><table class=shortcuts><tr><th>&nbsp;</th><th>GUI</th><th>Vim</th><th>tmux</th></tr><tr><th>Cut</th><td><kbd>Ctrl</kbd>+<kbd>X</kbd></td><td><kbd>Ctrl</kbd>+<kbd>X</kbd></td><td>&mdash;</td></tr><tr><th>Copy</th><td><kbd>Ctrl</kbd>+<kbd>C</kbd><br><kbd>Ctrl</kbd>+<kbd>Insert</kbd></td><td><kbd>Ctrl</kbd>+<kbd>C</kbd><br><kbd>Ctrl</kbd>+<kbd>Insert</kbd></td><td><kbd>Y</kbd><sup>*</sup></td></tr><tr><th>Paste</th><td><kbd>Ctrl</kbd>+<kbd>V</kbd><br><kbd>Shift</kbd>+<kbd>Insert</kbd></td><td><kbd>Ctrl</kbd>+<kbd>V</kbd><br><kbd>Shift</kbd>+<kbd>Insert</kbd></td><td><kbd>Ctrl</kbd>+<kbd>V</kbd><br><kbd>Shift</kbd>+<kbd>Insert</kbd></td></tr></table><p><sup>*</sup>  When used to yank text selected with the mouse, press and release
+<kbd>Y</kbd> before releasing the left mouse button.</p><hr><h2 id=installation>Installation</h2><p>We&rsquo;ll need the following ingredients:</p><ul class=compact><li><a href=https://www.virtualbox.org/wiki/Downloads>VirtualBox 6.1.6</a> (or newer)</li><li><a href=https://crunchbangplusplus.org/>Crunchbang++ 10</a> 64-bit image</li><li>Internet connection (Crunchbang is based on Debian netinstall)</li></ul><p>We&rsquo;ll need to create a new VM with <em>Debian (64-bit)</em> selected as the guest
+operating system type. I&rsquo;m on an Intel i7 4790k 4.0 GHz with 32 gigs of RAM,
+so I just allocated 4 CPU cores and 4 gigs to the new VM, and created a 40 GB
+dynamic storage on an SSD partition (recommended). Pretty standard stuff, but
+make sure that <em>Enable PAE/NX System</em> is checked under <em>System / Processor
+/ Extended Features</em>, otherwise the installer will fail.</p><p>It is important to select <em>VBoxSVGA</em> instead of the recommended <em>VMSVGA</em> under
+<em>Display/ Graphics Controller</em>. Failing to do so will result in all sorts of
+problems after installing the guest additions and rebooting once or twice
+(e.g. black screen after reboot, defaulting to 640x480 and getting flooded
+with error notifications, etc.)</p><p>From this point it&rsquo;s easy sailing&mdash;just insert the ISO and proceed with the
+install. I recommend using the text mode installer because the GUI one hung at
+some point during downloading the packages. Everything should be
+self-explanatory, just accept the default HDD partitioning scheme (or you can
+complicate things, up to you).</p><h2 id=on-first-boot>On first boot</h2><p>About 30 minutes later, we will be greeted by the <code>cbpp-welcome</code> script
+that will offer us to update the system and install some optional packages.
+We&rsquo;ll do that, but later, so just exit for now. Our first objective is to get
+the desktop environment up and running, then we&rsquo;ll do the system update, and
+finally we&rsquo;ll fix a few issues and perform some other usability enhancements.</p><h3 id=set-zsh-as-the-default-shell>Set zsh as the default shell</h3><p>My first thing to do on a new system is switch to <strong>zsh</strong>, so let&rsquo;s install
+that quickly with <code>sudo apt-get install zsh</code> and then set it as the default
+login shell. Just run <code>chsh</code> and enter <code>/bin/zsh</code> as the new value. Note that
+the change will only take effect on the next login.</p><p>It is also recommended to set <code>x-terminal-emulator</code> to <code>urvxt</code> (after having
+installed it) because the built-in Openbox menus use it:</p><pre><code>% sudo update-alternatives --config x-terminal-emulator
+</code></pre><h3 id=install-virtualbox-guest-additions>Install VirtualBox Guest Additions</h3><p>We need to install the VirtualBox Guest Additions to get fullscreen,
+bidirectional clipboard and drag-and-drop support working. This will also make
+the screen updates snappier and it will fix the default jerky mouse pointer
+behaviour, which is quite horrible. But before we could proceed, the kernel
+headers must be installed first:</p><pre><code>% sudo apt-get install linux-headers-$(uname -r)
+</code></pre><p>After this, select <em>Insert Guest Additions CD image&mldr;</em> in the <em>Devices</em> menu
+in VirtualBox. You might need to create a virtual optical drive first in the
+VM settings if you haven&rsquo;t done so already (remember that you can only do that
+when the VM is shut down, otherwise the <em>Add optical drive</em> button on the
+<em>Storage</em> tab will be disabled).</p><p>Now we can install the additions:</p><pre><code>% cd /media/cdrom
+% sudo sh ./VBoxLinuxAdditions.run
+</code></pre><p>Don&rsquo;t forget to tick <em>Shared Clipboard</em> and <em>Drag&rsquo;n&rsquo;Drop</em> to <em>Bidirectional</em>
+under <em>General / Advanced</em> in the VM settings. Enter fullscreen mode (<kbd>R
+Ctrl</kbd>+<kbd>F</kbd>), reboot, and you should be rewarded for your efforts
+with a glorious fullscreen Crunchbang desktop sporting a fluid mouse pointer!</p><h3 id=perform-system-update>Perform system update</h3><p>The easiest way to do this is to run the <code>cbpp-welcome</code> script again and let
+it update the software sources and the system (answer <em>Yes</em> to the first two
+questions). This will take a while, depending on the speed of your network (I
+think it took about an hour for me). After this, you&rsquo;ll have the option to
+install a few more additional packages.</p><h3 id=enable-autologin>Enable autologin</h3><p>If you&rsquo;re the sole user of this VM, you&rsquo;ll probably want to enable autologin.
+Uncomment the <code>autologin</code> parameter in <code>/etc/lxdm/cbpp.lxdm.conf</code> (line 3) and
+set it to your login name.</p><h3 id=installing-powerline-fonts>Installing Powerline fonts</h3><p>Some people maintain that one can live a full and prosperous life without
+Powerline fonts. Needless to say, this is <em>utter bollocks!</em> Those in the know
+will surely follow my wise advice and install the Powerline symbols font with
+the following command:</p><pre><code>sudo apt-get install fonts-powerline
+</code></pre><p>The best way to make use of it is to set it up as a fallback font in
+<code>.Xdefaults</code>:</p><pre><code>URxvt*font: xft:Liberation Mono:pixelsize=13,xft:Literation\ Mono\ Powerline:pixelsize=13
+</code></pre><h3 id=setting-the-right-wallpaper>Setting the <em>right</em> wallpaper</h3><p>No desktop Linux setup is ever complete without a wallpaper, but, of course,
+the chosen wallpaper must be the <em>correct</em> one. Look no further than
+<a href=/img/lotus.png>this</a>!</p><p>&mldr; aaaand congratulations, you&rsquo;re done. Enjoy your brand new vimified
+desktop! :)</p><section class=links><h2 id=further-reading>Further reading</h2><ul><li><a href=https://xaizek.github.io/2016-08-13/big-list-of-vim-like-software/>The big list of Vi[m]-like software</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>There are a few good ones though, for example I&rsquo;m using the Windows version of Inkscape, but there&rsquo;s really no match for Lightroom or Photoshop (if you want to recommend me The Gimp at this point, please save your energy). Moreover, the driver support for (semi-)pro audio interfaces is just non-existent on Linux, and let&rsquo;s not even talk about the audio software front&mldr;&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>Sadly, Vimperator has been discontinued since I originally wrote this
+article in 2016. It seems to have been fallen prey to the security
+tightening around the extension mechanism of Firefox. I&rsquo;m currently trialing
+<a href=https://github.com/ueokande/vim-vixen>Vim Vixen</a> as a replacement.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>There&rsquo;s a third one called <em>secondary selection</em> too, but no one ever uses that for anything, as far as I&rsquo;m aware. One less thing to worry about!&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body></html>
