@@ -1,4 +1,4 @@
-<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Smooth video playback with subtitles on Raspberry PI 4 | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2021/05/31/smooth-video-playback-with-subtitles-on-raspberry-pi-4/>Smooth video playback with subtitles on Raspberry PI 4</a></h1><p class=date><time datetime=2021-05-31>2021 May 31</time></p></header><nav class=tags><ul></ul></nav><p>A few weeks ago I decided it was time to replace my aging 2007 Macbook Pro I
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Smooth video playback with subtitles on Raspberry PI 4 | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.44c433f93f3a240ae1fdb9741d343f41247b4e652f64683bc1a5ad93f0492219.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><link rel=stylesheet href=/css/photoswipe-default-skin/default-skin.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/lib/photoswipe.min.js></script><script src=/js/lib/photoswipe-ui-default.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2021/05/31/smooth-video-playback-with-subtitles-on-raspberry-pi-4/>Smooth video playback with subtitles on Raspberry PI 4</a></h1><p class=date><time datetime=2021-05-31>2021 May 31</time></p></header><nav class=tags><ul></ul></nav><p>A few weeks ago I decided it was time to replace my ageing 2007 Macbook Pro I
 had been using for watching movies on my big living room TV with something
 newer. Something that can play H.264 videos without the fan going into
 overdrive, and H.265 videos, well, at all&mldr; The new <a href=https://www.raspberrypi.org/products/raspberry-pi-4-model-b/specifications/>Raspberry Pi
@@ -33,7 +33,7 @@ the first place!)</p><p>Apparently, some guy came up with a very particular meth
 for Raspberry 3 with full hardware decoding support, but the script hasn&rsquo;t
 been updated for Pi 4 yet, and no one seems to be up for the task. Maybe
 someone will figure it out in the future, but currently mpv on RPi4 is a <em>no
-go</em> either.</p><h2 id=kodi>Kodi</h2><p>At this point I had exhausted all hardware accelarated players, except for
+go</em> either.</p><h2 id=kodi>Kodi</h2><p>At this point I had exhausted all hardware accelerated players, except for
 Kodi. I only needed a simple video player, not a full media center app, but in
 my final desperation I thought what the hell, let&rsquo;s give it a go. I installed
 the <code>kodi</code> package, and to my pleasant surprise, the video playback was
@@ -51,8 +51,8 @@ version of Kodi. It&rsquo;s basically a minimal Linux system that&rsquo;s only
 capable of running Kodi and a few basic services, like SSH.</p><p>The installation was super simple: I just downloaded the <a href=https://libreelec.tv/downloads_new/>SD Card imager
 tool</a> from their website, and 15-30 mins
 later I had Kodi installed onto my SD card. There was a setup wizard that
-walked me through the basic steps on first boot, very user friendly and well
-thought out. The partition was automatically resized to the max capacity of
+walked me through the basic steps on first boot, very user-friendly and well-
+thought-out. The partition was automatically resized to the max capacity of
 the card after the first boot, that&rsquo;s quite cool too. And the best of all, the
 aforementioned issues I experienced when running Kodi under a host OS were
 completely gone; the UI was and fast and snappy, and the subtitles were no
@@ -73,7 +73,7 @@ had to set it to -4%</em></li></ul></li><li>Regional<ul><li><em>Adjust according
 properly calibrated TV in a dark room)</em></li><li>Override ASS / SSA subtitles fonts: <em>Doesn&rsquo;t seem to do anything, but
 one could always hope!</em></li></ul></li></ul></li></ul><h3 id=keyboard-bindings>Keyboard bindings</h3><p>The default keyboard bindings are quite good, there&rsquo;s really not much need to
 change them. One important thing, however, was missing: VLC and mpv provide
-keyboard shorcuts by default for adjusting the subtitle delay, while Kodi
+keyboard shortcuts by default for adjusting the subtitle delay, while Kodi
 doesn&rsquo;t. You need to use the mouse and go into the subtitles menu while
 watching the video to activate the delay adjustment tool, which is quite
 cumbersome.</p><p>I tried some plugin for defining custom keyboard shortcuts, but I couldn&rsquo;t get
@@ -93,7 +93,7 @@ as described in the guide, and always in your normal movie viewing conditions
 <em>Full/Limited/Limited</em> is best avoided. My experience was quite different; I
 could achieve the best picture quality with the least amount of banding on the
 test gradients with <strong>Full/Limited/Limited</strong>, so this is my recommendation (my
-guess is that RGB limited (16-235) is the native passthrough mode of the Pi&rsquo;s
+guess is that RGB limited (16-235) is the native pass-through mode of the Pi&rsquo;s
 Broadcom VideoCore VI GPU). <em>Full/Full/Full</em>, while it worked, exhibited
 significant banding; and finally <em>Limited/Full/Limited</em> (the supposedly best
 combo) crushed the blacks so heavily on my setup that it was practically
@@ -111,13 +111,13 @@ In my case, I set it to <code>1</code> (RGB limited).</p><h3 id=some-weird-issue
 makes the <em>Player</em> menu and a few other menus disappear (!) from the
 <em>Settings</em> screen. Well, the good thing is that rebooting Kodi brings is back
 :) I have no idea why this is happening, I guess it must be a bug. In any
-case, if your <em>Player</em> menu has mysteriuosly disappeared, a system reboot
-might just be the ticket&mldr;</p><h3 id=hardware-setup>Hardware setup</h3><p>Finaly, some words about the hardware setup. I&rsquo;m using the official Raspberry
+case, if your <em>Player</em> menu has mysteriously disappeared, a system reboot
+might just be the ticket&mldr;</p><h3 id=hardware-setup>Hardware setup</h3><p>Finally, some words about the hardware setup. I&rsquo;m using the official Raspberry
 power supply; I very much recommend doing so because I had problems with
 random Chinese PSUs with my Pi 2 (random reboots, not being able to boot
 sometimes, etc.)</p><p>If you want a passively cooled setup, you cannot go wrong with the <a href=https://flirc.tv/more/raspberry-pi-4-case>FLIRC
 Raspberry Pi 4 Case</a>. It&rsquo;s
-inexpesive, well-built, looks stylish, and keeps the Pi sufficiently cool as
+inexpensive, well-built, looks stylish, and keeps the Pi sufficiently cool as
 the whole metal casing acts as a large heatsink (thermal conductor material is
 included). The metal casing doesn&rsquo;t enclose the Pi fully, which might be the
 reason why I haven&rsquo;t noticed much WiFi signal degradation (which could be a
@@ -132,7 +132,7 @@ the cheapest 64GB card you can find because they&rsquo;re all fast enough for vi
 playback (if you want to store video files on the card, that is, otherwise 32GB or
 maybe even 16GB would suffice).</p><h2 id=in-conclusion>In conclusion</h2><p>I&rsquo;m really happy with LibreELEC now because I bought this little box for video
 playback duties only. But I have to say that if LibreELEC didn&rsquo;t exist (or I
-didn&rsquo;t stumble upon it), then I would be one dissapointed customer; I just
+didn&rsquo;t stumble upon it), then I would be one disappointed customer; I just
 couldn&rsquo;t use the box for what I bought it for! I would never have dreamt
 that VLC, probably the most popular open-source media player, had this weird
 subtitle freezing issue <em>only</em> on Linux (well, maybe the Raspberry OS is at
