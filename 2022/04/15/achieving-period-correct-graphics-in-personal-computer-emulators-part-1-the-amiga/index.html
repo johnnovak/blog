@@ -254,7 +254,7 @@ demo <a href=https://demozoo.org/productions/5784/>Arte</a>)</figcaption></figur
 image dimensions in pixels, and their equivalent CRT sizes when viewed on a
 typical 24" / 1080p LCD:</p><table><caption>PAL image scaling ratios</caption><tr><th width=16%>Scale<br>ratio</th><th width=12%>Horiz.<br>size</th><th width=15%>Vert.<br>size</th><th width=12%>Width<br>(px)</th><th width=15%>Height<br>(px)</th><th width=29%>Equivalent CRT size<br>(on 24"/1080p LCD)</th></tr><tr><td>&#215;3.0</td><td>1000</td><td>1000</td><td>920</td><td>768</td><td>14" (13.0" viewable)</td></tr><tr><td>&#215;3.2</td><td>1200</td><td>1200</td><td>1024</td><td>819</td><td>15" (13.8" viewable)</td></tr><tr><td>&#215;3.5</td><td>1500</td><td>1500</td><td>1120</td><td>896</td><td>17" (15.5" viewable)</td></tr><tr><td>&#215;4.0</td><td>2000</td><td>2000</td><td>1280</td><td>1024</td><td>19" (17.3" viewable)</td></tr></table><p>I recommend saving these settings as presets so you can conveniently switch
 between them (loading a filter preset won&rsquo;t restart the emulated machine). The
-quick&rsquo;n&rsquo;easy way is to download <a href=files/WinUAE-C1084S-emulation.zip>my preset
+quick&rsquo;n&rsquo;easy way is to download <a href=files/WinUAE-Commodore-1084S-ShaderPack.zip>my preset
 pack</a>, load the full WinUAE configs (I&rsquo;ve
 included one for every scaler setting) and just save the filter settings for
 each. Don&rsquo;t worry about the NTSC presets just yet, we&rsquo;ll get to them in the
@@ -445,18 +445,18 @@ screen is 320×256 low-res, while the bottom
 half displaying the text is 640×256 hi-res. As you can see,
 <strong>CRT-A2080-HiRes-SmartRes-Interlace</strong> handles situations like this
 splendidly! I love you, <strong>CRT-A2080-HiRes-SmartRes-Interlace</strong>! ❤️</figcaption></figure><p>I have tweaked the shader settings a little bit, you can download my
-customised versions <a href=files/WinUAE-C1084S-emulation.zip>from here</a>. They&rsquo;re called <strong>CRT-A2080-PAL-*</strong> and
-<strong>CRT-A2080-NTSC-*</strong> and have several variants &mdash; I had to create copies
-because WinUAE doesn&rsquo;t support shader presets yet, plus I made the names a
-little shorter. The NTSC variants push scanline strength to the max without
-much noticeable moire/aliasing for the scaling factor indicated in the name,
-so for example for ×3.5 scaling you can safely use
-<strong>CRT-A2080-NTSC-x3.5</strong>, or the <strong>x3.2</strong> or <strong>x3.0</strong> variants for less strong
-scanlines. I created these because NTSC users seem to have a fondness for
-scanlines and want them to be displayed prominently. But you can just stick
-with the PAL preset if you prefer to keep them subtle (that&rsquo;s what I do most
-of the time). The special <strong>PAL-sharp</strong> preset is designed for text adventures
-to maximise text readability.</p><p>(By the way, in case you&rsquo;re wondering, &ldquo;the Commodore A2080 was essentially a
+customised versions <a href=files/WinUAE-Commodore-1084S-ShaderPack.zip>from here</a>.
+They&rsquo;re called <strong>CRT-A2080-PAL-*</strong> and <strong>CRT-A2080-NTSC-*</strong> and have several
+variants &mdash; I had to create copies because WinUAE doesn&rsquo;t support shader
+presets yet, plus I made the names a little shorter. The NTSC variants push
+scanline strength to the max without much noticeable moire/aliasing for the
+scaling factor indicated in the name, so for example for ×3.5 scaling
+you can safely use <strong>CRT-A2080-NTSC-x3.5</strong>, or the <strong>x3.2</strong> or <strong>x3.0</strong>
+variants for less strong scanlines. I created these because NTSC users seem to
+have a fondness for scanlines and want them to be displayed prominently. But
+you can just stick with the PAL preset if you prefer to keep them subtle
+(that&rsquo;s what I do most of the time). The special <strong>PAL-sharp</strong> preset is
+designed for text adventures to maximise text readability.</p><p>(By the way, in case you&rsquo;re wondering, &ldquo;the Commodore A2080 was essentially a
 high persistence phosphor model of the 1084 to reduce flicker in NTSC modes&rdquo;,
 according to the <a href="https://bigbookofamigahardware.com/bboah/product.aspx?id=864">Big Book of Amiga
 Hardware</a>.)</p><p>Okay, so this is how to set this up:</p><p>In the <strong>Miscellaneous</strong> section, select <strong>Direct3D 11</strong> for the <strong>Graphics
@@ -494,7 +494,8 @@ WinUAE folder to use this, just follow Guest&rsquo;s instructions from the
 one thing that he doesn&rsquo;t mention is that the shaders depend on the common
 <strong>ReShade.fxh</strong> and <strong>ReShadeUI.fxh</strong> files that are not included, so just get
 them from <a href=https://github.com/crosire/reshade-shaders/tree/slim/Shaders>here</a>
-(all these files are included in <a href=files/WinUAE-C1084S-emulation.zip>my preset pack</a>, by the way).</p><p>TODO reshade windowed</p><p>Once you&rsquo;ve set up everything correctly, just enable <strong>WinUaeColor.fx</strong> and
+(all these files are included in <a href=files/WinUAE-Commodore-1084S-ShaderPack.zip>my preset
+pack</a>, by the way).</p><p>TODO reshade windowed</p><p>Once you&rsquo;ve set up everything correctly, just enable <strong>WinUaeColor.fx</strong> and
 set it up like shown below. <strong>Color Profile 4</strong> is the Philips, most people
 should leave <strong>Color Space</strong> at 0 (sRGB), but if you&rsquo;re the lucky owner of a
 wide-gamut display then you definitely should set it to match your display&rsquo;s
@@ -560,7 +561,7 @@ first (if you&rsquo;re impressed, you&rsquo;ve added <em>waaaaaay</em> too much 
 you turn them <em>off</em> later, you&rsquo;ll really miss the effect.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-intro-glow.jpg data-width=960 data-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-intro-glow.jpg alt="Eye of the Beholder, bloom and glow comparison" style=width:90%></a><figcaption style=width:90%;text-align:center>Left: Eye of the Beholder intro, no bloom & glow emulation<br>Right: Same image with subtle bloom & glow emulation</figcaption></figure><h2 id=in-closing>In closing</h2><p>Phew, that was one long article, indeed! Hopefully you&rsquo;ve enjoyed my ramblings
 and have actually learned something useful. I wish you a nice emulated Amiga
 experience, and stay tuned for the next episode where we&rsquo;ll be looking at
-DOS/early-Windows era EGA and VGA graphics!</p><hr><section class=links><h2 id=links-files--further-reading>Links, files & further reading</h2><h3 id=files>Files</h3><ul><li><a href=files/WinUAE-C1084S-emulation.zip>Commodore 1084S emulation shader pack for WinUAE</a></li></ul><h3 id=misc>Misc</h3><ul><li><a href="https://docs.google.com/spreadsheets/d/1iH8YOhiGvKJ7kZogvKv_aDxkX4688T_VXRFAA2exmJs/edit?usp=sharing">Emulated display resolution calculator</a></li></ul><h3 id=guests-shaders>Guest&rsquo;s shaders</h3><ul><li><a href=https://github.com/guestrr/WinUAE-Shaders>Latest version of the WinUAE shader pack</a></li><li><a href="https://eab.abime.net/showthread.php?t=61776">Original releases and discussion</a></li><li><a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>Guest&rsquo;s new bleeding-edge CRT shaders</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>Yes, some people couldn&rsquo;t afford a monitor and hooked up their
+DOS/early-Windows era EGA and VGA graphics!</p><hr><section class=links><h2 id=links-files--further-reading>Links, files & further reading</h2><h3 id=files>Files</h3><ul><li><a href=files/WinUAE-Commodore-1084S-ShaderPack.zip>Commodore 1084S emulation shader pack for WinUAE</a></li></ul><h3 id=misc>Misc</h3><ul><li><a href="https://docs.google.com/spreadsheets/d/1iH8YOhiGvKJ7kZogvKv_aDxkX4688T_VXRFAA2exmJs/edit?usp=sharing">Emulated display resolution calculator</a></li></ul><h3 id=guests-shaders>Guest&rsquo;s shaders</h3><ul><li><a href=https://github.com/guestrr/WinUAE-Shaders>Latest version of the WinUAE shader pack</a></li><li><a href="https://eab.abime.net/showthread.php?t=61776">Original releases and discussion</a></li><li><a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>Guest&rsquo;s new bleeding-edge CRT shaders</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>Yes, some people couldn&rsquo;t afford a monitor and hooked up their
 machine to a TV, but those were either small 13&ndash;14" TV sets, or if they
 used the big family TV, that had to be viewed from a distance, so the
 effective image dimensions ended up being about the same (remember, TVs in
