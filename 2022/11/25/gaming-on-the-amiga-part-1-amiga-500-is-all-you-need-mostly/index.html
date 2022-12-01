@@ -1,0 +1,313 @@
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Gaming on the Amiga &mdash; Part 1: Amiga 500 is all you need (mostly) | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.240a1a431b5f2540776c196661d0758d1331db8dd188c089f0ec1e822176eef6.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/>Gaming on the Amiga &mdash; Part 1: Amiga 500 is all you need (mostly)</a></h1><p class=date><time datetime=2022-11-25>2022 Nov 25</time></p></header><nav class=tags><ul><li><a href=/tags/amiga/>amiga</a></li><li><a href=/tags/gaming/>gaming</a></li></ul></nav><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#introduction>Introduction</a></li><li><a href=#prerequisites>Prerequisites</a></li><li><a href=#a-brief-history-of-the-amiga>A brief history of the Amiga</a></li><li><a href=#ocs-vs-aga>OCS vs AGA</a></li><li><a href=#non-ocs-adventure-rpg-and-strategy-games-worth-playing>Non-OCS adventure, RPG, and strategy games worth playing</a><ul><li><a href=#agacd32-versions-of-dos-vga-games>AGA/CD32 versions of DOS VGA games</a></li><li><a href=#agacd32-exclusive-adventure-games>AGA/CD32 exclusive adventure games</a></li><li><a href=#agacd32-exclusive-rpgs>AGA/CD32 exclusive RPGs</a></li><li><a href=#aga-exclusive-strategy-games>AGA exclusive strategy games</a></li></ul></li><li><a href=#the-case-against-whdload>The Case Against WHDLoad</a></li><li><a href=#winuae-configurations>WinUAE configurations</a></li><li><a href=#references--further-reading>References & further reading</a></li></ul></nav><h2 id=introduction>Introduction</h2><p>It appears that the generally accepted &ldquo;best&rdquo; way of playing Amiga games these
+days is via WHDLoad on an Amiga 1200 expanded with a turbo card and lots of
+extra RAM (either emulated or real hardware). I disagree with this notion.</p><p>Frankly, this has been bothering me for quite some time. WHDLoad is simply
+<em>not</em> the magic ultimate solution many people make it out to be, and there are
+much simpler ways to play games from the hard drive (especially when using
+emulators), if avoiding disk swapping is your goal. WHDLoad has a number of
+drawbacks that range from mere annoyances to game-breaking problems. At the
+very least, it needlessly complicates things when a much simpler solution
+would often suffice, and makes the experience generally inauthentic. The
+various glitches and problems might put Amiga games in a bad light for people
+new to the platform, and annoy oldtimers like me who are after replicating the
+Authentic Original Experience™.</p><p>While I agree that grabbing some hard drive image that comes pre-installed
+with all WHDLoad games in the known universe is certainly the method that
+requires the <em>least amount of effort</em> (especially for newcomers who don&rsquo;t want
+to learn about the Amiga), I don&rsquo;t think it&rsquo;s the best or ideal way to
+experience Amiga games. So in this article series I am going to challenge this
+recommendation, explain the reason for WHDLoad&rsquo;s existence, highlight some of
+the problems with it, then present a much more authentic (and in my view,
+better) way of playing these classic games on a hard drive equipped Amiga 500.
+I will focus on setting things up in an emulator (WinUAE), but the method
+certainly works on a real computer too.</p><h2 id=prerequisites>Prerequisites</h2><p>This guide assumes some basic familiarity with the Amiga line of home
+computers. If you&rsquo;ve never used one of these magnificient machines before, or
+if you want to get back into the hobby after several decades without having
+used one, I highly recommend reading the excellent <a href=https://www.amigaretro.com/index.php/page,1.html>Amiga Beginner&rsquo;s
+Series</a> first. It covers a
+lot of ground quite succintly, and if not everything makes complete sense,
+don&rsquo;t worry, I&rsquo;ll explain the important things in more detail later. But you
+<em>need</em> to understand the basics first, and without a desire to have some basic
+level of technical understanding on how the Amigas work, you won&rsquo;t get very
+far. Personal computers from the 80s and 90s are not consoles; every user
+(including gamers) was expected to have some minimal knowledge of the
+hardware to be able to use it effectively.</p><p>Another very important thing: Amiga games just look wrong without properly
+emulating a period-correct CRT monitor, so I very much recommend referencing
+<a href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/>my earlier
+article</a>
+on setting up an authentic Commodore 1084S shader setup for WinUAE before
+getting started.</p><h2 id=a-brief-history-of-the-amiga>A brief history of the Amiga</h2><p>The first Amiga ever, the iconic <a href=https://en.wikipedia.org/wiki/Amiga_1000>Amiga
+1000</a> was released in 1985 to the
+unsuspecting public, followed by the more budget oriented <a href=https://en.wikipedia.org/wiki/Amiga_500>Amiga
+500</a> in 1987. These were simply the
+best home computers money could buy at that time, it was unbelievable &mdash; as
+if someone time-travelled <a href=https://mitpress.mit.edu/9780262535694/the-future-was-here/>back from the
+future</a> to bring
+the world&rsquo;s first true multimedia computer to us (no, it wasn&rsquo;t the Macintosh,
+neither the much later &ldquo;multimedia Pentium PCs&rdquo;).</p><p>The Amiga 500 featured the same Motorola 68000 processor running at 7.14 MHz,
+and nearly the same <a href=https://en.wikipedia.org/wiki/Original_Chip_Set>Original Chip Set
+(OCS)</a> as the Amiga 1000. In
+Amiga terms, the chipset defines the graphics capabilities of the machine. The
+OCS chipset was capable of displaying a palette of up to 32 colours out of
+4096 (64 in the special <a href=https://en.wikipedia.org/wiki/Amiga_Halfbrite_mode>Extra Half-Brite
+(EHB)</a> mode, and all
+possible colours in <a href=https://en.wikipedia.org/wiki/Hold-And-Modify>Hold-And-Modify
+(HAM)</a>, but this was only
+utilised in a handful of games). The most common screen modes for games were
+320×256 (PAL) and 320×200 (NTSC), but some made good use of the
+640×256/200 hi-res resolutions as well.</p><p>The other important defining characteristic of an Amiga computer is the
+version of the <a href=https://en.wikipedia.org/wiki/Kickstart_(Amiga)>Kickstart</a>,
+which is the firmware part of the operating system. This resided in a ROM chip
+on the Amiga 500 and later models. Kickstart 1.3 was <em>the</em> standard Kickstart
+for the Amiga 500, but some early models came with version 1.2. Earlier
+versions than that were very buggy beta releases and thus can be safely
+ignored.</p><p>Now, the Amiga 500 was a tremendous success, it sold several millions of units
+worldwide (the exact figure is a never-ending point of contention). It should
+be of little surprise then that the overwhelming majority of the Amiga gaming
+catalogue was targeting OCS equipped Amigas with 1 MB of RAM running Kickstart
+1.3 &mdash; in other words, the ubiquitous Amiga 500, the most popular Amiga model
+ever, with a 512k RAM expansion board which was de-facto standard. This is
+quite understandable, as the relatively low price point of the Amiga 500 made
+it a very attactive choice for parents wanting to buy a personal computer for
+their kids (IBM PC compatibles with similar capabilities could easily cost 3
+to 5 times more in Europe). And those &ldquo;similar capabilities&rdquo; of the PCs
+haven&rsquo;t really materialised until about 1989 (with some goodwill), the year
+the Sound Blaster 1.0 was released, and it took a few more years for the VGA
+adapters (originally released in 1987) to come down in price so ordinary
+people on regular salaries could afford them (especially outside of the US).</p><p>The next major chipset generation was the <a href=https://en.wikipedia.org/wiki/Amiga_Advanced_Graphics_Architecture>Amiga Advanced Graphics
+Architecture
+(AGA)</a>
+that found its way into the successor of the Amiga 500 in the budget category,
+the Amiga 1200 released at the end of 1992. It was a rather lackluster
+incremental upgrade over the OCS and the shortlived ECS chipset (which is
+unimportant from a gaming perspective). At this point, Commodore was basically
+just playing catchup with the IBM PC compatibles. Although AGA made the use of
+256 colours out of a total palette of 16 million possible, similarly to the
+VGA standard released in 1987 (note the huge 5 year gap there!), it was an
+architectural dead-end. No improvements had been made to the Amiga&rsquo;s sound
+capabilities at all (I don&rsquo;t count the removal of the fixed low-pass filter as
+an improvement); it was the exact same 4-channel / 8-bit / up to ~28.8kHz
+audio the Amiga 1000 introduced in 1985. At the same time, 1992 saw the
+release of landmark PC audio cards such as the <a href=https://en.wikipedia.org/wiki/Sound_Blaster_16>Sound Blaster
+16</a> (CD-quality audio, FM
+synthesis, optional MIDI daughterboard) and the <a href=https://en.wikipedia.org/wiki/Gravis_UltraSound>Gravis
+UltraSound</a> (CD-quality
+audio, 32 channels, hardware mixer, up to 1 MB of sample RAM). From about 1992
+onwards, you could no longer proudly recommend Amiga versions of games as the
+&ldquo;best&rdquo; versions; the PC had simply taken over and became the leading platform.
+Amiga ports had become mostly just afterthoughs, ranging from mediocre to
+bad. With the eventual demise of Commodore in 1994, developers started to
+abandon the platform in droves, and the fate of the Amiga as a mainstream
+gaming platform was sealed. One could argue that the final nail in the coffin
+was the release of DOOM a bit earlier in 1993, establishing the hugely popular
+FPS genre. It was simply impossible to achieve a similarly fast-paced 3D
+gameplay on a stock Amiga 1200 with the AGA chipset. Regardless of the
+importantce of DOOM in the downfall of the Amiga, the new lines of machines
+could simply not keep up with the fast advancements in the 3D accelerated
+graphics arena, and that&rsquo;s what most gamers wanted.</p><p>All in all, while the Amiga 1000/500 were revolutionary at their inception,
+the Amiga 1200 offered only a rather modest evolutionary upgrade to that
+classic machine, and overall it was a disappointment. It was too little, and
+far too late. Naturally, there are <a href="https://eab.abime.net/showthread.php?t=86674">long forum
+threads</a> discussing this in
+painstaking detail, with lots zealotry, name calling, emotions running mile
+high, and &mdash; surprisingly! &mdash; even the occasional valuable insight and
+factual information there if you&rsquo;re persistent enough (I couldn&rsquo;t muster up
+the strength to get past the 21st page myself&mldr;) My feelings about the
+eventual death-spiral of the Amiga and the <a href=https://qr.ae/pvf5zR>general incompetency of Commodore
+management</a> is summed up pretty well in this comment:</p><blockquote><p>I was disappointed but it&rsquo;s like being disappointed with one of your family, you ignore the negatives and love it anyway.</p></blockquote><h2 id=ocs-vs-aga>OCS vs AGA</h2><p>But instead of entering endless subjective debates, let&rsquo;s look at some actual
+numbers! Thanks to the <a href=https://hol.abime.net/>Hall of Light</a> online
+database, I was able to collect some statistics on the number of commercially
+released Amiga games &mdash; looking at the OCS and AGA numbers separately is
+pretty revealing. I&rsquo;ve included the
+<a href=https://en.wikipedia.org/wiki/Amiga_CD32>CD32</a> as well; although it was
+basically an Amiga 1200 with a CD-ROM (plus the vastly underutilised
+<a href=https://en.wikipedia.org/wiki/Amiga_custom_chips#Akiko>Akiko</a> chip), I think
+it warrants its own category. You can check out the raw numbers and the
+database queries I used
+<a href="https://docs.google.com/spreadsheets/d/15eBazUr5dA2aRdaWNpa4Fi-1Coex0sMTH6nY_hDKXF8/edit?usp=sharing">here</a>.</p><p>As we can see, the total number of AGA and CD32 games dwindle in comparison to
+OCS:</p><figure class=image><a class=largeimg href=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/all-releases.png data-pswp-width=2129 data-pswp-height=1052><img src=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/all-releases.png alt="Commercial Amiga game releases between 1985&ndash;2003" style=width:100%></a><figcaption style=width:100%;text-align:center></figcaption></figure><p>The chart quite nicely illustrates that gaming on the Amiga started in the earnest
+in 1988, a year after the affordable Amiga 500 came out. There was a
+golden-age period until about 1991/92, after which the number of releases
+plummeted due to the increasing popularity of DOS gaming. The release of the
+AGA architecture could not reverse this trend; the Amiga 1200 did not sell that
+well, and quite understandably, developers were reluctant to target anything
+else than the least common dominator, which was still the Amiga 500. The decline
+continued until the bankruptcy of Commodore in 1994, after which things took
+an even sharper downwards turn. It takes a lot of goodwill <em>not</em> to declare the
+Amiga officially dead as a mainstream gaming platform by 1997.</p><p>These numbers actually put AGA releases into a much better light because most
+of them were in fact just rehashes (read: cash-grabs) of earlier OCS games
+with minor graphical upgrades. Many people (me included) think the OCS
+originals have more character, and are thus the definitive versions. Another
+sizable chuck of the AGA releases were phoned-in ports of DOS VGA games. Sure,
+back in the day every Amiga owner was happy for whatever they could still get
+for their aging platform, but there&rsquo;s very little sense in preferring these
+lackluster ports to the genuine article today (apart from historical interest, perhaps), which are the DOS originals.</p><p>I am personally not interested in action games much (apart from classic
+action-adventures, such as <a href=https://hol.abime.net/3274>Another World</a>, <a href=https://hol.abime.net/568>Flashback</a>, <a href=https://hol.abime.net/1235>Rick
+Dangerous</a> or <a href=https://hol.abime.net/1150>Prince or Persia</a> that require some thinking apart from quick reflexes), so let&rsquo;s take a closer look at my favourite genres: adventures, strategy games, and RPGs.</p><p>There are a handful of AGA ports of these games that have better music on
+the Amiga still, and there are the AGA/CD32 exclusives, but both pools are pretty small.
+So small that I&rsquo;ll list every single adventure, RPG, and strategy game that
+fall into these special categories and are worth playing on the Amiga in my
+view.</p><p>But first, let&rsquo;s look at the general trends:</p><figure class=image><a class=largeimg href=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/adventure-releases.png data-pswp-width=2129 data-pswp-height=1052><img src=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/adventure-releases.png alt="Commercial Amiga adventure & action adventure releases between 1985&ndash;2003" style=width:100%></a><figcaption style=width:100%;text-align:center></figcaption></figure><figure class=image><a class=largeimg href=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/strategy-releases.png data-pswp-width=2129 data-pswp-height=1052><img src=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/strategy-releases.png alt="Commercial Amiga strategy releases between 1985&ndash;2003" style=width:100%></a><figcaption style=width:100%;text-align:center></figcaption></figure><figure class=image><a class=largeimg href=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/rpg-releases.png data-pswp-width=2129 data-pswp-height=1052><img src=/2022/11/25/gaming-on-the-amiga-part-1-amiga-500-is-all-you-need-mostly/img/rpg-releases.png alt="Commercial Amiga RPG releases between 1985&ndash;2003" style=width:100%></a><figcaption style=width:100%;text-align:center></figcaption></figure><p>No big suprises here, but it&rsquo;s quite interesting to see the abrupt drop in the
+number of new releases in 1993 in both the adventure and RPG categories. My
+guess is that this is the result of major American developers seeing the
+writing on the wall and abandoning the platform (a significant portion of the
+more cerebral Amiga games were American made).</p><p>Finally, here are the results in numeric format:</p><table style=width:70%><caption>Number of commercial Amiga game releases 1985–2003</caption><tr><th width=24%>Percentage</th><th width=19% style=text-align:right>All</th><th width=19% style=text-align:right>OCS</th><th width=19% style=text-align:right>AGA</th><th width=19% style=text-align:right>CD32</th></tr><tr><td>All genres</td><td style=text-align:right>100.0%</td><td style=text-align:right>89.7%</td><td style=text-align:right>6.5%</td><td style=text-align:right>3.8%</td></tr><tr><td>Adventure</td><td style=text-align:right>13.4%</td><td style=text-align:right>12.4%</td><td style=text-align:right>0.8%</td><td style=text-align:right>0.3%</td></tr><tr><td>Strategy</td><td style=text-align:right>5.5%</td><td style=text-align:right>4.7%</td><td style=text-align:right>0.5%</td><td style=text-align:right>0.3%</td></tr><tr><td>RPG</td><td style=text-align:right>3.1%</td><td style=text-align:right>2.5%</td><td style=text-align:right>0.4%</td><td style=text-align:right>0.2%</td></tr><tr><th width=24%>Totals</th><th width=19% style=text-align:right>All</th><th width=19% style=text-align:right>OCS</th><th width=19% style=text-align:right>AGA</th><th width=19% style=text-align:right>CD32</th></tr><tr><td>All genres</td><td style=text-align:right>3727</td><td style=text-align:right>3343</td><td style=text-align:right>244</td><td style=text-align:right>140</td></tr><tr><td>Adventure</td><td style=text-align:right>501</td><td style=text-align:right>462</td><td style=text-align:right>28</td><td style=text-align:right>11</td></tr><tr><td>Strategy</td><td style=text-align:right>205</td><td style=text-align:right>174</td><td style=text-align:right>20</td><td style=text-align:right>11</td></tr><tr><td>RPG</td><td style=text-align:right>114</td><td style=text-align:right>93</td><td style=text-align:right>15</td><td style=text-align:right>6</td></tr></table><h2 id=non-ocs-adventure-rpg-and-strategy-games-worth-playing>Non-OCS adventure, RPG, and strategy games worth playing</h2><p>Okay, so we have unequivocally established that the target platform
+for the overwhelming majority of the Amiga gaming catalogue is the Amiga 500
+with the OCS chipset.</p><p>But let&rsquo;s have a look at the aforementioned small pool of non-OCS titles that
+are still worthwhile to play on the Amiga &mdash; these account for the &ldquo;(mostly)&rdquo;
+part in the title.</p><p>All the games have either official HD installers, can be manually installed
+onto the hard drive (Ishar I), or are CD32 versions where you just pop in the
+CD and off you go. So neither of them requires WHDLoad (or would be improved
+by WHDLoad in any way).</p><p>Again, focusing on adventures, RPGs, and strategy games. I don&rsquo;t care about
+pure action and shoot&rsquo;em up stuff, and you really have to be a masochist to
+play Amiga ports of VGA-era flight and space simulators on the Amiga 😎</p><h3 id=agacd32-versions-of-dos-vga-games>AGA/CD32 versions of DOS VGA games</h3><p>Although the below games do have very respectable DOS versions, the Amiga
+ports offer something special (usually in the sound department), making them
+the preferred option for the true Amiga aficionado:</p><ul class=compact><li><a href=https://hol.abime.net/91>Beneath A Steel Sky</a> (<strong>CD32</strong>; although the Amiga version has less colours, it&rsquo;s a skillfull conversion, and I much prefer the atmosphere of the slightly grungy Amiga soundtrack)</li><li><a href=https://hol.abime.net/432>DreamWeb</a> (<strong>AGA</strong>; that&rsquo;s the uncensored Amiga original, and it has better music)</li><li><a href=https://hol.abime.net/6039>Eye of the Beholder I</a>, <a href=https://hol.abime.net/6040>II</a> (<strong>AGA</strong>; the <em>definitive</em> fan-made AGA version that combines the superior sound of the Amiga ports with the original 256-colour VGA graphics, plus includes the Amiga-only outro sequence of the first game which was cut from the DOS port)</li><li><a href=https://hol.abime.net/2864>Inherit the Earth</a> (<strong>AGA</strong>, <strong>CD32</strong>; I prefer the music in the recently discovered <a href=https://unofficial-cd32-ports.blogspot.com/2015/02/002-inherit-earth.html>lost English beta version</a> that is actually completable with minor bugs)</li><li><a href=https://hol.abime.net/2665>Ishar I</a>, <a href=https://hol.abime.net/2667>II</a>, <a href=https://hol.abime.net/2669>III</a> (AGA; the music is better and completely different in the Amiga versions)</li><li><a href=https://hol.abime.net/1941>Simon the Sorcerer</a> (<strong>AGA</strong>, <strong>CD32</strong>; better music on the Amiga, the CD32 version even has voice-acting)</li><li><a href=https://hol.abime.net/1790>UFO: Enemy Unknown</a> (<strong>AGA</strong>, <strong>CD32</strong>; the music of the Amiga version was done by the legendary scene musician, 4-Mat, therefore <a href=https://thecakeisaliegaming.wordpress.com/2017/07/11/remember-amiga-ufo-enemy-unknown/>many people prefer this</a> to the DOS original that has a completely different soundtrack; requires a fast expanded machine to play at acceptable speed)</li></ul><h3 id=agacd32-exclusive-adventure-games>AGA/CD32 exclusive adventure games</h3><p>You can only play these on the Amiga &mdash; there are no other options:</p><ul class=compact><li><a href=https://hol.abime.net/4382>Sixth Sense Investigations</a> (<strong>AGA</strong>, <strong>CD32</strong>)</li><li><a href=https://hol.abime.net/1674>Wasted Dreams</a> (<strong>AGA</strong>)</li><li><a href=https://hol.abime.net/2305>onEscapee</a> (<strong>AGA</strong>; Flashback style action adventure)</li></ul><h3 id=agacd32-exclusive-rpgs>AGA/CD32 exclusive RPGs</h3><p>As above; no Amiga equals no game for these:</p><ul class=compact><li><a href=https://hol.abime.net/3953>Evil&rsquo;s Doom</a> (<strong>AGA</strong>; never released officially)</li><li><a href=https://hol.abime.net/883>Liberation: Captive II</a> (<strong>AGA</strong>, <strong>CD32</strong>)</li><li><a href=https://hol.abime.net/2056>The Speris Legacy</a> (<strong>AGA</strong>, <strong>CD32</strong>; an underwhelming Zelda clone)</li><li><a href=https://hol.abime.net/1499>Trapped</a> (<strong>AGA</strong>; requires a fast expanded machine to play at acceptable speed)</li><li><a href=https://hol.abime.net/4182>Trapped 2</a> (<strong>AGA</strong>; requires a fast expanded machine to play at acceptable speed)</li></ul><h3 id=aga-exclusive-strategy-games>AGA exclusive strategy games</h3><p>Slim pickings, all important strategy games were pretty much PC exclusives at
+this point:</p><ul class=compact><li><a href=https://hol.abime.net/614>Foundation</a>, <a href=https://hol.abime.net/616>Foundation: Gold</a>, <a href=https://hol.abime.net/615>Foundation: The Directors Cut</a> (spiritual successor of The Settlers)</li><li><a href=https://hol.abime.net/3861>Total Chaos: Battle At The Frontier Of Time</a> (shareware)</li></ul><h2 id=the-case-against-whdload>The Case Against WHDLoad</h2><p>First, let me quote what Wikipedia&rsquo;s has to say about <a href=https://en.wikipedia.org/wiki/WHDLoad>WHDLoad</a> because it&rsquo;s
+rather well written:</p><blockquote><p>The primary reason for this loader is that a large number of computer games
+for the Amiga don&rsquo;t properly interact with the AmigaOS operating system, but
+instead run directly on the Amiga hardware, making assumptions about
+specific control registers, memory locations, etc. The hardware of newer
+Amiga models had been greatly revised, causing these assumptions to break
+when trying to run the same games on newer hardware, and vice versa with
+newer games on older hardware. WHDLoad provides a way to install such games
+on an AmigaOS-compatible hard drive and run on newer hardware. An added
+benefit is the avoidance of loading times and disk swaps, because everything
+the game needs is stored on the hard drive.</p></blockquote><p>Basically, people got fed up with the fact that they couldn&rsquo;t play some of
+their old Amiga 500 OCS games on their new AGA machines, and came up with a
+solution around 1996, which was WHDLoad. The added benefit was that it also
+allowed to run the supported games from the hard drive. Keep in mind that most
+people sold their old Amiga 500 and put the money towards buying an Amiga
+1200, so for many this was the only option to play those old games.</p><p>So far so good, what&rsquo;s not to like? Quite a few things, actually. In order to
+work its magic, every supported game needs a so-called WHDLoad &ldquo;slave&rdquo; written
+for it that can perform a number of interesting (and complex) things:</p><ul><li><p><strong>Patch the game code</strong> so it runs correctly (or rather, with minimal
+issues) on the AGA chipset with fast memory present and on faster
+processors (68020 at 14MHz is the minimum for an A1200). This definitely
+sounds like a good thing, but it&rsquo;s not always possible to do 100% perfectly
+for all games, resulting in sync and timing issues. Also, if not all of
+these incompatibilities have been patched up, that can result in bugs or
+crashes. But that&rsquo;s just the nature of the beast; you need to put your trust
+in the author of the WHDLoad slave if you&rsquo;re going down this route. You&rsquo;re
+not just dealing with the original game code anymore, but an additional layer on
+top of that.</p></li><li><p><strong>Emulate the environment</strong> the game expects, for example, an older
+Kickstart version or some specific memory layout. Many older,
+OS-unfriendly games expect a fixed memory layout (e.g. a stock A500 with
+the extra 512K slow RAM), and would crash on any other setup. So the slave
+needs to emulate the old Kickstart in software, and do various magical
+things to fool the game into believing it runs from a floppy on a say
+stock Amiga 500 with Kickstart 1.2. All these machinations require extra
+memory; in fact, only a few WHDLoad games can run on a stock A1200 with 2
+MB chip RAM. At least 8 MB fast RAM is recommended, but preferably more.
+This is not a big deal when using an emulator, but&mldr; I just don&rsquo;t like
+it. It&rsquo;s too much complexity, there&rsquo;s so much room for things to go wrong
+compared to a simple Amiga 500 setup the game was coded for (but I admit,
+all this machinery is very quite cool from a purely technical point of
+view).</p></li><li><p><strong>Allow hiscores and savegames to be stored on the hard drive</strong>. Again, a
+cool feature on paper, but many of these games could only store such
+things on floppies, often bypassing the OS completely. So the game needs
+to be patched to write this data into some kind of temporary buffer in
+memory, then when the buffer fills up, AmigaOS needs to be swapped back
+into the memory space now occupied by the game to be able to write the
+buffer to disk (it&rsquo;s not possible to access the HD without the OS, and
+many older floppy games start by killing the OS). Then the game code needs
+to be swapped back, and this goes back and forth for a while. Usually this
+results in a black screen, and it can slow things down quite a bit (it&rsquo;s
+referred to as &ldquo;OS swapping&rdquo;). Some slaves only perform the writes when
+exiting the game, as an attempt to minimise the number of OS swaps, but if
+you forget to properly quit the game, or worse, the game crashes on you,
+all your <em>saved</em> (!) progress from your session is lost&mldr; I think this is
+the #1 issue that gets every WHDLoad newbie, and I certainly did lose my
+progress more than once by forgetting to exit the game. Although I&rsquo;m not
+100% certain about the technical explanation, such slowdowns can also
+affect games that perform lots of reads during the game, often slowing
+down these loading times 2-5-fold! Sometimes the WHDLoad version runs
+<em>slower</em> than the floppy version, which is plain unacceptable&mldr;</p></li><li><p><strong>Remove copy protection</strong> from games that used nefarious disk-based
+protection schemes and/or custom non-DOS disk formats. Although the majority
+of WHDLoad conversions require original uncracked floppy images, removing
+such protections is a necessity and effectively requires cracking the game.
+Sure, not having to consult code wheels and manuals every time you start the
+game sounds like a good thing, but this comes with all the drawbacks
+associated with cracking; a bad crack can simply render your game
+unplayable. This is certainly annoying in action games and platformers that
+take a few hours tops to finish (and therefore are easy to test by the
+crackers), but with adventure games and especially RPGs that can take
+anywhere between 20 and 100 hours to complete, a bad crack can be
+catastrophic. Some devious developers had literally woven the protection
+into the fabric of the game&rsquo;s code; it wasn&rsquo;t just a simple
+question/response style manual or code wheel check at the beginning, but the
+protection was <em>embedded</em> into the game, so to speak. Moreover, there was no
+indication whatsoever of failing these subtle checks, the game did not
+outright stop or crash but let you keep playing for hours on end while
+gradually crippling the experience until it got into an unwinnable state,
+possibly even corrupting or &ldquo;infecting&rdquo; your save files. Needless to say,
+very few crackers had spent 20-100 hours to complete such games over and
+over to test their cracks (just think of a complex branching RPG and how
+much effort it would be to properly test that). Here&rsquo;s a few notable examples:</p></li></ul><p><a href=https://en.wikipedia.org/wiki/Fate:_Gates_of_Dawn>Fate: Gates of Dawn</a>, one
+of the longest and best RPGs Amiga-exclusive RPGs:</p><blockquote><p>It is notable that from these copies of the game only the copy protection
+but not the password protection was removed. Password requests are not made
+at the start of the game but at intervals in the game repeated after some
+time. Just ignoring these requests or a wrong answer leads not to an abrupt
+end to the game, but gameplay deteriorating until it becomes unplayable.
+Therefore, a copy of the manual is still required for the right code.</p></blockquote><p>The <a href=https://tcrf.net/Dungeon_Master_(Amiga)>ingenious</a> <a href="https://dmweb.free.fr/?q=node/210">protection</a> <a href="https://www.youtube.com/watch?v=VheNpiSZxf0&t=489s">scheme</a> of <a href=https://hol.abime.net/441>Dungeon Master</a> had received a lot of respect
+from crackers back in the day; I took them a year to fully reverse engineer it. The
+protection definitely had served its purpose in this particular case!</p><blockquote><p>Additional anti-piracy checks exist in the code, including further fuzzy bit
+sector reading, checksums, code hidden as images in GRAPHICS.DAT, and other
+fun tricks intended to slow down and frustrate crackers. These respond with
+a delay-action effect [&mldr;] It is still possible to complete the game if you
+save progress frequently. These checks only hinder progress rather than
+making the game impossible.</p></blockquote><p>This commenter is probably <a href=https://hackaday.com/2019/06/25/copy-protection-in-the-80s-showcased-by-classic-game-dungeon-master/#comment-6309734>reminiscing</a> about the copy protection of <a href=https://hol.abime.net/412>Dragonflight</a>:</p><blockquote><p>There was an Amiga RPG, I think by Thalion that made the game crash when the
+anti piracy was triggered. However some time later there appeared a full
+screen stylized pirate skull over whatever game you had running then. This
+was kind of scary because we thought it was some virus until we realized it
+was the RPG game that keept the skull in RAM even after a reset until you
+turned off your Amiga.</p></blockquote><p>Not an Amiga game, but an <a href="https://news.ycombinator.com/item?id=8809505">interesting case</a> nonetheless:</p><blockquote><p>Another copy-protection classic was Spyro: Year of the Dragon:
+<a href=https://www.gamedeveloper.com/business/keeping-the-pirates-at-bay>https://www.gamedeveloper.com/business/keeping-the-pirates-at-bay</a></p><p>This used a multi-layered copy protection scheme. The first layers would
+show a dialog and quit. Later layers got progressively more vicious:</p><ol><li>They&rsquo;d remove 1 out of 10 gems needed to complete a certain level.</li><li>They&rsquo;d randomly corrupt data.</li><li>They&rsquo;d change the UI language at runtime.</li></ol><p>Read the post-mortem I linked above; it&rsquo;s really fun. The basic idea was to
+require crackers to play the entire game very carefully, looking for subtle
+side effects that broke game play.</p></blockquote><p>Okay, so you get the picture. I&rsquo;m not saying all cracks are bad, but quite a
+few were back in the day, I clearly remember that. If you were unlucky and got
+your hands on a bad crack of a long adventure game or RPG, you just had to put
+it aside until you managed to find a better cracked version. I just don&rsquo;t have
+time for this bullshit anymore, so nowadays I prefer to play uncracked
+originals if at all possible, and I recommend you do the same.</p><p>Now here are some concrete problems that I&rsquo;ve personally encountered with
+WHDLoad games. Note that I wasn&rsquo;t looking particularly hard to find faulty
+slaves, I just installed a bunch of my favourite games and about half of the
+time I ran into some weirdness or suboptimal behaviour. It&rsquo;s surely annoying
+for me who knows how these games should play, but it can certainly put someone off for good from
+Amiga gaming completely who is new to the Amiga and their first experience
+with these games is via WHDLoad. <em>That</em> is precisely my problem with WHDLoad being
+recommended everywhere as the magic ultimate solution &mdash; it&rsquo;s cool, it&rsquo;s
+clever, it might even work well with some particular games, but it&rsquo;s most
+certainly <em>not</em> the best solution for many many games, so you should at the
+very least exercise caution.</p><p>Alright, so here we go:</p><ul><li><p><a href>Ishar III AGA</a>: Opening the map takes 4
+seconds, and closing it around 13 seconds in the WHDLoad version. This
+makes the map completely unusable! Bumping up the CPU speed to 50 MHz
+reduces the wait times by about 40%, but it&rsquo;s still slow. Whereas when
+playing the game from floppies or using the included HD installer, opening
+the map is almost instantaneous, and closing it takes less then 2 seconds
+with the stock 14 MHz CPU, which is perfectly usable. Because the game
+contains a HD installer on the first disk, it&rsquo;s a bit perplexing why a
+WHDLoad version even exists in the first place&mldr;</p></li><li><p><a href>Pool of Radiance</a>: Saving the game into a new unused slot takes more than a
+minute during which the screen is mostly black (OS swap, a common theme with
+many WHDLoad games).</p></li><li><p><a href>Lemmings</a>: The game freezes randomly after about 10-30 minutes of playing
+(probably the result of an incomplete crack). To my knowledge, this issues
+hasn&rsquo;t been rectified as of 2022, which is a shame for such a classic
+title.</p></li><li><p><a href>King&rsquo;s Bounty</a>: Severe slowdowns, probably due OS swapping. Timings when
+playing the game on a stock Amiga 500 with the manual HD install method:</p><ul class=compact><li>creating a new character &ndash; 47s</li><li>opening the Puzzle Map &ndash; 5s</li><li>closing the Puzzle Map &ndash; 2s</li></ul><p>And the WHDLoad timings on a stock Amiga 1200 with 128 MB of RAM (!):</p><ul class=compact><li>creating a new character &ndash; 116s (2.5x slower)</li><li>opening the Puzzle Map &ndash; 23s (4.6x slower)</li><li>closing the Puzzle Map &ndash; 8s (4x slower)</li></ul><p>Certain actions in the WHDLoad version are just unacceptably slow! These are
+not the only ones, there&rsquo;s a lot more (e.g. when saving the game), I just
+didn&rsquo;t bother measuring them all&mldr;</p></li><li><p><a href>Warhead</a>: Saving the game takes a long time and the screen keeps flashing
+(OS swap).</p></li><li><p><a href>It Came From the Desert</a>: Speed and music syncing problems (the music gets cut off before the intro could properly end).</p></li></ul><p>Like you would expect, all these games work perfectly fine and without any
+issues when run from the hard drive or floppies on an Amiga 500 (you need an
+A1200 for Ishar III AGA, of course).</p><h2 id=winuae-configurations>WinUAE configurations</h2><p>So, from all the above we conclude that to be able to play all Amiga games
+worth playing, we&rsquo;ll need three base configurations:</p><dl><dt>Amiga 500 with hard-drive</dt><dd>This setup will take care of the vast majority of your gaming needs:<ul class=compact><li>All OCS games that have official HD installers:<ul><li>Most games made by North American studios (e.g. LucasArts, SSI, Sierra, Interplay, Infocom, MicroProse, Cinemaware, Dynamix, SSI, Westwood, New World Computing, Maxis, etc.)</li><li>Most adventures and RPGs, and many strategy games made by European studios (e.g. Bullfrog, Coktel Vision, reLine, HorrorSoft / Adventure Soft, Delphine, Magnetic Scrolls, Level 9, Thalion, Revolution, Silmarils, etc.)</li></ul></li><li>Many OCS games that do not have HD installers, but can be installed
+onto the hard drive manually quite easily (e.g. MicroMagic games)</li><li>OCS games that can be only run from floppies</li></ul></dd><dt>Amiga 1200 with hard-drive</dt><dd><ul class=compact><li>For the handful of AGA games, which all HD-installable (as per above)</li><li>The even smaller pool of games where you&rsquo;re better off with WHDLoad:<ul><li><a href=https://hol.abime.net/509>Fate: Gates of Dawn</a> (patched English version with
+restored nudity from the German original, confirmed to be completable)</li><li><a href=https://hol.abime.net/6039>Eye of the Beholder AGA I</a>, <a href=https://hol.abime.net/6040>II</a> (fan-made port of the DOS VGA original with Amiga sound that only exists as a WHDLoad game; very well done and completable)</li><li><a href=https://hol.abime.net/6052>Where Time Stood Still</a> (fan-made port of the Atari ST game)</li></ul></li></ul></dd><dt>Amiga CD32</dt><dd><ul><li>For the odd CD32 game</li></ul></dd></dl><hr><section class=links><h2 id=references--further-reading>References & further reading</h2><ul><li><p><a href=https://www.amigaretro.com/index.php/page,1.html>Amiga Beginner&rsquo;s Series</a></p></li><li><p><a href=https://mitpress.mit.edu/9780262535694/the-future-was-here/>Jimmy Maher &ndash; The Future Was Here: The Commodore Amiga</a></p></li></ul></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
+    import PhotoSwipeLightbox from '/js/lib/photoswipe-lightbox.esm.min.js';
+
+    const lightbox = new PhotoSwipeLightbox({
+      gallery: 'body',
+      children: 'figure > a',
+      showHideAnimationType: 'none',
+      pswpModule: () => import('/js/lib/photoswipe.esm.min.js')
+    });
+
+    lightbox.init();
+  </script></html>
