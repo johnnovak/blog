@@ -1,4 +1,7 @@
-<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Ao resists the forces of darkness (pbrt meets Nim) | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.240a1a431b5f2540776c196661d0758d1331db8dd188c089f0ec1e822176eef6.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2017/06/18/ao-resists-the-forces-of-darkness-pbrt-meets-nim/>Ao resists the forces of darkness (pbrt meets Nim)</a></h1><p class=date><time datetime=2017-06-18>2017 Jun 18</time></p></header><nav class=tags><ul><li><a href=/tags/ao/>ao</a></li><li><a href=/tags/graphics/>graphics</a></li><li><a href=/tags/ray-tracing/>ray tracing</a></li><li><a href=/tags/pbrt/>pbrt</a></li><li><a href=/tags/nim/>nim</a></li></ul></nav><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#overview>Overview</a></li><li><a href=#notes-on-the-book>Notes on the book</a><ul><li><a href=#coordinate-system>Coordinate system</a></li><li><a href=#vectors-normals-points>Vectors, Normals, Points</a></li><li><a href=#matrix-inverse>Matrix inverse</a></li><li><a href=#ray-box-intersection-tests>Ray-box intersection tests</a></li></ul></li><li><a href=#notes-on-nim>Notes on Nim</a><ul><li><a href=#project-structure>Project structure</a></li><li><a href=#inlining>Inlining</a></li><li><a href=#calling-parent-methods>Calling parent methods</a></li><li><a href=#managing-circular-dependencies>Managing circular dependencies</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#further-links-of-interest>Further links of interest</a></li></ul></nav><h2 id=overview>Overview</h2><p>I started reading the awesome <a href=https://www.pbrt.org/>Physically Based Rendering: From Theory to
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Ao resists the forces of darkness (pbrt meets Nim) | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.240a1a431b5f2540776c196661d0758d1331db8dd188c089f0ec1e822176eef6.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script>
+<script src=/js/lib/jqmath-etc-0.4.6.min.js></script>
+<script src=/js/blog.js></script>
+<link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2017/06/18/ao-resists-the-forces-of-darkness-pbrt-meets-nim/>Ao resists the forces of darkness (pbrt meets Nim)</a></h1><p class=date><time datetime=2017-06-18>2017 Jun 18</time></p></header><nav class=tags><ul><li><a href=/tags/ao/>ao</a></li><li><a href=/tags/graphics/>graphics</a></li><li><a href=/tags/ray-tracing/>ray tracing</a></li><li><a href=/tags/pbrt/>pbrt</a></li><li><a href=/tags/nim/>nim</a></li></ul></nav><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#overview>Overview</a></li><li><a href=#notes-on-the-book>Notes on the book</a><ul><li><a href=#coordinate-system>Coordinate system</a></li><li><a href=#vectors-normals-points>Vectors, Normals, Points</a></li><li><a href=#matrix-inverse>Matrix inverse</a></li><li><a href=#ray-box-intersection-tests>Ray-box intersection tests</a></li></ul></li><li><a href=#notes-on-nim>Notes on Nim</a><ul><li><a href=#project-structure>Project structure</a></li><li><a href=#inlining>Inlining</a></li><li><a href=#calling-parent-methods>Calling parent methods</a></li><li><a href=#managing-circular-dependencies>Managing circular dependencies</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#further-links-of-interest>Further links of interest</a></li></ul></nav><h2 id=overview>Overview</h2><p>I started reading the awesome <a href=https://www.pbrt.org/>Physically Based Rendering: From Theory to
 Implementation</a> book a few weeks ago, which made me
 realise that it&rsquo;s probably for the best if I rewrote <a href=/tags/ray-tracing/>my ray
 tracer</a> from the ground up based on the ideas presented in
@@ -39,7 +42,7 @@ very well written in a somewhat terse but interesting style, and the authors
 generally do a good to excellent job at explaining the theory behind the
 algorithms. I say generally because a few times I found myself wanting to do
 further research on a given proof, but this is probably more due to me not
-exactly being a math genius than the authors' fault&mldr;</p><p>For example, their less than one page derivation of the rotation transforms
+exactly being a math genius than the authors&rsquo; fault&mldr;</p><p>For example, their less than one page derivation of the rotation transforms
 wasn&rsquo;t quite clear to me, so I went googling and finally found <a href=http://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf>this paper</a>
 that made everything crystal clear. But then, the book is already 1100+ pages
 long and giving more detailed proofs could easily have doubled that I guess,
@@ -82,17 +85,17 @@ and <a href=https://www.openexr.com/>OpenEXR</a> spring to mind) and just define
 a single universal vector type instead to keep things simple. Then it&rsquo;s up to
 the actual code to interpret the data in the right context. That&rsquo;s what I&rsquo;m
 doing here too; all vectors, normals and points are represented by a single
-vector type:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span>
-  <span class=n>Vec2</span><span class=o>*[</span><span class=n>T</span><span class=o>]</span> <span class=o>=</span> <span class=k>object</span>
-    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>:</span> <span class=n>T</span>
-
-  <span class=n>Vec3</span><span class=o>*[</span><span class=n>T</span><span class=o>]</span> <span class=o>=</span> <span class=k>object</span>
-    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>,</span> <span class=n>z</span><span class=o>*</span><span class=p>:</span> <span class=n>T</span>
-
-  <span class=n>Vec2f</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec2</span><span class=o>[</span><span class=n>FloatT</span><span class=o>]</span>
-  <span class=n>Vec2i</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec2</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span>
-  <span class=n>Vec3f</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec3</span><span class=o>[</span><span class=n>FloatT</span><span class=o>]</span>
-  <span class=n>Vec3i</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec3</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span></code></pre></div><h3 id=matrix-inverse>Matrix inverse</h3><p>I have introduced a special fast version of the 4x4 matrix inverse operation
+vector type:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>type</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec2</span><span class=o>*[</span><span class=n>T</span><span class=o>]</span> <span class=o>=</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>:</span> <span class=n>T</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3</span><span class=o>*[</span><span class=n>T</span><span class=o>]</span> <span class=o>=</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>,</span> <span class=n>z</span><span class=o>*</span><span class=p>:</span> <span class=n>T</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>Vec2f</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec2</span><span class=o>[</span><span class=n>FloatT</span><span class=o>]</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec2i</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec2</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3f</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec3</span><span class=o>[</span><span class=n>FloatT</span><span class=o>]</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3i</span><span class=o>*</span> <span class=o>=</span> <span class=n>Vec3</span><span class=o>[</span><span class=kt>int</span><span class=o>]</span></span></span></code></pre></div><h3 id=matrix-inverse>Matrix inverse</h3><p>I have introduced a special fast version of the 4x4 matrix inverse operation
 called <code>rigidInverse</code> that can be used to quickly invert affine transforms
 that don&rsquo;t have a scaling component. The optimised version only costs 24 FLOPs
 instead of the 152 FLOPs of the general version (6.3x speedup!). I was able to make good use
@@ -162,9 +165,9 @@ import gaussian     # imports src/filters/gaussian.nim
 </code></pre><p>The <code>types.nim</code> file inside each main module is a special thing that I am
 going to explain <a href=#managing-circular-dependencies>a bit later</a>.</p><h3 id=inlining>Inlining</h3><p>The Nim compiler doesn&rsquo;t do automatic inlining of small functions across
 module boundaries; it is the programmer&rsquo;s responsibility to annotate such
-functions with the <code>{.inline.}</code> pragma like this:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>proc </span><span class=nf>vec3f</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=n>FloatT</span><span class=p>):</span> <span class=n>Vec3f</span> <span class=p>{.</span><span class=n>inline</span><span class=p>.}</span> <span class=o>=</span>
-  <span class=n>result</span> <span class=o>=</span> <span class=n>Vec3f</span><span class=p>(</span><span class=n>x</span><span class=p>:</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=n>z</span><span class=p>)</span>
-  <span class=n>assert</span><span class=p>(</span><span class=ow>not</span> <span class=n>hasNaNs</span><span class=p>(</span><span class=n>result</span><span class=p>))</span></code></pre></div><p>This is a small thing, but forgetting about it can result in <a href=/2017/04/22/nim-performance-tuning-for-the-uninitiated/#4-nim-----vector-module>severe
+functions with the <code>{.inline.}</code> pragma like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>proc </span><span class=nf>vec3f</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=n>FloatT</span><span class=p>):</span> <span class=n>Vec3f</span> <span class=p>{.</span><span class=n>inline</span><span class=p>.}</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>result</span> <span class=o>=</span> <span class=n>Vec3f</span><span class=p>(</span><span class=n>x</span><span class=p>:</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=n>z</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=n>assert</span><span class=p>(</span><span class=ow>not</span> <span class=n>hasNaNs</span><span class=p>(</span><span class=n>result</span><span class=p>))</span></span></span></code></pre></div><p>This is a small thing, but forgetting about it can result in <a href=/2017/04/22/nim-performance-tuning-for-the-uninitiated/#4-nim-----vector-module>severe
 performance
 penalties</a>
 in numerical code that needs to be as fast as possible.</p><h3 id=calling-parent-methods>Calling parent methods</h3><p>Nim doesn&rsquo;t have a convenient <code>super()</code> pseudo-method that would allow the
@@ -175,51 +178,51 @@ slightly different solutions, namely <strong>calling parent constructors</strong
 and <strong>calling ordinary parent methods</strong>.</p><h4 id=calling-parent-constructors>Calling parent constructors</h4><p>Constructor chaining is most easily accomplished by introducing internal
 <code>init</code> helper procedures for every subclass which then can be called with the
 subclass type converted to the parent class type. It&rsquo;s much easier to
-understand this by looking at a concrete example:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span>
-  <span class=n>Shape</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span> <span class=k>of</span> <span class=n>RootObj</span>
-    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>:</span> <span class=kt>float</span>
-    <span class=n>visible</span><span class=o>*</span><span class=p>:</span> <span class=kt>bool</span>
-
-  <span class=n>Circle</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span> <span class=k>of</span> <span class=n>Shape</span>
-    <span class=n>radius</span><span class=o>*</span><span class=p>:</span> <span class=kt>float</span>
-
-<span class=k>proc </span><span class=nf>init</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=kd>var</span> <span class=n>Shape</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>)</span> <span class=o>=</span>
-  <span class=n>self</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>x</span>
-  <span class=n>self</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>y</span>
-  <span class=n>self</span><span class=p>.</span><span class=n>visible</span> <span class=o>=</span> <span class=n>visible</span>
-
-<span class=k>proc </span><span class=nf>initShape</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>):</span> <span class=n>Shape</span> <span class=o>=</span>
-  <span class=n>init</span><span class=p>(</span><span class=n>result</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>
-
-<span class=k>proc </span><span class=nf>init</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=kd>var</span> <span class=n>Circle</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>)</span> <span class=o>=</span>
-  <span class=n>init</span><span class=p>(</span><span class=n>self</span><span class=p>.</span><span class=n>Shape</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>  <span class=c># this is the trick, call init on a Shape</span>
-  <span class=n>self</span><span class=p>.</span><span class=n>radius</span> <span class=o>=</span> <span class=n>radius</span>
-
-<span class=k>proc </span><span class=nf>initCircle</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>):</span> <span class=n>Circle</span> <span class=o>=</span>
-  <span class=n>init</span><span class=p>(</span><span class=n>result</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>
-
-
-<span class=c># Test</span>
-<span class=kd>var</span> <span class=n>c</span> <span class=o>=</span> <span class=n>initCircle</span><span class=p>(</span><span class=mi>5</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=mf>10.2</span><span class=p>,</span> <span class=kp>true</span><span class=p>)</span>
-<span class=n>echo</span> <span class=n>c</span>
-<span class=c># Prints: (radius: 10.2, x: 5.0, y: 8.0, visible: true)</span></code></pre></div><p>The trick is happening in the <code>init</code> procedure of <code>Circle</code>, where we first
+understand this by looking at a concrete example:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>type</span>
+</span></span><span class=line><span class=cl>  <span class=n>Shape</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span> <span class=k>of</span> <span class=n>RootObj</span>
+</span></span><span class=line><span class=cl>    <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>:</span> <span class=kt>float</span>
+</span></span><span class=line><span class=cl>    <span class=n>visible</span><span class=o>*</span><span class=p>:</span> <span class=kt>bool</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>  <span class=n>Circle</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span> <span class=k>of</span> <span class=n>Shape</span>
+</span></span><span class=line><span class=cl>    <span class=n>radius</span><span class=o>*</span><span class=p>:</span> <span class=kt>float</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>init</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=kd>var</span> <span class=n>Shape</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>)</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>self</span><span class=p>.</span><span class=n>x</span> <span class=o>=</span> <span class=n>x</span>
+</span></span><span class=line><span class=cl>  <span class=n>self</span><span class=p>.</span><span class=n>y</span> <span class=o>=</span> <span class=n>y</span>
+</span></span><span class=line><span class=cl>  <span class=n>self</span><span class=p>.</span><span class=n>visible</span> <span class=o>=</span> <span class=n>visible</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>initShape</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>):</span> <span class=n>Shape</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>init</span><span class=p>(</span><span class=n>result</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>init</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=kd>var</span> <span class=n>Circle</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>)</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>init</span><span class=p>(</span><span class=n>self</span><span class=p>.</span><span class=n>Shape</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>  <span class=c># this is the trick, call init on a Shape</span>
+</span></span><span class=line><span class=cl>  <span class=n>self</span><span class=p>.</span><span class=n>radius</span> <span class=o>=</span> <span class=n>radius</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>initCircle</span><span class=o>*</span><span class=p>(</span><span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>:</span> <span class=kt>float</span><span class=p>,</span> <span class=n>visible</span><span class=p>:</span> <span class=kt>bool</span><span class=p>):</span> <span class=n>Circle</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>init</span><span class=p>(</span><span class=n>result</span><span class=p>,</span> <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>radius</span><span class=p>,</span> <span class=n>visible</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c># Test</span>
+</span></span><span class=line><span class=cl><span class=kd>var</span> <span class=n>c</span> <span class=o>=</span> <span class=n>initCircle</span><span class=p>(</span><span class=mi>5</span><span class=p>,</span> <span class=mi>8</span><span class=p>,</span> <span class=mf>10.2</span><span class=p>,</span> <span class=kp>true</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=n>echo</span> <span class=n>c</span>
+</span></span><span class=line><span class=cl><span class=c># Prints: (radius: 10.2, x: 5.0, y: 8.0, visible: true)</span></span></span></code></pre></div><p>The trick is happening in the <code>init</code> procedure of <code>Circle</code>, where we first
 convert the <code>Circle</code> to a <code>Shape</code> and run the parent <code>init</code> procedure on it.</p><h4 id=calling-ordinary-parent-methods>Calling ordinary parent methods</h4><p>For ordinary methods, using
 <a href=https://nim-lang.org/docs/system.html#procCall,untyped><code>procCall</code></a> that
-disables dynamic binding for a given call is the solution:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>method</span> <span class=n>draw</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=n>Shape</span><span class=p>)</span> <span class=p>{.</span><span class=n>base</span><span class=p>.}</span> <span class=o>=</span>
-  <span class=n>echo</span> <span class=s>&#34;Shape.draw enter&#34;</span>
-  <span class=n>echo</span> <span class=s>&#34;Shape.draw exit&#34;</span>
-
-<span class=k>method</span> <span class=n>draw</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=n>Circle</span><span class=p>)</span> <span class=o>=</span>
-  <span class=n>echo</span> <span class=s>&#34;Circle.draw enter&#34;</span>
-  <span class=n>procCall</span> <span class=n>self</span><span class=p>.</span><span class=n>Shape</span><span class=p>.</span><span class=n>draw</span>  <span class=c># or Shape(self).draw</span>
-  <span class=n>echo</span> <span class=s>&#34;Circle.draw exit&#34;</span>
-
-<span class=n>c</span><span class=p>.</span><span class=n>draw</span>
-<span class=c># Prints:</span>
-<span class=c># Circle.draw enter</span>
-<span class=c># Shape.draw enter</span>
-<span class=c># Shape.draw exit</span>
-<span class=c># Circle.draw exit</span></code></pre></div><h3 id=managing-circular-dependencies>Managing circular dependencies</h3><p>Nim allows recursive module dependencies, as described <a href=https://nim-lang.org/docs/manual.html#modules>in the
+disables dynamic binding for a given call is the solution:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>method</span> <span class=n>draw</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=n>Shape</span><span class=p>)</span> <span class=p>{.</span><span class=n>base</span><span class=p>.}</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;Shape.draw enter&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;Shape.draw exit&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>method</span> <span class=n>draw</span><span class=p>(</span><span class=n>self</span><span class=p>:</span> <span class=n>Circle</span><span class=p>)</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;Circle.draw enter&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=n>procCall</span> <span class=n>self</span><span class=p>.</span><span class=n>Shape</span><span class=p>.</span><span class=n>draw</span>  <span class=c># or Shape(self).draw</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;Circle.draw exit&#34;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>c</span><span class=p>.</span><span class=n>draw</span>
+</span></span><span class=line><span class=cl><span class=c># Prints:</span>
+</span></span><span class=line><span class=cl><span class=c># Circle.draw enter</span>
+</span></span><span class=line><span class=cl><span class=c># Shape.draw enter</span>
+</span></span><span class=line><span class=cl><span class=c># Shape.draw exit</span>
+</span></span><span class=line><span class=cl><span class=c># Circle.draw exit</span></span></span></code></pre></div><h3 id=managing-circular-dependencies>Managing circular dependencies</h3><p>Nim allows recursive module dependencies, as described <a href=https://nim-lang.org/docs/manual.html#modules>in the
 manual</a>. They are a bit tricky
 to work with in more complex scenarios, and different techniques are involved
 when dealing with <strong>circular procedure calls</strong> versus <strong>circular type
@@ -229,33 +232,33 @@ use of Nim.)</p><h4 id=circular-procedure-calls>Circular procedure calls</h4><p>
 should make it clear what I&rsquo;m referring to. Let&rsquo;s try to define two functions
 in two separate modules that call each other co-routine style (blowing up the
 stack, eventually). It turns out that we need to use forward proc declarations
-to be able to accomplish this:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=c># bar.nim</span>
-<span class=k>proc </span><span class=nf>barProc</span><span class=o>*</span><span class=p>()</span>     <span class=c># (1) forward declaration (there&#39;s no proc body)</span>
-
-<span class=kn>import</span> <span class=n>foo</span>          <span class=c># (2) stop parsing bar.nim &amp; continue with foo.nim</span>
-
-<span class=k>proc </span><span class=nf>barProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>   <span class=c># (5) parsing foo.nim completed, continue from here</span>
-  <span class=n>echo</span> <span class=s>&#34;bar&#34;</span>
-  <span class=n>fooProc</span><span class=p>()</span>
-
-<span class=k>when</span> <span class=n>isMainModule</span><span class=p>:</span>
-  <span class=n>barProc</span><span class=p>()</span></code></pre></div><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=c># foo.nim</span>
-<span class=kn>import</span> <span class=n>bar</span>      <span class=c># (3) only the already known symbols in bar.nim are imported,</span>
-                <span class=c>#     which is only the forward declaration of barProc</span>
-
-<span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>
-  <span class=n>echo</span> <span class=s>&#34;foo&#34;</span>
-  <span class=n>barProc</span><span class=p>()</span>     <span class=c># (4) this works because of the forward declaration</span></code></pre></div><p>Running the code with <code>nim c -r bar</code> will print out <code>bar</code> and <code>foo</code> on
+to be able to accomplish this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=c># bar.nim</span>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>barProc</span><span class=o>*</span><span class=p>()</span>     <span class=c># (1) forward declaration (there&#39;s no proc body)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=n>foo</span>          <span class=c># (2) stop parsing bar.nim &amp; continue with foo.nim</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>barProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>   <span class=c># (5) parsing foo.nim completed, continue from here</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;bar&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=n>fooProc</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>when</span> <span class=n>isMainModule</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>  <span class=n>barProc</span><span class=p>()</span></span></span></code></pre></div><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=c># foo.nim</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=n>bar</span>      <span class=c># (3) only the already known symbols in bar.nim are imported,</span>
+</span></span><span class=line><span class=cl>                <span class=c>#     which is only the forward declaration of barProc</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;foo&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=n>barProc</span><span class=p>()</span>     <span class=c># (4) this works because of the forward declaration</span></span></span></code></pre></div><p>Running the code with <code>nim c -r bar</code> will print out <code>bar</code> and <code>foo</code> on
 alternating lines until we hit a stack overflow. If we wanted to be able to
 compile <code>foo.nim</code> separately as well, we&rsquo;d need to put a forward declaration
 at the top of the <code>foo</code> module too (should be obvious why after following the
-path of execution in the above listings):</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span>
-
-<span class=kn>import</span> <span class=n>bar</span>
-
-<span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>
-  <span class=n>echo</span> <span class=s>&#34;foo&#34;</span>
-  <span class=n>barProc</span><span class=p>()</span></code></pre></div><h4 id=circular-type-dependencies>Circular type dependencies</h4><p>Nim only allows the forward declaration of procedures; for types, we&rsquo;ll need
+path of execution in the above listings):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=n>bar</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>proc </span><span class=nf>fooProc</span><span class=o>*</span><span class=p>()</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>echo</span> <span class=s>&#34;foo&#34;</span>
+</span></span><span class=line><span class=cl>  <span class=n>barProc</span><span class=p>()</span></span></span></code></pre></div><h4 id=circular-type-dependencies>Circular type dependencies</h4><p>Nim only allows the forward declaration of procedures; for types, we&rsquo;ll need
 a different approach. Moreover, there&rsquo;s a further limitation that
 <a href=https://nim-lang.org/docs/tut2.html#object-oriented-programming-mutually-recursive-types>mutually recursive types</a>
 need to be declared within a single type section (this is so to keep
@@ -269,13 +272,13 @@ was moving all my top-level types into a new <code>core/types.nim</code> submodu
 the <code>core</code> module as an example) which would then be imported by all <code>core</code>
 submodules. All the types in <code>core/types.nim</code> are defined in a single type
 section&mdash;this way I don&rsquo;t even need to think about circular type
-dependencies anymore.</p><p>As a concrete example, <code>core/geometry.nim</code> would start like this:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=kn>import</span> <span class=n>common</span><span class=p>,</span> <span class=n>types</span>
-<span class=kn>import</span> <span class=n>math</span>
-
-<span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec2f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec2i</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec3f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec3i</span>
-<span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Box2f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box2i</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box3f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box3i</span>
-<span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Ray</span>
-<span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>RayDifferential</span></code></pre></div><p>The <code>export</code> statements ensure that the public types of this submodule will be
+dependencies anymore.</p><p>As a concrete example, <code>core/geometry.nim</code> would start like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=kn>import</span> <span class=n>common</span><span class=p>,</span> <span class=n>types</span>
+</span></span><span class=line><span class=cl><span class=kn>import</span> <span class=n>math</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec2f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec2i</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec3f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Vec3i</span>
+</span></span><span class=line><span class=cl><span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Box2f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box2i</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box3f</span><span class=p>,</span> <span class=n>types</span><span class=p>.</span><span class=n>Box3i</span>
+</span></span><span class=line><span class=cl><span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>Ray</span>
+</span></span><span class=line><span class=cl><span class=k>export</span> <span class=n>types</span><span class=p>.</span><span class=n>RayDifferential</span></span></span></code></pre></div><p>The <code>export</code> statements ensure that the public types of this submodule will be
 available to the importing module. Private types that are used only internally
 between the submodules simply don&rsquo;t get exported anywhere.</p><p>First I was averse to the idea of moving all the types into a single file,
 away from the actual method implementations, but then I grew to like it. It&rsquo;s
@@ -298,10 +301,10 @@ characteristics that is a joy to use, you should definitely check it out, and</p
 had the pleasure of reading, but also one of the best technical books
 overall! If you are interested in computer graphics and don&rsquo;t have
 it yet, it deserves a place on your bookshelf! It&rsquo;s a steal for the asking
-price.</p></li></ul><hr class=noline><section class=links><h2 id=further-links-of-interest>Further links of interest</h2><ul><li><p><a href=https://www.pbrt.org/>pbrt</a></p></li><li><p><a href=https://nim-lang.org/>Nim</a></p></li><li><p><a href=https://www.scratchapixel.com/>Scratchapixel</a></p></li><li><p><a href=https://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf>Kenneth E. Hoff III &ndash; Deriving 2D and 3D Rotations</a></p></li><li><p><a href=https://tutorial.math.lamar.edu/download.aspx>Paul&rsquo;s Online Math Notes</a></p></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>My personal opinion is that it is actually a good thing that Nim has
+price.</p></li></ul><hr class=noline><section class=links><h2 id=further-links-of-interest>Further links of interest</h2><ul><li><p><a href=https://www.pbrt.org/>pbrt</a></p></li><li><p><a href=https://nim-lang.org/>Nim</a></p></li><li><p><a href=https://www.scratchapixel.com/>Scratchapixel</a></p></li><li><p><a href=https://gamma.cs.unc.edu/users/hoff/projects/comp236_ta/rotations/rotations.pdf>Kenneth E. Hoff III &ndash; Deriving 2D and 3D Rotations</a></p></li><li><p><a href=https://tutorial.math.lamar.edu/download.aspx>Paul&rsquo;s Online Math Notes</a></p></li></ul></section><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>My personal opinion is that it is actually a good thing that Nim has
 not been designed for assembly-line style large-scale software
 development&mldr; just look at the macro system and imagine how much havoc a
-30+ person VB.NET team could wreak even just by looking at it!&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
+30+ person VB.NET team could wreak even just by looking at it!&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//johnnovak.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
     import PhotoSwipeLightbox from '/js/lib/photoswipe-lightbox.esm.min.js';
 
     const lightbox = new PhotoSwipeLightbox({

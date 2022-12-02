@@ -1,4 +1,7 @@
-<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Nim performance tuning for the uninitiated | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.240a1a431b5f2540776c196661d0758d1331db8dd188c089f0ec1e822176eef6.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2017/04/22/nim-performance-tuning-for-the-uninitiated/>Nim performance tuning for the uninitiated</a></h1><p class=date><time datetime=2017-04-22>2017 Apr 22</time></p></header><nav class=tags><ul><li><a href=/tags/coding/>coding</a></li><li><a href=/tags/nim/>nim</a></li><li><a href=/tags/c++/>c++</a></li><li><a href=/tags/performance/>performance</a></li></ul></nav><section class=intro><p><strong>UPDATE 2017-06-04:</strong> Corrected some slight misinformation regarding link
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Nim performance tuning for the uninitiated | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.240a1a431b5f2540776c196661d0758d1331db8dd188c089f0ec1e822176eef6.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script>
+<script src=/js/lib/jqmath-etc-0.4.6.min.js></script>
+<script src=/js/blog.js></script>
+<link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net//feed.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2017/04/22/nim-performance-tuning-for-the-uninitiated/>Nim performance tuning for the uninitiated</a></h1><p class=date><time datetime=2017-04-22>2017 Apr 22</time></p></header><nav class=tags><ul><li><a href=/tags/coding/>coding</a></li><li><a href=/tags/nim/>nim</a></li><li><a href=/tags/c++/>c++</a></li><li><a href=/tags/performance/>performance</a></li></ul></nav><section class=intro><p><strong>UPDATE 2017-06-04:</strong> Corrected some slight misinformation regarding link
 time optimisations and the {.inline.} pragma, some stylistic improvements,
 added more references.</p></section><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#overview>Overview</a></li><li><a href=#first-attempts>First attempts</a></li><li><a href=#test-setup>Test setup</a></li><li><a href=#round-1-----nim-vs-c>Round 1 &mdash; Nim vs C++</a><ul><li><a href=#0-c>0. C++</a></li><li><a href=#1-nim-----using-glm>1. Nim &mdash; using GLM</a></li><li><a href=#2-nim-----custom-vector-class-object-refs>2. Nim &mdash; custom vector class (object refs)</a></li><li><a href=#3-nim-----custom-vector-class-objects>3. Nim &mdash; custom vector class (objects)</a></li><li><a href=#4-nim-----vector-module>4. Nim &mdash; vector module</a></li><li><a href=#5-nim-----vector-module-with-inlines>5. Nim &mdash; vector module (with inlines)</a></li></ul></li><li><a href=#round-2-----nim-vs-java-javascript--python>Round 2 &mdash; Nim vs Java, JavaScript & Python</a><ul><li><a href=#jit-warmup>JIT warmup</a></li></ul></li><li><a href=#conclusion>Conclusion</a></li><li><a href=#does-it-all-matter>Does it all matter?</a></li><li><a href=#further-links-of-interest>Further links of interest</a></li></ul></nav><h2 id=overview>Overview</h2><p>This post documents the trials and tribulations I encountered during my foray
 into the wonderful world of low-level performance optimisation. For those
@@ -92,17 +95,17 @@ there, as I&rsquo;ll show below.</p><h4 id=memory-layout>Memory layout</h4><p>On
 memory. For every single ray we&rsquo;re going to mow through all the triangles in
 a linear fashion, checking for intersections, so we must store the triangles
 contiguously in a big chunk of memory to best utilise the CPU data caches.
-This is straightforward to do in C:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=n>struct</span> <span class=n>Vec3</span>
-<span class=p>{</span>
-  <span class=kt>float</span> <span class=n>x</span><span class=p>;</span>
-  <span class=kt>float</span> <span class=n>y</span><span class=p>;</span>
-  <span class=kt>float</span> <span class=n>z</span><span class=p>;</span>
-<span class=p>};</span>
-
-<span class=n>Vec3</span> <span class=o>*</span><span class=n>allocTriangles</span><span class=p>(</span><span class=kt>int</span> <span class=n>numTriangles</span><span class=p>)</span>
-<span class=p>{</span>
-  <span class=k>return</span> <span class=p>(</span><span class=n>Vec3</span> <span class=o>*</span><span class=p>)</span> <span class=n>malloc</span><span class=p>(</span><span class=n>sizeof</span><span class=p>(</span><span class=n>Vec3</span><span class=p>)</span> <span class=o>*</span> <span class=n>numTriangles</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>
-<span class=p>}</span></code></pre></div><h4 id=inspecting-the-assembly-output>Inspecting the assembly output</h4><p>Before progressing any further, let&rsquo;s take a quick look at a typical number
+This is straightforward to do in C:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=n>struct</span> <span class=n>Vec3</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=kt>float</span> <span class=n>x</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>float</span> <span class=n>y</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=kt>float</span> <span class=n>z</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>Vec3</span> <span class=o>*</span><span class=n>allocTriangles</span><span class=p>(</span><span class=kt>int</span> <span class=n>numTriangles</span><span class=p>)</span>
+</span></span><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=p>(</span><span class=n>Vec3</span> <span class=o>*</span><span class=p>)</span> <span class=n>malloc</span><span class=p>(</span><span class=n>sizeof</span><span class=p>(</span><span class=n>Vec3</span><span class=p>)</span> <span class=o>*</span> <span class=n>numTriangles</span> <span class=o>*</span> <span class=mi>3</span><span class=p>);</span>
+</span></span><span class=line><span class=cl><span class=p>}</span></span></span></code></pre></div><h4 id=inspecting-the-assembly-output>Inspecting the assembly output</h4><p>Before progressing any further, let&rsquo;s take a quick look at a typical number
 crunching function in assembly form! This is the command to compile the C++
 source into the final executable:</p><pre><code>clang -std=c++11 -lm -O3 -o perftest perftest.cpp
 </code></pre><p>And the command to emit the corresponding assembly output:</p><pre><code>clang -std=c++11 -S -O3 -o perftest.s perftest.cpp
@@ -110,49 +113,49 @@ source into the final executable:</p><pre><code>clang -std=c++11 -lm -O3 -o perf
 we want to inspect (<code>rayTriangleIntersect</code> in this case). As I said, we don&rsquo;t
 really need to understand assembly on a deep level for our purposes; it&rsquo;s
 enough to know that a healthy-looking number crunching function should
-resemble something like this:</p><div class=highlight><pre class=chroma><code class=language-asm data-lang=asm>    <span class=na>.globl</span>  <span class=no>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_</span>
-    <span class=na>.align</span>  <span class=mi>4</span><span class=p>,</span> <span class=mi>0x90</span>
-<span class=nl>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_:</span>   <span class=c># decorated function name
-</span><span class=c></span>    <span class=na>.cfi_startproc</span>            <span class=c># function starts here
-</span><span class=c></span>    <span class=no>pushq</span>   <span class=err>%</span><span class=no>rbp</span>              <span class=c># some init stuff
-</span><span class=c></span><span class=no>Ltmp15</span><span class=p>:</span>
-    <span class=na>.cfi_def_cfa_offset</span> <span class=mi>16</span>
-<span class=nl>Ltmp16:</span>
-    <span class=na>.cfi_offset</span> <span class=err>%</span><span class=no>rbp</span><span class=p>,</span> <span class=p>-</span><span class=mi>16</span>
-    <span class=nf>movq</span>    <span class=nv>%rsp</span><span class=p>,</span> <span class=nv>%rbp</span>
-<span class=nl>Ltmp17:</span>
-    <span class=na>.cfi_def_cfa_register</span> <span class=err>%</span><span class=no>rbp</span>
-    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rdx</span><span class=p>),</span> <span class=nv>%xmm14</span>
-    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rsi</span><span class=p>),</span> <span class=nv>%xmm15</span>
-
-    <span class=na>...</span>                       <span class=c># omitted
-</span><span class=c></span>
-    <span class=nf>mulss</span>   <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm11</span>
-    <span class=nf>movaps</span>  <span class=nv>%xmm1</span><span class=p>,</span> <span class=nv>%xmm2</span>
-    <span class=nf>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm2</span>
-    <span class=nf>subss</span>   <span class=nv>%xmm2</span><span class=p>,</span> <span class=nv>%xmm11</span>
-    <span class=nf>movaps</span>  <span class=nv>%xmm13</span><span class=p>,</span> <span class=nv>%xmm4</span>     <span class=c># actual function body
-</span><span class=c></span>    <span class=no>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm4</span>
-    <span class=nf>movaps</span>  <span class=nv>%xmm5</span><span class=p>,</span> <span class=nv>%xmm2</span>
-    <span class=nf>mulss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
-    <span class=nf>addss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
-
-    <span class=na>...</span>                       <span class=c># omitted
-</span><span class=c></span>
-    <span class=nf>jmp</span> <span class=no>LBB5_9</span>                <span class=c># some cleanup stuff
-</span><span class=c></span><span class=no>LBB5_2</span><span class=p>:</span>
-    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
-    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
-<span class=nl>LBB5_4:</span>
-    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
-    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
-<span class=nl>LBB5_6:</span>
-    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
-<span class=nl>LBB5_9:</span>
-    <span class=nf>movaps</span>  <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm0</span>
-    <span class=nf>popq</span>    <span class=nv>%rbp</span>
-    <span class=nf>retq</span>
-    <span class=na>.cfi_endproc</span>              <span class=err>#</span> <span class=no>the</span> <span class=no>end</span></code></pre></div><p>The init and cleanup stuff we&rsquo;re not really interested about, but the fact
+resemble something like this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-asm data-lang=asm><span class=line><span class=cl>    <span class=na>.globl</span>  <span class=no>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_</span>
+</span></span><span class=line><span class=cl>    <span class=na>.align</span>  <span class=mi>4</span><span class=p>,</span> <span class=mi>0x90</span>
+</span></span><span class=line><span class=cl><span class=nl>__Z20rayTriangleIntersectP3RayP4Vec3S2_S2_:</span>   <span class=c1># decorated function name
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=na>.cfi_startproc</span>            <span class=c1># function starts here
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>pushq</span>   <span class=nv>%rbp</span>              <span class=c1># some init stuff
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nl>Ltmp15:</span>
+</span></span><span class=line><span class=cl>    <span class=na>.cfi_def_cfa_offset</span> <span class=mi>16</span>
+</span></span><span class=line><span class=cl><span class=nl>Ltmp16:</span>
+</span></span><span class=line><span class=cl>    <span class=na>.cfi_offset</span> <span class=nv>%rbp</span><span class=p>,</span> <span class=p>-</span><span class=mi>16</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movq</span>    <span class=nv>%rsp</span><span class=p>,</span> <span class=nv>%rbp</span>
+</span></span><span class=line><span class=cl><span class=nl>Ltmp17:</span>
+</span></span><span class=line><span class=cl>    <span class=na>.cfi_def_cfa_register</span> <span class=nv>%rbp</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rdx</span><span class=p>),</span> <span class=nv>%xmm14</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movq</span>    <span class=p>(</span><span class=nv>%rsi</span><span class=p>),</span> <span class=nv>%xmm15</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=na>...</span>                       <span class=c1># omitted
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nf>mulss</span>   <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm11</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movaps</span>  <span class=nv>%xmm1</span><span class=p>,</span> <span class=nv>%xmm2</span>
+</span></span><span class=line><span class=cl>    <span class=nf>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm2</span>
+</span></span><span class=line><span class=cl>    <span class=nf>subss</span>   <span class=nv>%xmm2</span><span class=p>,</span> <span class=nv>%xmm11</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movaps</span>  <span class=nv>%xmm13</span><span class=p>,</span> <span class=nv>%xmm4</span>     <span class=c1># actual function body
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=nf>mulss</span>   <span class=nv>%xmm0</span><span class=p>,</span> <span class=nv>%xmm4</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movaps</span>  <span class=nv>%xmm5</span><span class=p>,</span> <span class=nv>%xmm2</span>
+</span></span><span class=line><span class=cl>    <span class=nf>mulss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
+</span></span><span class=line><span class=cl>    <span class=nf>addss</span>   <span class=nv>%xmm7</span><span class=p>,</span> <span class=nv>%xmm2</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=na>...</span>                       <span class=c1># omitted
+</span></span></span><span class=line><span class=cl><span class=c1></span>
+</span></span><span class=line><span class=cl>    <span class=nf>jmp</span> <span class=no>LBB5_9</span>                <span class=c1># some cleanup stuff
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=nl>LBB5_2:</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+</span></span><span class=line><span class=cl>    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
+</span></span><span class=line><span class=cl><span class=nl>LBB5_4:</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+</span></span><span class=line><span class=cl>    <span class=nf>jmp</span> <span class=no>LBB5_9</span>
+</span></span><span class=line><span class=cl><span class=nl>LBB5_6:</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movss</span>   <span class=no>LCPI5_0</span><span class=p>(</span><span class=nv>%rip</span><span class=p>),</span> <span class=nv>%xmm6</span>
+</span></span><span class=line><span class=cl><span class=nl>LBB5_9:</span>
+</span></span><span class=line><span class=cl>    <span class=nf>movaps</span>  <span class=nv>%xmm6</span><span class=p>,</span> <span class=nv>%xmm0</span>
+</span></span><span class=line><span class=cl>    <span class=nf>popq</span>    <span class=nv>%rbp</span>
+</span></span><span class=line><span class=cl>    <span class=nf>retq</span>
+</span></span><span class=line><span class=cl>    <span class=na>.cfi_endproc</span>              <span class=err>#</span> <span class=no>the</span> <span class=no>end</span></span></span></code></pre></div><p>The init and cleanup stuff we&rsquo;re not really interested about, but the fact
 that they are there is actually a good sign; this means that the compiler has
 not optimised away the whole function. The function body for numerical
 calculations involving floating point numbers will be basically lots of
@@ -196,48 +199,48 @@ resulted in some improvement, but not by much:</p><pre><code>Total intersection 
 Total time:                      11.41 seconds
 Millions of tests per second:     8.76
 </code></pre><p>What went wrong here? It turns out that for some reason I used object
-references instead of plain objects for my <code>Vec3</code> and <code>Ray</code> types:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Vec3</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
-  <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=kt>float32</span>
-
-<span class=k>type</span> <span class=n>Ray</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
-  <span class=n>dir</span><span class=p>,</span> <span class=n>orig</span><span class=p>:</span> <span class=n>Vec3</span></code></pre></div><p>Inspecting the corresponding C code in the <code>nimcache</code> directory makes the
+references instead of plain objects for my <code>Vec3</code> and <code>Ray</code> types:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>type</span> <span class=n>Vec3</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>  <span class=n>x</span><span class=p>,</span> <span class=n>y</span><span class=p>,</span> <span class=n>z</span><span class=p>:</span> <span class=kt>float32</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=n>Ray</span> <span class=o>=</span> <span class=k>ref</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>  <span class=n>dir</span><span class=p>,</span> <span class=n>orig</span><span class=p>:</span> <span class=n>Vec3</span></span></span></code></pre></div><p>Inspecting the corresponding C code in the <code>nimcache</code> directory makes the
 problem blatantly obvious (I cleaned up the generated symbol names for
-clarity):</p><div class=highlight><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>Vec3ObjectType</span> <span class=p>{</span>
-  <span class=n>NF32</span> <span class=n>x</span><span class=p>;</span>
-  <span class=n>NF32</span> <span class=n>y</span><span class=p>;</span>
-  <span class=n>NF32</span> <span class=n>z</span><span class=p>;</span>
-<span class=p>};</span>
-
-<span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
-  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>dir</span><span class=p>;</span>    <span class=c1>// indirection!
-</span><span class=c1></span>  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>orig</span><span class=p>;</span>   <span class=c1>// indirection!
-</span><span class=c1></span><span class=p>};</span>
-
-<span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
-  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
-  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// indirection! (array of pointers)
-</span><span class=c1></span><span class=p>};</span>
-
-<span class=n>SeqVec3Type</span><span class=o>*</span> <span class=n>vertices</span><span class=p>;</span></code></pre></div><p>So instead of having a contiguous block of triangle data, we ended up with
+clarity):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>struct</span> <span class=n>Vec3ObjectType</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>NF32</span> <span class=n>x</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>NF32</span> <span class=n>y</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>NF32</span> <span class=n>z</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>dir</span><span class=p>;</span>    <span class=c1>// indirection!
+</span></span></span><span class=line><span class=cl><span class=c1></span>  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>orig</span><span class=p>;</span>   <span class=c1>// indirection!
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3ObjectType</span><span class=o>*</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// indirection! (array of pointers)
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=n>SeqVec3Type</span><span class=o>*</span> <span class=n>vertices</span><span class=p>;</span></span></span></code></pre></div><p>So instead of having a contiguous block of triangle data, we ended up with
 a contiguous block of <em>pointers</em> to each of the points making up the
 triangles. This has disastrous performance implications: all the points are
 randomly scattered around in memory so the cache utilisation will be really
 terrible as it is evident from the results.</p><h3 id=3-nim-----custom-vector-class-objects>3. Nim &mdash; custom vector class (objects)</h3><p>Fortunately, <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/perftest3.nim#L3-L7>the
 fix</a>
-is very simple; we only need to remove the <code>ref</code> keywords:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>type</span> <span class=n>Vec3</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
-  <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>,</span> <span class=n>z</span><span class=o>*</span><span class=p>:</span> <span class=kt>float32</span>
-
-<span class=k>type</span> <span class=n>Ray</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
-  <span class=n>dir</span><span class=o>*</span><span class=p>,</span> <span class=n>orig</span><span class=o>*</span><span class=p>:</span> <span class=n>Vec3</span></code></pre></div><p>This will make the resulting type definitions be in line with our original C++
-code:</p><div class=highlight><pre class=chroma><code class=language-c data-lang=c><span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
-  <span class=n>Vec3ObjectType</span> <span class=n>dir</span><span class=p>;</span>
-  <span class=n>Vec3ObjectType</span> <span class=n>orig</span><span class=p>;</span>
-<span class=p>};</span>
-
-<span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
-  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
-  <span class=n>Vec3ObjectType</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// array of structs
-</span><span class=c1></span><span class=p>};</span></code></pre></div><p>And the moment of truth:</p><pre><code>Total intersection tests:  100,000,000
+is very simple; we only need to remove the <code>ref</code> keywords:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>type</span> <span class=n>Vec3</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>  <span class=n>x</span><span class=o>*</span><span class=p>,</span> <span class=n>y</span><span class=o>*</span><span class=p>,</span> <span class=n>z</span><span class=o>*</span><span class=p>:</span> <span class=kt>float32</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=n>Ray</span><span class=o>*</span> <span class=o>=</span> <span class=k>object</span>
+</span></span><span class=line><span class=cl>  <span class=n>dir</span><span class=o>*</span><span class=p>,</span> <span class=n>orig</span><span class=o>*</span><span class=p>:</span> <span class=n>Vec3</span></span></span></code></pre></div><p>This will make the resulting type definitions be in line with our original C++
+code:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=k>struct</span> <span class=n>RayObjectType</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3ObjectType</span> <span class=n>dir</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3ObjectType</span> <span class=n>orig</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>};</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=k>struct</span> <span class=n>SeqVec3Type</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=n>TGenericSeq</span> <span class=n>Sup</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>  <span class=n>Vec3ObjectType</span> <span class=n>data</span><span class=p>[</span><span class=n>SEQ_DECL_SIZE</span><span class=p>];</span>  <span class=c1>// array of structs
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>};</span></span></span></code></pre></div><p>And the moment of truth:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      5,206,370 ( 5.21%)
   Misses:                   94,793,630 (94.79%)
 
@@ -269,8 +272,8 @@ inlining of the functions decorated with it into all generated C files where
 the functions are referenced on the Nim compiler (preprocessor) level.</p><h3 id=5-nim-----vector-module-with-inlines>5. Nim &mdash; vector module (with inlines)</h3><p>Fixing this is very easy; as explained above, we&rsquo;ll just need to <a href=https://github.com/johnnovak/raytriangle-test/blob/master/nim/vectorfast.nim>decorate
 every
 method</a>
-in our module with <code>{.inline.}</code> pragmas. For example:</p><div class=highlight><pre class=chroma><code class=language-nim data-lang=nim><span class=k>proc </span><span class=nf>`-`</span><span class=o>*</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>:</span> <span class=n>Vec3</span><span class=p>):</span> <span class=n>Vec3</span> <span class=p>{.</span><span class=n>inline</span><span class=p>.}</span> <span class=o>=</span>
-  <span class=n>result</span> <span class=o>=</span> <span class=n>vec3</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>x</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>x</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>y</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>y</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>z</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>z</span><span class=p>)</span></code></pre></div><p>And we&rsquo;re done, the performance of version 3 has been restored:</p><pre><code>Total intersection tests:  100,000,000
+in our module with <code>{.inline.}</code> pragmas. For example:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-nim data-lang=nim><span class=line><span class=cl><span class=k>proc </span><span class=nf>`-`</span><span class=o>*</span><span class=p>(</span><span class=n>a</span><span class=p>,</span> <span class=n>b</span><span class=p>:</span> <span class=n>Vec3</span><span class=p>):</span> <span class=n>Vec3</span> <span class=p>{.</span><span class=n>inline</span><span class=p>.}</span> <span class=o>=</span>
+</span></span><span class=line><span class=cl>  <span class=n>result</span> <span class=o>=</span> <span class=n>vec3</span><span class=p>(</span><span class=n>a</span><span class=p>.</span><span class=n>x</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>x</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>y</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>y</span><span class=p>,</span> <span class=n>a</span><span class=p>.</span><span class=n>z</span> <span class=o>-</span> <span class=n>b</span><span class=p>.</span><span class=n>z</span><span class=p>)</span></span></span></code></pre></div><p>And we&rsquo;re done, the performance of version 3 has been restored:</p><pre><code>Total intersection tests:  100,000,000
   Hits:                      4,640,926 ( 4.64%)
   Misses:                   95,359,074 (95.36%)
 
@@ -368,7 +371,7 @@ unrealistic for the performance gain factor to be in the 2 to 1000 range!</p><p>
 I won&rsquo;t hit an insurmountable brick wall in the future, because whatever is
 possible in C in terms of performance, there&rsquo;s a way to replicate that in Nim
 too, and with careful coding the runtime efficiency of both languages can be
-virtually identical.</p><hr><section class=links><h2 id=further-links-of-interest>Further links of interest</h2><ul><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 1</a></p></li><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 2</a></p></li><li><p><a href=https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/>Andreas on Coding &mdash; Optimizable Code</a></p></li><li><p><a href=https://www.dataorienteddesign.com/dodbook/>Richard Fabian &mdash; Data-Oriented Design</a></p></li><li><p><a href=https://godbolt.org/>Compiler Explorer</a></p></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>The <a href=https://en.wikipedia.org/wiki/SSE2>SSE2</a> instruction set was introduced in 2001 with the <a href=https://en.wikipedia.org/wiki/Pentium_4>Pentium 4</a>, so virtually every x86 family processor supports it today. Note that this is 64-bit code, which you can easily spot because registers XMM8 through XMM15 are only available for 64-bit.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>Not that I would consider Nim a low-level language, quite on the contrary! It&rsquo;s as enjoyable and fast to code in Nim as in Python, but with the added benefit of type safety which is not a hassle thanks to Nim&rsquo;s excellent type inference. I think of Nim as a high-level language with the <em>possibility</em> of going low-level when necessary, which is exactly what I want from a general purpose programming language.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
+virtually identical.</p><hr><section class=links><h2 id=further-links-of-interest>Further links of interest</h2><ul><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-16-disassembling-the-assembly-part-1.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 1</a></p></li><li><p><a href=https://www.mikeash.com/pyblog/friday-qa-2011-12-23-disassembling-the-assembly-part-2.html>Gwynne Raskind &mdash; Disassembling the Assembly, Part 2</a></p></li><li><p><a href=https://deplinenoise.wordpress.com/2013/12/28/optimizable-code/>Andreas on Coding &mdash; Optimizable Code</a></p></li><li><p><a href=https://www.dataorienteddesign.com/dodbook/>Richard Fabian &mdash; Data-Oriented Design</a></p></li><li><p><a href=https://godbolt.org/>Compiler Explorer</a></p></li></ul></section><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>The <a href=https://en.wikipedia.org/wiki/SSE2>SSE2</a> instruction set was introduced in 2001 with the <a href=https://en.wikipedia.org/wiki/Pentium_4>Pentium 4</a>, so virtually every x86 family processor supports it today. Note that this is 64-bit code, which you can easily spot because registers XMM8 through XMM15 are only available for 64-bit.&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p>Not that I would consider Nim a low-level language, quite on the contrary! It&rsquo;s as enjoyable and fast to code in Nim as in Python, but with the added benefit of type safety which is not a hassle thanks to Nim&rsquo;s excellent type inference. I think of Nim as a high-level language with the <em>possibility</em> of going low-level when necessary, which is exactly what I want from a general purpose programming language.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//johnnovak.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
     import PhotoSwipeLightbox from '/js/lib/photoswipe-lightbox.esm.min.js';
 
     const lightbox = new PhotoSwipeLightbox({
