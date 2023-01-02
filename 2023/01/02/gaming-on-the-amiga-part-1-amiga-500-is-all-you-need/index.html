@@ -255,11 +255,11 @@ more. This is not a big deal when using an emulator, but&mldr; I just don&rsquo;
 like it. It&rsquo;s too much complexity; there&rsquo;s so much room for things to go
 wrong compared to a simple Amiga 500 setup the game was coded for (but I
 admit, all this machinery is very cool from a purely technical point of
-view).</p></li><li><p><strong>Allow high-scores and save games to be stored on the hard drive</strong>. Again,</p></li><li><p>a
-cool feature on paper, but many of these games could only store such data
-on floppies, often bypassing the OS completely. So the game needs to be
-patched to write this data into some temporary buffer in memory, then when
-the buffer fills up, AmigaOS needs to be swapped back into the memory
+view).</p></li><li><p><strong>Allow high-scores and save games to be stored on the hard drive</strong>. Again,
+a cool feature on paper, but many of these games could only store such
+data on floppies, often bypassing the OS completely. So the game needs to
+be patched to write this data into some temporary buffer in memory, then
+when the buffer fills up, AmigaOS needs to be swapped back into the memory
 space now occupied by the game to be able to write the buffer to disk
 (it&rsquo;s not possible to access the hard drive without the OS, and many older
 floppy games start by killing the OS right away). Then the game code needs
@@ -274,8 +274,8 @@ that gets every WHDLoad newbie, and I certainly did lose my progress more
 than once by forgetting to quit the game via the quit key. Although I&rsquo;m
 not 100% certain about the technical explanation, such slowdowns can also
 affect games that perform lots of reads during the game, often slowing
-them down 2 to 5-fold! Sometimes the WHDLoad version runs <em>slower</em> than the
-floppy version (!), which I find plain unacceptable.</p></li><li><p><strong>Remove copy protection</strong> from games that use nefarious disk-based
+them down 2 to 5-fold! Sometimes the WHDLoad version runs <em>slower</em> than
+the floppy version (!), which I find plain unacceptable.</p></li><li><p><strong>Remove copy protection</strong> from games that use nefarious disk-based
 protection schemes and/or custom non-DOS disk formats. Although the
 majority of WHDLoad conversions require original uncracked floppy images,
 removing such protections is a necessity and effectively requires the
