@@ -1,18 +1,20 @@
-<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Achieving period-correct graphics in personal computer emulators &mdash; Part 1: The Amiga | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.7ca272506c29d008b08d5bbb343a92990a00e77e302dd6087d0065134f9bb57b.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net/index.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/>Achieving period-correct graphics in personal computer emulators &mdash; Part 1: The Amiga</a></h1><p class=date><time datetime=2022-04-15>2022 Apr 15</time></p></header><nav class=tags><ul><li><a href=/tags/graphics/>graphics</a></li><li><a href=/tags/amiga/>amiga</a></li><li><a href=/tags/gaming/>gaming</a></li><li><a href=/tags/shader/>shader</a></li></ul></nav><section class=intro><p><strong>UPDATE 2022-11-20:</strong> Shader pack updated to v2, changed the instructions
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>Achieving period-correct graphics in personal computer emulators &mdash; Part 1: The Amiga | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.63b8160b4504b230d467bd1075e9672bc173d8b232a6f866511ba65db1ef15dc.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net/index.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/>Achieving period-correct graphics in personal computer emulators &mdash; Part 1: The Amiga</a></h1><p class=date><time datetime=2022-04-15>2022 Apr 15</time></p></header><nav class=tags><ul><li><a href=/tags/graphics/>graphics</a></li><li><a href=/tags/amiga/>amiga</a></li><li><a href=/tags/gaming/>gaming</a></li><li><a href=/tags/shader/>shader</a></li></ul></nav><section class=intro><p><strong>UPDATE 2023-02-19:</strong> Add section explaining analog RGB, further elaborate my
+views on low-resolution &ldquo;pixel art&rdquo;, plus wording improvements and grammar
+fixes.</p><p><strong>UPDATE 2022-11-20:</strong> Shader pack updated to v2, changed the instructions
 and screenshots accordingly, plus revised the whole article here and there a
 bit. Note that the names of the shader files have changed.</p><p>This is a significant update that incorporates Guest&rsquo;s recent shader
 improvements, achieves better preservation of highlights, more contrast,
-sharpness & vividness, and subtler glow and halation. Enjoy! 😎</section></p><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#preamble>Preamble</a></li><li><a href=#the-amiga>The Amiga</a><ul><li><a href=#single-vs-double-scan>Single vs double-scan</a></li><li><a href=#why-bother>Why bother?</a></li></ul></li><li><a href=#a-few-quick-words-about-human-psychology>A few quick words about human psychology</a></li><li><a href=#credits>Credits</a></li><li><a href=#image-dimensions>Image dimensions</a></li><li><a href=#aspect-ratio>Aspect ratio</a><ul><li><a href=#pal-vs-ntsc>PAL vs NTSC</a></li><li><a href=#north-american-games-on-pal-computers>North American games on PAL computers</a></li><li><a href=#its-not-just-about-the-video>It&rsquo;s not just about the video</a></li><li><a href=#running-games-in-ntsc>Running games in NTSC</a></li><li><a href=#but-life-aint-simple>But life ain&rsquo;t simple</a></li></ul></li><li><a href=#crt-shader>CRT shader</a></li><li><a href=#crt-colour-profile-and-monitor-controls>CRT colour profile and monitor controls</a></li><li><a href=#phosphor-and-shadow-mask>Phosphor and shadow mask</a></li><li><a href=#bloom-and-glow>Bloom and glow</a></li><li><a href=#changing-shader-settings-from-the-amiga>Changing shader settings from the Amiga</a></li><li><a href=#in-closing>In closing</a></li><li><a href=#links-files--further-reading>Links, files & further reading</a><ul><li><a href=#files>Files</a></li><li><a href=#misc>Misc</a></li><li><a href=#guests-shaders>Guest&rsquo;s shaders</a></li></ul></li></ul></nav><h2 id=preamble>Preamble</h2><p>In this article series we&rsquo;re going to be looking at emulating the <strong>Commodore
-Amiga</strong>, <strong>Commodore 64</strong>, and MS-DOS/early Windows era <strong>IBM PC compatibles</strong>
-with period-correct graphics (and maybe a few other classic machines, who
-knows?). What do I mean by &ldquo;period-correctness&rdquo;? It&rsquo;s quite simple&mdash;the
-emulated graphics should look as close as possible to the output of CRT
-displays used with these computers back in the 80s and 90s. Now, there&rsquo;s quite
-a bit of variance about the most typically used CRT technology per platform,
-and these differences matter <em>a lot</em>, as it will demonstrated. The below dream
+sharpness & vividness, and subtler glow and halation. Enjoy! 😎</p></section><h2>Table of contents</h2><nav id=TableOfContents><ul><li><a href=#preamble>Preamble</a></li><li><a href=#the-amiga>The Amiga</a><ul><li><a href=#analog-rgb-vs-tv-standards>Analog RGB vs TV standards</a></li><li><a href=#single-vs-double-scan>Single vs double-scan</a></li><li><a href=#why-bother>Why bother?</a></li><li><a href=#things-worth-emulating>Things worth emulating</a></li></ul></li><li><a href=#a-few-quick-words-about-human-psychology>A few quick words about human psychology</a></li><li><a href=#credits>Credits</a></li><li><a href=#image-dimensions>Image dimensions</a></li><li><a href=#aspect-ratio>Aspect ratio</a><ul><li><a href=#pal-vs-ntsc>PAL vs NTSC</a></li><li><a href=#north-american-games-on-pal-computers>North American games on PAL computers</a></li><li><a href=#its-not-just-about-the-video>It&rsquo;s not just about the video</a></li><li><a href=#running-games-in-ntsc>Running games in NTSC</a></li><li><a href=#but-life-aint-simple>But life ain&rsquo;t simple</a></li></ul></li><li><a href=#crt-shader>CRT shader</a></li><li><a href=#crt-colour-profile-and-monitor-controls>CRT colour profile and monitor controls</a></li><li><a href=#phosphor-and-shadow-mask>Phosphor and shadow mask</a></li><li><a href=#bloom-and-glow>Bloom and glow</a></li><li><a href=#changing-shader-settings-from-the-amiga>Changing shader settings from the Amiga</a></li><li><a href=#in-closing>In closing</a></li><li><a href=#links-files--further-reading>Links, files & further reading</a><ul><li><a href=#files>Files</a></li><li><a href=#misc>Misc</a></li><li><a href=#guests-shaders>Guest&rsquo;s shaders</a></li><li><a href=#amiga-rkm-libraries-manual-----graphics-libraries>Amiga RKM Libraries Manual &mdash; Graphics Libraries</a></li></ul></li></ul></nav><h2 id=preamble>Preamble</h2><p>In this article series we&rsquo;ll be looking at emulating the <strong>Commodore Amiga</strong>,
+<strong>Commodore 64</strong>, and MS-DOS/early Windows era <strong>IBM PC compatibles</strong> with
+period-correct graphics (and maybe a few other classic machines, who knows?).
+What do I mean by &ldquo;period-correctness&rdquo;? It&rsquo;s quite simple&mdash;the emulated
+graphics should look as close as possible to the output of CRT displays used
+with these computers back in the 80s and 90s. Now, there&rsquo;s quite a bit of
+variance about the most typically used CRT technology per platform, and these
+differences matter <em>a lot</em>, as will be demonstrated. The below dream
 retro-setup showcases the perfect pairings for the aforementioned computers
 (no, it&rsquo;s not mine, unfortunately):</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/dream-setup.jpg data-pswp-width=1920 data-pswp-height=840><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/dream-setup-small.jpg alt="Dream retro-computing setup" style=width:100% loading=lazy></a><figcaption style=width:100%>Left: a Commodore 64 paired with a small 13" colour TV. Middle: an Amiga 500
-hooked up to the venerable C= 1084 monitor (it&rsquo;s not period-correct if the
+hooked up to the venerable Commodore 1084 monitor (it&rsquo;s not period-correct if the
 front panel door is <em>not</em> broken off!). Right: an IBM PC compatible with a nice
 15" Trinitron display. This Norwegian dude (<a href=https://www.youtube.com/channel/UC_Exbgz-zDrEEEaGZmbfA9Q>UncleAwesome</a>) certainly knows how to have a good time!
 (<a href="https://www.amigalove.com/viewtopic.php?f=11&t=1593&p=10458&hilit=winter#p10458">source</a>)</figcaption></figure><p>Of course, a small percentage of users who used their computers professionally
@@ -31,7 +33,7 @@ produced
 in <a href=https://en.wikipedia.org/wiki/ProTracker>ProTracker</a> and <a href=https://en.wikipedia.org/wiki/FastTracker_2>FastTracker
 II</a>, so maybe I&rsquo;m a bit more
 attuned to the accurate emulation of the audiovisual idiosyncrasies of these
-classic machines than the average user (or maybe not&mdash;many people who &ldquo;just
+classic machines than the average user (or perhaps not&mdash;many people who &ldquo;just
 play games&rdquo; can be very sensitive to these aspects as well). I&rsquo;ve also done a
 fair bit of VGA programming in assembly on my first 486 PC, so I&rsquo;m not a
 complete stranger to the low-level details of graphics programming either.</p><p>In any case, this is not about prescribing the &ldquo;best&rdquo; way of emulating these
@@ -49,10 +51,10 @@ historically accurate information in my writings, the more I researched the
 topic, the more I realised how much depth and subtlety there is to it. It&rsquo;s
 not unlikely that I made a few mistakes here and there, and as there is far
 too much misinformation circulating about emulating these systems on the
-Internet already, if you&rsquo;ve spotted any mistakes, factual or otherwise, I&rsquo;d
+Internet already, if you&rsquo;ve spotted any errors, factual or otherwise, I&rsquo;d
 appreciate if you&rsquo;d let me know in the comments so I can make the necessary
 corrections.</p><p>But enough of this lengthy introduction, let&rsquo;s get to one of the best personal
-computers of all human history<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>&mdash;the mighty Commodore Amiga!</p></section><h2 id=the-amiga>The Amiga</h2><p>In the <a href=https://en.wikipedia.org/wiki/Amiga>Amiga</a>&rsquo;s heyday from the mid-80s
+computers of all human history<sup id=fnref:1><a href=#fn:1 class=footnote-ref role=doc-noteref>1</a></sup>&mdash;the mighty Commodore Amiga!</p></section><h2 id=the-amiga>The Amiga</h2><p>In the <a href=https://en.wikipedia.org/wiki/Amiga>Amiga</a>&rsquo;s heyday, from the mid-80s
 to early 90s, pretty much everybody who could afford it used their beloved
 machine with the iconic <a href=https://dfarq.homeip.net/commodore-1084-monitor/>Commodore
 1084S</a> monitor or a <a href=https://www.msx.org/wiki/Philips_CM_8833>Philips
@@ -60,16 +62,35 @@ CM 8833</a> (most 1084 models were
 manufactured by Philips and thus used the same picture tube; they&rsquo;re
 essentially identical monitors). Sure, there were other Commodore models, the
 1084 itself had dozens of variations over the years (and so had the Philips),
-but they all shared the same <a href=https://project64.c64.org/hw/1084s%20Monitor.txt>basic
+but they all shared the same <a href=https://project64.c64.org/hw/1084s%20Monitor.txt>essential
 characteristics</a>:</p><ul class=compact><li>14" picture tube with a 13" diagonal viewable area</li><li>slotted-triplet shadow mask (also known as slot mask, or <a href=https://en.wikipedia.org/wiki/Shadow_mask#/media/File:CRT_pixel_array.jpg>in-line shadow
-mask</a>)</li><li>0.42 mm dot pitch</li><li>15,626 Hz line frequency (<a href=https://en.wikipedia.org/wiki/Horizontal_scan_rate>horizontal scan rate</a>)</li><li>50/60 Hz image frequency (<a href=https://en.wikipedia.org/wiki/Refresh_rate>vertical scan rate</a>, or refresh rate; most models could handle both PAL and NTSC)</li><li>600-line vertical resolution</li><li>composite and analog RGB inputs</li></ul><p>Practically, they were <em>really</em> high-quality (for the time) and affordable
+mask</a>)</li><li>0.42 mm dot pitch</li><li>15,626 Hz line frequency (<a href=https://en.wikipedia.org/wiki/Horizontal_scan_rate>horizontal scan rate</a>)</li><li>50/60 Hz image frequency (<a href=https://en.wikipedia.org/wiki/Refresh_rate>vertical scan rate</a>,
+or refresh rate; most models could handle both PAL and NTSC&mdash;or
+<a href=#analog-rgb-vs-tv-standards>RGB 50 and RGB 60</a>, to be more exact)</li><li>600-line vertical resolution</li><li>composite and analog RGB inputs</li></ul><p>Practically, they were <em>really</em> high-quality (for the time) and affordable
 small TVs with analog RGB inputs. As pairing the computer with one of these
 monitors is arguably the most authentic classic Amiga experience<sup id=fnref:2><a href=#fn:2 class=footnote-ref role=doc-noteref>2</a></sup>,
 we&rsquo;ll be looking at emulating this particular display in
-<a href=https://www.winuae.net/>WinUAE</a>, the premier Amiga emulator.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/sachs-amiga-demo.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/sachs-amiga-demo-small.jpg alt="Amiga Demo by Jim Sachs" style=width:90% loading=lazy></a><figcaption style=width:90%>&ldquo;Amiga Demo&rdquo; by the legendary <a href=https://amiga.lychesis.net/artist/JimSachs.html>Jim
+<a href=https://www.winuae.net/>WinUAE</a>, the premier Amiga emulator. Naturally, we
+won&rsquo;t care about composite emulation at all&mdash;everybody who owned such a
+monitor used the much superior RGB input!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/sachs-amiga-demo.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/sachs-amiga-demo-small.jpg alt="Amiga Demo by Jim Sachs" style=width:90% loading=lazy></a><figcaption style=width:90%>&ldquo;Amiga Demo&rdquo; by the legendary <a href=https://amiga.lychesis.net/artist/JimSachs.html>Jim
 Sachs</a> displayed in WinUAE
-with C= 1084S CRT emulation in correct NTSC aspect ratio.<br>(Click on the
-image for an enlarged version to appreciate the details)</figcaption></figure><h3 id=single-vs-double-scan>Single vs double-scan</h3><p>A significant number of people really dislike the idea of using any kind of
+with Commodore 1084S CRT emulation in correct NTSC aspect ratio.<br>(Click on the
+image for an enlarged version to appreciate the details)</figcaption></figure><h3 id=analog-rgb-vs-tv-standards>Analog RGB vs TV standards</h3><p>Although it&rsquo;s customary to talk about <a href=http://oldwww.nvg.ntnu.no/amiga/amigafaq/AmigaFAQ_19.html>PAL and NTSC screen
+modes</a> on the
+Amiga, those are <a href=https://en.wikipedia.org/wiki/Analog_television>analog TV broadcast
+standards</a> and we&rsquo;re dealing
+with analog RGB here. There are certainly differences between colours, gamma,
+and various image artifacts between PAL and NTSC on
+<a href=https://en.wikipedia.org/wiki/Composite_video>composite</a> and <a href=https://en.wikipedia.org/wiki/RF_connector>coaxial RF
+(aerial)</a> connections, but not on
+analog RGB. The only difference between them when connecting the machine to
+the <a href=https://www.epanorama.net/circuits/vga2tv/rgb_pinouts.html>analog RGB
+input</a> of a
+monitor or a SCART-equipped TV is the vertical refresh rate.</p><p>Therefore, the proper names for these &ldquo;PAL over RGB&rdquo; and &ldquo;NTSC over RGB&rdquo; modes
+are <strong>RGB 50</strong> and <strong>RGB 60</strong>, respectively. But I&rsquo;ll just keep using &ldquo;PAL&rdquo;
+and &ldquo;NTSC&rdquo; in this article because they&rsquo;re so entrenched in the popular
+vernacular, and that&rsquo;s how these screen modes are named in every Amiga
+program and the operating system itself.</p><h3 id=single-vs-double-scan>Single vs double-scan</h3><p>A significant number of people really dislike the idea of using any kind of
 CRT emulation shader, and prefer the look of sharp rectangular pixels when
 playing old games on modern flat displays. Well, I used to be one of them so I
 know, and if we&rsquo;re talking about emulating 320×200 to 640×480
@@ -96,7 +117,7 @@ interlaced, at 576 (480) lines of vertical resolution. What this means is that
 the display alternates between even and odd fields at 50 (60) Hz, and every
 field only contains 288 (240) lines, stretched to fill the screen (there is
 literally a 1-line vertical offset between the two alternating fields; this is
-the cause of the infamous &ldquo;interlace flicker&rdquo;). Interlace is not that great
+the cause of the infamous &ldquo;interlace flicker&rdquo;). <a href=http://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0316.html>Interlace</a> is not that great
 with mostly static computer generated images having sharp contours, so for
 low-res they used the same trick as most consoles of the era: they simply just
 sent the display either all-even or all-odd fields, rather than alternating
@@ -104,22 +125,22 @@ between even and odd. The result is a completely static 50 (60) FPS image, but
 the scanlines now only have half the &ldquo;density&rdquo; vertically, so to speak, which
 is the main contributing factor for the famous &ldquo;scanline&rdquo; look. Scanlines are
 much more noticeable on NTSC because of its ~17% reduced vertical resolution
-compared to PAL, which causes the lines making up the image to be placed
+compared to PAL; this causes the lines making up the image to be placed
 further apart (incidentally, this explains why certain forms
 scanline-fetishism seem to be more rampant in American retro-gaming circles
 nowadays&mldr;)</p><p>The below photos of Commodore monitors displaying 320×200 low-res in NTSC
 illustrate single-scanning very well (enlarge them to inspect the details).</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/monkey-island-ntsc.jpg data-pswp-width=4032 data-pswp-height=3024><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/monkey-island-ntsc-small.jpg alt="Monkey Island, NTSC" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center><a href=https://hol.abime.net/1859>The Secret of Monkey Island</a>, 320×200 NTSC (<a href=https://www.reddit.com/r/crtgaming/comments/jdlr4h/monkey_island_on_a_1084s_in_60hz/>source</a>)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/winterscene-ntsc.jpg data-pswp-width=1905 data-pswp-height=1364><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/winterscene-ntsc-small.jpg alt="Winter Scene, NTSC" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Winter scene, 320×200 NTSC, 16-colour palette (<a href="https://www.amigalove.com/viewtopic.php?f=5&t=2069&p=13621&hilit=winter#p13621">source</a>)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/pinball-dreams-ntsc.jpg data-pswp-width=1920 data-pswp-height=1440><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/pinball-dreams-ntsc-small.jpg alt="Pinball Dreams, NTSC" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center><a href=https://hol.abime.net/1054>Pinball Dreams</a>, 320×200 NTSC
 (<a href="https://www.amigalove.com/viewtopic.php?f=8&t=1566&hilit=pinball+dreams&start=10">source</a>)</figcaption></figure><p>And this is a video recording of an NTSC Commodore monitor in action from
-<a href=amigalove.com/>AmigaLove</a> (you should watch it in fullscreen at 1080p to
-appreciate the details).</p><div class=video-wrapper><iframe width=560 height=315 src="https://www.youtube.com/embed/b0sVz6hWO68?start=425" title="YouTube video player" frameborder=0 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p>At 320×256 PAL resolutions, the pixels are more densely packed together
+<a href=https://www.amigalove.com/>AmigaLove</a> (you should watch it in fullscreen at 1080p to
+appreciate the details).</p><div class=video-wrapper><iframe width=560 height=315 src="https://www.youtube.com/embed/b0sVz6hWO68?start=425" title="YouTube video player" frameborder=0 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p>At 320×256 PAL resolution, the pixels are more densely packed together
 vertically, and although the scanline effect is weaker, it still subtly
-contributes to the overall &ldquo;textured&rdquo; quality of the image:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal.jpg data-pswp-width=1400 data-pswp-height=947><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal-small.jpg alt="Shadow of the Beast, PAL" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center><a href=https://hol.abime.net/1891>Shadow of the Beast</a>, 320×256 PAL, <a href=https://codetapper.com/amiga/sprite-tricks/shadow-of-the-beast/>too many colours to count</a></figcaption></figure><p>Essentially, all online flamewars about scanlines vs sharp pixels comes down
-to which particular systems the people participating in the debate owned. Guys
-whose first computer was a PC and grew up with VGA games can rightfully claim
-that they never saw scanlines on their monitors, and the pixels appeared as
-sharp, chunky little rectangles, while the Amiga and console folks are
-definitely not hallucinating either when they keep talking about scanlines and
-the beneficial smoothing effects of CRTs on low-res graphics.</p><h3 id=why-bother>Why bother?</h3><p>People are paying big money for powerful graphics cards these days to enjoy
+contributes to the overall &ldquo;textured&rdquo; quality of the image:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal.jpg data-pswp-width=1400 data-pswp-height=947><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal-small.jpg alt="Shadow of the Beast, PAL" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center><a href=https://hol.abime.net/1891>Shadow of the Beast</a>, 320×256 PAL, <a href=https://codetapper.com/amiga/sprite-tricks/shadow-of-the-beast/>too many colours to count</a></figcaption></figure><p>Essentially, all online flamewars about scanlines versus sharp pixels come
+down to which particular systems people participating in the debate owned.
+Guys whose first computer was a PC and grew up with VGA games can rightfully
+claim that they never saw scanlines on their monitors; the pixels appeared
+as sharp, chunky little rectangles for them. On the other hand, the Amiga and console folks are
+certainly not hallucinating either when they keep talking about scanlines and
+the beneficial smoothing effects of CRTs on low-res graphics.<sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup></p><h3 id=why-bother>Why bother?</h3><p>People are paying big money for powerful graphics cards these days to enjoy
 their 3D games with smooth antialiased graphics&mdash;back in the 80s we got that
 smoothing for free in the monitor hardware! Of course, the graphics still had
 to be skilfully made, but if it was properly antialiased by the artist, the
@@ -127,77 +148,116 @@ results just looked glorious on a typical Commodore monitor.</p><p>Below is an A
 quintessential Commodore 1084S monitor (click on it for a larger version, and
 click again if the cursor turns into a magnifier glass to have it displayed
 with 1:1 pixel mapping; this is crucial for all images presented in the
-article that demonstrate the shaders). I&rsquo;d bet that most people could not correctly guess
-that this is in fact 320×256 / 64-colour pixel art (the actual image is
-even smaller; it fits within a 274×216 rectangle). Subjectively, it
-certainly looks higher resolution than that; there&rsquo;s an almost 640×480
-SVGA quality to it.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/made-scarecrow.jpg data-pswp-width=1294 data-pswp-height=853><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/made-scarecrow-small.jpg alt="Scarecrow by Made" style=width:90% loading=lazy></a><figcaption style=width:90%><p><a href=https://demozoo.org/graphics/67551/>Scarecrow</a> by <a href=https://demozoo.org/sceners/131/>Made</a> (320×256 / 64-colour Amiga AGA pixel art)</p><p>The image was 3× upscaled with a CRT shader. Notice on the 200% view
+article that demonstrate the shaders). I&rsquo;d bet that most people could not
+correctly guess that this is in fact 320×256 / 64-colour pixel art (the
+actual image is even smaller; it fits within a 274×216 rectangle).
+Subjectively, it certainly looks higher resolution than that; there&rsquo;s an
+almost 640×480 SVGA quality to it. The gradients and the curves appear
+super smooth, you can&rsquo;t see any jagged edges and chunky pixels like you would
+on an objectively higher-quality VGA monitor displaying the <em>exact same</em>
+image!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/made-scarecrow.jpg data-pswp-width=1294 data-pswp-height=853><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/made-scarecrow-small.jpg alt="Scarecrow by Made" style=width:90% loading=lazy></a><figcaption style=width:90%><p><a href=https://demozoo.org/graphics/67551/>Scarecrow</a> by <a href=https://demozoo.org/sceners/131/>Made</a> (320×256 / 64-colour Amiga AGA pixel art)</p><p>The image was 3× upscaled with a CRT shader. Notice on the 200% view
 how the shader melts away all the blockiness, smoothes out the dither
 patterns, increases the perceived resolution, and adds subtle texture to the
 image. None of that is present in the straight 3× integer upscaled
 version. That&rsquo;s analog versus digital for you, in a nutshell (emulated
-analog, but still).</p></figcaption></figure><p>The gradients and the curves appear super smooth, you can&rsquo;t see any jagged edges
-and chunky pixels like you would on an objectively higher-quality VGA monitor
-displaying the <em>exact same</em> image. But measurable improvements in technical
-specifications don&rsquo;t necessarily always translate into better outcomes,
-especially when human perception and something as subjective as art is
-involved. For me personally, pixel art viewed on Commodore monitors from the
-80s is pure magic, and that magic largely got lost during transitioning to the
-technologically superior PC VGA monitors in the 90s. From 1985 to about 1995,
-a generation of Amiga artists and enthusiast had been fixating their gazes
-upon the flickering analog magic that was the Commodore 1084S, and that&rsquo;s
-something I think is well worth understanding and preserving. And it&rsquo;s
-just heaps of fun! Using WinUAE with an emulated 1084S puts me in a good mood
-every time; although it&rsquo;s not perfect, it gets me a little closer to the
-experience of sitting in front of a real Amiga. And how long until all
-Commodore monitors finally die and end up in the junkyard? Clearly, emulation
-is the only practical way going forward.</p><p>Having said all that, it&rsquo;s not all roses with analog CRTs. People fondly
+analog, but still).</p></figcaption></figure><p>What some people don&rsquo;t realise is that you are not really drawing a &ldquo;mosaic
+image&rdquo; when creating &ldquo;pixel art&rdquo; on the Amiga (or any other single-scanline
+computer or console intended to be used with a CRT display). The pixel grid is
+merely a <em>control mechanism</em> for the artist to &ldquo;command&rdquo; the electron beam to
+perform its analog magic with blending, bloom, glow, and a host of other
+CRT-specific artifacts. These &ldquo;commands&rdquo; effectively modulate the electron
+beam that paints each raster line from left to right, top to bottom, 50 (or
+60) times a second, superimposing a little focused speck of light with a
+soft-falloff over the fixed phosphor and slot mask patterns. <em><strong>There are no
+pixels to speak of on a CRT screen!</strong></em></p><p>Although I&rsquo;m nowhere near
+<a href=https://amiga.lychesis.net/artist/JimSachs.html>the</a>
+<a href=https://amiga.lychesis.net/scene/Made.html>true</a>
+<a href=https://amiga.lychesis.net/scene/Facet.html>pixel</a><a href=https://amiga.lychesis.net/scene/Archmage.html>-</a><a href=https://amiga.lychesis.net/scene/Fairfax.html>wizards</a>
+<a href=https://amiga.lychesis.net/scene/Suny.html>of</a>
+<a href=https://amiga.lychesis.net/scene/Cougar.html>the</a>
+<a href=https://amiga.lychesis.net/scene/Prowler.html>Amiga</a>,
+I&rsquo;ve done a fair bit of pixeling in <a href=https://en.wikipedia.org/wiki/Deluxe_Paint>Deluxe
+Paint</a>, and this dichotomy between
+the zoomed-in pixel grid and what you actually saw on the unzoomed image on
+the CRT was pretty obvious to every artist who didn&rsquo;t completely suck (whether
+they consciously realised what they were really doing or not).</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/guru5.png data-pswp-width=960 data-pswp-height=702><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/guru5.png alt="Dream retro-computing setup" style=width:100% loading=lazy></a><figcaption style=width:100%>Title picture of the 5th issue of the <a href=https://demozoo.org/groups/101854/>Guru
+diskmag</a> (a legendary Hungarian-only
+diskmag from the early 90s). The artist (Edvárd Tóth aka
+<a href="http://artcity.bitfellas.org/index.php?a=artist&id=2198">Silkie</a> of the
+Amiga demo group Cerberos, who was also solely responsible for the stellar art in
+the RPG game <a href=http://edvardtoth.com/games/perihelion/>Perihelion</a>) used the
+320x256 PAL screen mode with a 16-colour palette. This is how the image
+looks like when viewed using the C= 1084 shader&mdash;due to Silkie&rsquo;s masterful
+use of anti-aliasing, you don&rsquo;t see little rectangular &ldquo;pixels&rdquo;, only smooth
+shapes. This is how well-made &ldquo;pixel art&rdquo; looks on a CRT, be it either real
+or emulated!</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/guru5-dpaint3.png data-pswp-width=1111 data-pswp-height=865><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/guru5-dpaint3.png alt="Dream retro-computing setup" style=width:100% loading=lazy></a><figcaption style=width:100%>Inspecting the above image in Deluxe Paint 3 reveals the peculiar dual
+nature of &ldquo;pixel art&rdquo;: you can clearly see the rectangular &ldquo;pixels&rdquo; on the
+zoomed-in image on the right, but at 1:1 magnification on the left, the
+&ldquo;pixels&rdquo; melt away; there are only smooth shapes. I studied this <em>exact</em>
+picture for hours in DPaint back in the day; it taught me a great deal about
+effective anti-aliasing techniques, and frankly, it was a revelation. I find
+it best to think about the pixel grid as an abstraction: a control mechanism
+that guides the electron beam to paint a picture with light (as opposed to
+simply displaying the control grid as a mosaic image).</figcaption></figure><p>So, as we can see, measurable improvements in technical specifications don&rsquo;t
+necessarily always translate into better outcomes, especially when human
+perception and something as subjective as art is involved. For me personally,
+pixel art viewed on Commodore monitors from the 80s is pure magic, and we lost
+that during transitioning to the technologically superior, higher-resolution
+PC VGA monitors in the 90s. From 1985 to about 1995, a generation of Amiga
+artists and enthusiasts had been fixating their gazes upon the flickering
+analog magic that was the Commodore 1084S, and that&rsquo;s something I think is
+well worth understanding and preserving. And it&rsquo;s just heaps of fun! Using
+WinUAE with an emulated 1084S puts me in a good mood every time; although it&rsquo;s
+not perfect, it gets me a little closer to the experience of sitting in front
+of a real Amiga. And how long until all Commodore monitors finally die and end
+up in the junkyard? Like it or not, emulation is the only practical way going
+forward.</p><h3 id=things-worth-emulating>Things worth emulating</h3><p>Having said all that, it&rsquo;s not all roses with analog CRTs. People fondly
 remember the visually pleasing aspects of this display technology, but nobody
-misses flicker, vignetting, geometric distortions of the non-flat
-picture tubes, just to name the worst offenders. Naturally, we will not be
-emulating any of these undesirable elements.</p><p>What we will be emulating, is the following:</p><ul class=compact><li>period-correct physical image dimensions and aspect ratio</li><li>electron beam illuminating the phosphors on the screen (versus sharp
+misses flicker, vignetting, and geometric distortions of the non-flat picture
+tubes&mdash;just to name the worst offenders. Naturally, we will not be emulating
+any of these undesirable elements.</p><p>What we <em>will</em> be emulating is the following:</p><ul class=compact><li>period-correct physical image dimensions and aspect ratio</li><li>electron beam illuminating the phosphors on the screen (versus sharp
 rectangular pixels)</li><li>scanlines (subtly different between PAL and NTSC)</li><li>phosphor and shadow mask patterns</li><li>the characteristic colour reproduction of the Philips picture tube</li><li>bloom, halation, and glow</li></ul><p>We won&rsquo;t be looking at emulating any temporal artefacts (e.g. motion
-blur, afterglow, etc.) as WinUAE has no support for such effects currently.</p><p>Here is a fun experiment on how the shaders hold up against a real 1084S
-monitor. The photos were taken from the <a href="https://www.amigalove.com/games.php?game_id=13">Eye of the Beholder
+blur, afterglow, etc.) as WinUAE has no support for such effects currently.</p><p>Here is a fun experiment on how the shaders hold up against a real Commodore
+1084S monitor. The photos were taken from the <a href="https://www.amigalove.com/games.php?game_id=13">Eye of the Beholder
 review</a> published at
 <a href=https://www.amigalove.com/>AmigaLove</a>. I highly recommend perusing this site
-as it&rsquo;s one of the best online sources of good quality photos of Commodore
-monitors, and of course the articles themselves are very well-written and
-informative too. Needless to say, close-up photos of CRTs viewed on LCD
+as it&rsquo;s one of the best online sources of good quality photos of games running
+on Commodore monitors; of course, the articles themselves are very
+well-written and informative too. Close-up photos of CRTs viewed on LCD
 screens don&rsquo;t nearly tell you the whole story, but I&rsquo;m actually quite
-surprised to see the emulated results to be this close to the real thing!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-shader-comparison.jpg data-pswp-width=1650 data-pswp-height=917><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-shader-comparison-small.jpg alt="Eye of the Beholder, real CRT vs shader comparison" style=width:100% loading=lazy></a><figcaption style=width:100%>Comparison of real C= 1084S monitor photos to the CRT emulation presented in
-this article, and to raw sharp bilinear upscaling. The image on the right
-illustates how most people typically experience the game in WinUAE (without a
-CRT shader and with in wrong PAL aspect ratio&mdash;that squashed Beholder
-certainly doesn&rsquo;t look too healthy!)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob1.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob1-small.jpg alt="Eye of the Beholder" style=width:90% loading=lazy></a><figcaption style=width:90%><a href=https://hol.abime.net/2903>Eye of the Beholder</a> with CRT emulation in WinUAE (in correct NTSC aspect ratio, as the developers intended)</figcaption></figure><p>That&rsquo;s fine for low-res, but what about hi-res content? There&rsquo;s nothing more
+surprised to see the emulated results be this close to the real thing!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-shader-comparison.jpg data-pswp-width=1650 data-pswp-height=917><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob-shader-comparison-small.jpg alt="Eye of the Beholder, real CRT vs shader comparison" style=width:100% loading=lazy></a><figcaption style=width:100%>Comparison of real Commodore 1084S monitor photos to the CRT emulation
+presented in this article, and to raw sharp bilinear upscaling. The image on
+the right illustates how most people typically experience the game in WinUAE
+(without a CRT shader and using the wrong PAL aspect ratio&mdash;that squashed
+Beholder surely doesn&rsquo;t look too healthy!)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob1.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/eob1-small.jpg alt="Eye of the Beholder" style=width:90% loading=lazy></a><figcaption style=width:90%><a href=https://hol.abime.net/2903>Eye of the Beholder</a> with CRT emulation in WinUAE (in correct NTSC aspect ratio, as the developers intended)</figcaption></figure><p>That&rsquo;s fine for low-res, but what about hi-res content? There&rsquo;s nothing more
 annoying than quitting a game and having to switch the shader off because it
 only supports low-res and makes the Workbench screen unreadable. If you&rsquo;re
-like me, that would take you right out of your retro-computing bliss in a
+like me, that will take you right out of your retro-computing bliss in a
 jiffy! Fortunately, I have good news for you: the shader we&rsquo;re going to use
-supports <em>all</em> <a href=https://amiga.lychesis.net/knowledge/ScreenModes.html>OCS Amiga screen
-modes</a> and therefore
-looks <em>glorious</em> in 640×512/400 hi-res too!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/wb13.jpg data-pswp-width=1128 data-pswp-height=866><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/wb13-small.jpg alt="Workbench 1.3" style=width:90% loading=lazy></a><figcaption style=width:90%>Workbench 1.3 in all its overscanned NTSC glory. Old school! If this doesn&rsquo;t
+supports <em>all</em>
+<a href=https://amiga.lychesis.net/knowledge/ScreenModes.html>OCS Amiga screen modes</a>
+and therefore looks <em>glorious</em> in 640×512/400 hi-res too!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/wb13.jpg data-pswp-width=1128 data-pswp-height=866><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/wb13-small.jpg alt="Workbench 1.3" style=width:90% loading=lazy></a><figcaption style=width:90%>Workbench 1.3 in all its overscanned NTSC glory. Old school! If this doesn&rsquo;t
 get you excited, I don&rsquo;t know what will. This shader looks so good I want to
-include it in my will, I swear!</figcaption></figure><h2 id=a-few-quick-words-about-human-psychology>A few quick words about human psychology</h2><p>Before we begin, it&rsquo;s worthwhile to point it out that your perception can play
-tricks on you, so at the very least it&rsquo;s good to be aware of a few basic
+include it in my will, I swear!</figcaption></figure><h2 id=a-few-quick-words-about-human-psychology>A few quick words about human psychology</h2><p>Before we begin, it&rsquo;s worthwhile to point out that your perception can play
+tricks on you, so at the very least, it&rsquo;s good to be aware of a few basic
 psychological facts about human perception.</p><p>Firstly, we&rsquo;ve been conditioned into thinking that <em>more</em>, <em>bigger</em>, <em>louder</em>,
-<em>faster</em>, etc. always equals <em>better</em>. Some of this might be evolutionary,
+<em>faster</em>, etc., always equals <em>better</em>. Some of this might be evolutionary,
 some just a product of the times we live in, and maybe it&rsquo;s even true most of
 the time, but not <em>always</em>. It&rsquo;s very easy to outright dismiss an experience
 because it seems &ldquo;inferior&rdquo; according to some preconditioned criteria, but if
 you keep an open mind and try to live with it for a while, you might start to
-appreciate some of its not so obvious qualities (e.g. a &ldquo;less sharp&rdquo; image
+appreciate some of its not-so-obvious qualities (e.g., a &ldquo;less sharp&rdquo; image
 could make gradients and dither appear smoother, gently melt away all the
-jagged edges, and subjectively might seem more &ldquo;cosy&rdquo;&mdash;not unlike the
-certain magic of technologically inferior (strictly speaking, when looking at
-specs and measurements only) old analog recordings versus surgically perfect
-digital audio reproduction).</p><p>Secondly, the order of experiencing things matters. Going from sharp to less
+jagged edges, and subjectively might seem more &ldquo;cosy&rdquo;&mdash;not unlike the certain
+magic of technologically inferior (strictly speaking, when looking at specs
+and measurements only) old analog recordings versus surgically precise digital
+audio reproduction).</p><p>Secondly, the order of experiencing things matters. Going from sharp to less
 sharp, highly saturated to less colourful, louder to quieter, etc., always
-feels like &ldquo;losing something&rdquo;. But look away from your monitor for 10&ndash;20
-seconds, then look again at the &ldquo;less sharp&rdquo; image&mdash;wow, now it seems quite
-normal! Switch back to the 100% sharp version&mdash;hmm, that&rsquo;s weird, now that
+feels like &ldquo;losing something.&rdquo; But look away from your monitor for 10&ndash;20
+seconds, then look again at the &ldquo;less sharp&rdquo; image&mdash;wow, now it seems pretty
+normal! Switch back to the 100% sharp version&mdash;hmm, that&rsquo;s weird; now that
 seems too clinical in comparison, and I&rsquo;m not even so sure anymore if that is
-&ldquo;better&rdquo;!</p><p>Like I said, I don&rsquo;t want to suggest to you what your experience should be
+&ldquo;better&rdquo;!</p><p>As I said, I don&rsquo;t want to suggest to you what your experience should be
 exactly (I couldn&rsquo;t really do that, could I?); it&rsquo;s just good to be aware of
 these mechanisms, otherwise they can be quite perplexing and could make
 you run around in circles, psychologically speaking.</p><h2 id=credits>Credits</h2><p>The shaders presented in the article are the works of Guest, who originally
@@ -206,59 +266,60 @@ published them in the <a href=https://eab.abime.net/>English Amiga Board</a> for
 <a href="https://eab.abime.net/showthread.php?t=61776">here</a>). Since then, he has made
 his WinUAE shader pack available on
 <a href=https://github.com/guestrr/WinUAE-Shaders>GitHub</a>. Apart from the emulation
-of the Commodore A2080 monitor which I&rsquo;m going use in this article, the pack
-also contains a number of other interesting things, such as an arcade CRT
-shader, and a recreation of the Sony Trinitron displays. They&rsquo;re certainly all
-worth a try!</p><p>Guest&rsquo;s current bleeding-edge shader related work can be followed in
-<a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>this LibRetro forum thread</a>.
-Although only available for RetroArch/LibRetro at the moment, it&rsquo;s surely
-worth checking out, and we can only hope his work will be eventually ported to
-WinUAE in the future once it has support for more advanced shading
-techniques.</p><h2 id=image-dimensions>Image dimensions</h2><p>As explained above, the physical dimensions of an Amiga monitor were
+of the Commodore A2080 monitor, which I&rsquo;m going use in this article, the
+collection also contains several other interesting things, such as an
+arcade CRT shader, and a recreation of the Sony Trinitron displays. They&rsquo;re
+certainly all worth a try!</p><p>Guest&rsquo;s current bleeding-edge shader-related work can be followed in <a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>this
+LibRetro forum
+thread</a>.
+Although only available for RetroArch/LibRetro at the moment, it&rsquo;s worth
+checking out, and we can only hope his work will be eventually ported to
+WinUAE in the future (once it has support for more advanced shading
+techniques).</p><h2 id=image-dimensions>Image dimensions</h2><p>As explained above, the physical dimensions of an Amiga monitor were
 effectively standardised, at least between about 1985&ndash;1995. This is important
 because if you play games featuring low-res artwork (320×256 PAL or
-320×200 NTSC) designed for 14" CRT screens <em>fullscreen</em> on a 24" or larger
-monitor, they will look like crap&mdash;everything will look too big and
+320×200 NTSC) designed for 14" CRT screens <em>fullscreen</em> on a 24" or
+larger monitor, they will look like crap&mdash;everything will look too big and
 overly blocky. The best way to experience those old games as their creators
 intended is to match the physical dimensions of the emulated computer&rsquo;s image
-to that of a 14" monitor. Eerily enough, with 3× integer scaling you
+to that of a 14" monitor. Eerily enough, with 3× integer scaling, you
 will get almost exactly that on a typical 24" LCD (just draw a 960×720
-rectangle and measure its diagonal with a ruler; it will be 13" which equals
-the diagonal viewable area of the C= 1084S).</p><p>Now, WinUAE is the greatest Amiga emulator ever and I absolutely love it, but
+rectangle and measure its diagonal with a ruler; it will be 13", which equals
+the diagonal viewable area of the Commodore 1084S).</p><p>Now, WinUAE is the greatest Amiga emulator ever, and I absolutely love it, but
 I&rsquo;ll be the first to admit that the display settings require pilot training.
 Things are hunky-dory until all you care about is stretching the image to fill
 the whole screen (just use the <strong>Fullscreen (TV)</strong> or <strong>Fullscreen (Max)</strong>
 scaling method in the <strong>Filter</strong> section, and set <strong>Aspect Ratio Correction</strong>
 to <strong>Automatic</strong>), but once you want to set up <em>exact</em> scaling ratios and
-image dimensions, the UI is really not on your side anymore, to put it
-politely. Long story short, after countless hours of tinkering, I stumbled
-upon the <em>One True Way™</em> of getting predictable results in the exact way
-I wanted, so that&rsquo;s what I&rsquo;ll describe next.</p><p>This is what your <strong>Display</strong> settings should look like. These are the
-settings for PAL; of course, you could use NTSC as well, and you might want to
+image dimensions, the UI is not on your side anymore, to put it politely. Long
+story short, after countless hours of tinkering, I stumbled upon the <em>One True
+Way™</em> of getting predictable results in the exact way I wanted, so
+that&rsquo;s what I&rsquo;ll describe next.</p><p>This is what your <strong>Display</strong> settings should look like. These are the
+settings for PAL; of course, you could also use NTSC, and you might want to
 use windowed mode or a different vsync method. But the rest must be set
 <em>exactly</em> as shown, and all the <strong>Brightness</strong>, <strong>Contrast</strong>, <strong>Gamma</strong>, etc.
-settings <em>must</em> be at zero (they&rsquo;ll screw up things royally when we&rsquo;ll get to
-the shader and colour profile setup later). Ticking the two <strong>Centering</strong>
-checkboxes surely seems enticing, but I recommend against it as it will lead
-to all sorts of problems when switching resolutions or moving screens
-vertically (we can always adjust the image position manually in the <strong>Filter</strong>
-settings if needed).</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-display.png data-pswp-width=825 data-pswp-height=600><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-display.png alt="WinUAE Display settings" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>WinUAE Display settings for setting up our CRT shaders</figcaption></figure><p>Now the <strong>Filter</strong> settings; again, you must set up everything <em>exactly</em> as
+settings <em>must</em> be at zero (otherwise they&rsquo;ll screw up things royally when we
+get to the shader and colour profile setup later). Ticking the two
+<strong>Centering</strong> checkboxes surely seems enticing, but I recommend against it as
+it will lead to all sorts of problems when switching resolutions or moving
+screens vertically (we can always adjust the image position manually in the
+<strong>Filter</strong> settings if needed).</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-display.png data-pswp-width=825 data-pswp-height=600><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-display.png alt="WinUAE Display settings" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>WinUAE Display settings for setting up our CRT shaders</figcaption></figure><p>Now the <strong>Filter</strong> settings; again, you must set up everything <em>exactly</em> as
 shown. With these settings, we&rsquo;ll have full manual control over the scaling
 with the <strong>Horiz. size</strong> and <strong>Vert. size</strong> sliders. Unfortunately, the
 numerical input boxes are read-only, so we must use the slider widgets to set
-the values which is rather inexact and cumbersome. The only way to make fine
+the values, which is rather inexact and cumbersome. The only way to make fine
 adjustments on the GUI is with the cursor keys while the slider is in focus.
 Better yet, just edit the config files directly to set up the correct values,
-or download my shader pack which contains all the configs you&rsquo;ll need.</p><p>With our settings so far, we&rsquo;re getting <strong>2× integer scaling</strong> with both
+or download my shader pack, which contains all the configs you&rsquo;ll need.</p><p>With our settings so far, we&rsquo;re getting <strong>2× integer scaling</strong> with both
 sliders at 0&mdash;that&rsquo;s a nice clean starting point. After some trial and
 error, I managed to reverse-engineer the magic formula for applying further
 scaling on top of that:</p><p class=center><strong>(ScalingRatio &ndash; 2) × 1000</strong></p><p>So if we want 3× scaling, we&rsquo;ll need to set both scaling factors to <strong>(3
-&ndash; 2) × 1000 = 1000</strong>.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-filter.png data-pswp-width=825 data-pswp-height=600><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-filter.png alt="WinUAE Filter settings (bilinear-sharp scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>WinUAE Filter settings (3× bilinear-sharp scaling)</figcaption></figure><p>Like I said, 3× scaling will give us the authentic 1084s image size on a
+&ndash; 2) × 1000 = 1000</strong>.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-filter.png data-pswp-width=825 data-pswp-height=600><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/winuae-filter.png alt="WinUAE Filter settings (bilinear-sharp scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>WinUAE Filter settings (3× bilinear-sharp scaling)</figcaption></figure><p>As I said, 3× scaling will give us the authentic 1084s image size on a
 typical 24" 1920×1080 LCD monitor. The rest of the article assumes this
 display type, so keep that in mind (you&rsquo;ll need to adjust a few things for 4k
 screens&mdash;this is an exercise for the reader). <a href="https://docs.google.com/spreadsheets/d/1iH8YOhiGvKJ7kZogvKv_aDxkX4688T_VXRFAA2exmJs/edit?usp=sharing">This handy
 calculator</a>
-will help you if you want to adopt my settings to other display size and
+will help you if you want to adapt my settings to other display size and
 resolution combinations.</p><p>Sometimes we can deviate from 3× scaling with good results. For example,
 Pinball Dreams is quite enjoyable at 3.5× when leaning back a bit, and I
 like to play Rick Dangerous at 3.5× or even 4× because the game
@@ -273,7 +334,7 @@ from the Amiga 500 demo <a href=https://demozoo.org/productions/5784/>Arte</a>)<
 image dimensions in pixels, and their equivalent CRT sizes when viewed on a
 typical 24" 1080p LCD:</p><table><caption>PAL image scaling ratios</caption><tr><th width=16%>Scaling<br>ratio</th><th width=12%>Horiz.<br>size</th><th width=15%>Vert.<br>size</th><th width=12%>Width<br>(px)</th><th width=15%>Height<br>(px)</th><th width=29%>Equivalent CRT size<br>(on 24"/1080p LCD)</th></tr><tr><td>3.0&#215;</td><td>1000</td><td>1000</td><td>920</td><td>768</td><td>14" (13.0" viewable)</td></tr><tr><td>3.2&#215;</td><td>1200</td><td>1200</td><td>1024</td><td>819</td><td>15" (13.8" viewable)</td></tr><tr><td>3.5&#215;</td><td>1500</td><td>1500</td><td>1120</td><td>896</td><td>17" (15.5" viewable)</td></tr><tr><td>4.0&#215;</td><td>2000</td><td>2000</td><td>1280</td><td>1024</td><td>19" (17.3" viewable)</td></tr></table><p>I recommend saving these settings as presets so you can conveniently switch
 between them (loading a filter preset won&rsquo;t restart the emulated machine). The
-quick&rsquo;n&rsquo;easy way is to download <a href=files/WinUAE-Commodore-1084S-ShaderPack-v2.zip>my preset
+quick & easy way is to download <a href=files/WinUAE-Commodore-1084S-ShaderPack-v2.zip>my preset
 pack</a>, load the configs (I&rsquo;ve
 included one for every scaler setting) and then create filter presets for
 each. Filter presets don&rsquo;t get saved as files in the config folder (probably
@@ -283,15 +344,15 @@ section.</p><p><img src=img/winuae-filter-resize-presets.png alt="Filter resize 
 scaling but don&rsquo;t care about the CRT shader (in which case you&rsquo;re missing out
 a lot, of course, but whatever 😎), you&rsquo;ll need to use the <strong>Point-Prescale</strong>
 shader in <strong>slot 0</strong> with both horizontal and vertical oversample factors set
-to <strong>4x</strong>.</p><p><img src=img/winuae-filter-point-prescale.png alt="Point prescale settings"></p><p>This will give you sharp-bilinear like rescaling in low-res modes, but in
+to <strong>4x</strong>.</p><p><img src=img/winuae-filter-point-prescale.png alt="Point prescale settings"></p><p>This will give you sharp-bilinear-like rescaling in low-res modes, but in
 hi-res (640-pixel-wide modes) the results will leave a lot to be desired. To
-properly fix that, you&rsquo;ll really need to use the CRT shader.</p><h2 id=aspect-ratio>Aspect ratio</h2><p><a href="https://www.amigalove.com/viewtopic.php?t=348">This</a>
+properly fix that, you&rsquo;ll need to use the CRT shader.</p><h2 id=aspect-ratio>Aspect ratio</h2><p><a href="https://www.amigalove.com/viewtopic.php?t=348">This</a>
 <a href="https://www.amigalove.com/viewtopic.php?f=5&t=27">topic</a>
 <a href=https://www.gamedeveloper.com/business/no-ms-dos-games-weren-t-widescreen-tips-on-correcting-aspect-ratio>has</a>
+<a href=http://coppershade.org/articles/More!/Topics/Correct_Amiga_Aspect_Ratio/>already</a>
 <a href="https://www.youtube.com/watch?v=zvdNZpHZsO4&t=672s">been</a>
 <a href="https://www.youtube.com/watch?v=HSujirmsrzQ">discussed</a>
 <a href="https://www.youtube.com/watch?v=D5hiwB7lzk8">to</a>
-<a href=http://coppershade.org/articles/More!/Topics/Correct_Amiga_Aspect_Ratio/>the</a>
 <a href="https://forums.scummvm.org/viewtopic.php?t=14460">death</a>
 <a href=https://www.reddit.com/r/videogamescience/comments/77c0rp/video_game_history_is_being_distorted_and_how_to/>a</a>
 <a href=https://www.neogaf.com/threads/ms-dos-games-and-aspect-ratio.1108226/>thousand</a>
@@ -300,7 +361,7 @@ still get it routinely wrong. Why&rsquo;s that so, it&rsquo;s a bit of a mystery
 whole concept is not that difficult to grasp. Here&rsquo;s my stab at explaining it
 unambiguously with as few words as possible (but not less!)</p><h3 id=pal-vs-ntsc>PAL vs NTSC</h3><ul><li><p>Before about 2005, all commonly used consumer TVs and monitors were
 <strong>4:3 display aspect ratio</strong>.</p></li><li><p>On <strong>PAL</strong> Amigas, non-interlaced & non-overscanned low-res is <strong>320×256</strong>
-and the <strong>pixels are square</strong><sup id=fnref:3><a href=#fn:3 class=footnote-ref role=doc-noteref>3</a></sup> (1:1 <a href=https://en.wikipedia.org/wiki/Pixel_aspect_ratio>pixel aspect
+and the <strong>pixels are square</strong><sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup> (1:1 <a href=https://en.wikipedia.org/wiki/Pixel_aspect_ratio>pixel aspect
 ratio</a>).
 To display the 5:4 aspect ratio image (320:256 = 5:4) on a 4:3 <a href=https://en.wikipedia.org/wiki/Aspect_ratio_(image)#Distinctions>display
 aspect ratio</a> screen
@@ -308,14 +369,15 @@ while keeping the pixels square, the image needs to be slightly
 <a href=https://en.wikipedia.org/wiki/Pillarbox>pillarboxed</a> (it fills the screen
 vertically, but there are two very narrow black borders on the sides, as
 shown on the photo in <a href=http://coppershade.org/articles/More!/Topics/Correct_Amiga_Aspect_Ratio/>this
-article</a>).<sup id=fnref:4><a href=#fn:4 class=footnote-ref role=doc-noteref>4</a></sup></p></li></ul><ul><li>On <strong>NTSC</strong> Amigas, standard low-res is <strong>320×200</strong> (because NTSC has less
+article</a>).<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup></p></li></ul><ul><li>On <strong>NTSC</strong> Amigas, standard low-res is <strong>320×200</strong> (because NTSC has less
 vertical resolution). Because the image fills the screen completely, the <strong>pixels
-need to be 20% taller than wide</strong> (1:1.2 pixel aspect ratio<sup id=fnref:5><a href=#fn:5 class=footnote-ref role=doc-noteref>5</a></sup>). This is commonly
-referred to as &ldquo;NTSC-stretch&rdquo; in the popular vernacular.<sup id=fnref:6><a href=#fn:6 class=footnote-ref role=doc-noteref>6</a></sup></li></ul><p>The same rationale applies to every other standard <a href=https://amiga.lychesis.net/knowledge/ScreenModes.html>OCS Amiga screen
+need to be 20% taller than wide</strong> (1:1.2 pixel aspect ratio<sup id=fnref:6><a href=#fn:6 class=footnote-ref role=doc-noteref>6</a></sup>). This is commonly
+referred to as &ldquo;NTSC stretch&rdquo; in the popular vernacular.<sup id=fnref:7><a href=#fn:7 class=footnote-ref role=doc-noteref>7</a></sup></li></ul><p>The same rationale applies to every other standard <a href=https://amiga.lychesis.net/knowledge/ScreenModes.html>OCS Amiga screen
 mode</a> and their
-overscanned variants. The most important thing to remember is that the
-vertical stretch factor of NTSC screen modes is <em>always</em> 1.2 in relation to
-their PAL counterparts, without exception.</p><p>This is nothing too controversial so far, is it? PAL users had square pixels,
+<a href=http://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0314.html>overscanned</a>
+variants. The most important thing to remember is that the vertical stretch
+factor of NTSC screen modes is <em>always</em> 1.2 in relation to their PAL
+counterparts, without exception.</p><p>This is nothing too controversial so far, is it? PAL users had square pixels,
 NTSC users slightly tall ones, and the image always filled the screen on both
 standards (not exactly 100%, as explained in the footnotes, but close enough).</p><h3 id=north-american-games-on-pal-computers>North American games on PAL computers</h3><p>Now, certain complications arise from the fact that most NTSC games designed
 by Americans (or Canadians), originally intended for the US/Canadian markets,
@@ -332,11 +394,11 @@ conversions had to use PAL screen modes. This meant the original NTSC graphics
 occupied the upper 320×200 area of a 320×256 PAL screen, leaving
 the bottom 56 lines blank (assuming low-res). As a result, the art appeared
 <em>vertically squashed</em> by about 17% compared to the NTSC originals (some people
-call this the &ldquo;PAL-squash&rdquo;).</p><p>Now, what you must understand is that <em>these games were made in North America,
+call this the &ldquo;PAL squash&rdquo;).</p><p>Now, what you must understand is that <em>these games were made in North America,
 on NTSC monitors</em> that stretched the 320×200 image to fill the whole 4:3
 screen. Therefore (whether like it or not) <em>everybody on PAL systems
 experienced these games incorrectly with the wrong aspect ratio back in the
-day</em> (&ldquo;PAL-squashed&rdquo;), <strong>not</strong> as the original artists intended! (Including
+day</em> (&ldquo;PAL squashed&rdquo;), <strong>not</strong> as the original artists intended! (Including
 me, because I grew up in Europe&mdash;I&rsquo;m not an American preaching to everybody
 that &ldquo;Europeans got it all wrong&rdquo; or something&mldr; I&rsquo;m just simply stating
 historical facts.)</p><p>Let this sink in a bit.</p><p>You must understand that the <em>only</em> reason for this rather precarious
@@ -347,7 +409,7 @@ experienced these games with squashed art (and potentially running 17% slower
 because of the 60 vs 50 Hz difference); that&rsquo;s how they remember them, and
 that&rsquo;s what they want to emulate for nostalgic reasons. It&rsquo;s hard to argue
 with that logic, indeed&mdash;if those are your memories, then that&rsquo;s the end of
-it. But keep in mind the &ldquo;PAL-squash&rdquo; only happened because of practical
+it. But keep in mind the &ldquo;PAL squash&rdquo; only happened because of practical
 considerations (mainly due to budgetary limitations); it wasn&rsquo;t a deliberate
 artistic or creative intention, but an unfortunate necessity. Then the real
 question is this: do you want to emulate these games as you remember them, or
@@ -365,16 +427,32 @@ graphics is still wrong!)</p><p>Check out this video for a demonstration of the 
 classic game Secret of Monkey Island. (By the way, it&rsquo;s worth watching the
 whole thing from the beginning, it&rsquo;s very informative and enlightening&mdash;but
 at the very least just watch this little snippet.)</p><div class=video-wrapper><iframe width=560 height=315 src="https://www.youtube.com/embed/CYiBDVw_lzA?start=886" title="YouTube video player" frameborder=0 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div><p>To cite a few examples of my own, the music plays noticeably slower in the
-following American made games in PAL mode, while in NTSC mode the music speed
-perfectly matches that of the DOS versions:</p><ul class=compact><li>Eye of the Beholder I-II</li><li>Indiana Jones and the Last Crusade</li><li>Pool of Radiance<sup id=fnref:7><a href=#fn:7 class=footnote-ref role=doc-noteref>7</a></sup></li><li>King&rsquo;s Quest 2</li><li>Space Quest 3 <em>(probably all Sierra games are affected)</em></li></ul><p>In some better coded games that handle both PAL and NTSC correctly, there is
+following American-made games in PAL mode, while in NTSC mode the music speed
+perfectly matches that of the DOS versions:</p><ul class=compact><li>Eye of the Beholder I-II</li><li>Indiana Jones and the Last Crusade</li><li>Pool of Radiance<sup id=fnref:8><a href=#fn:8 class=footnote-ref role=doc-noteref>8</a></sup></li><li>King&rsquo;s Quest 2</li><li>Space Quest 3 <em>(probably all Sierra games are affected)</em></li></ul><p>In some better-coded games that handle both PAL and NTSC correctly, there is
 no difference in gameplay or music playback speed (but the aspect ratio is
-still wrong, so definitely play these in NTSC):</p><ul class=compact><li>Curse of the Azure Bonds</li><li>Loom</li><li>Phantasie 1</li><li>Pirates!</li><li>Secret of the Silver Blades</li><li>Windwalker</li></ul><p>The moral of the story is that generally you can&rsquo;t go wrong by using NTSC mode
+still wrong, so definitely play these in NTSC):</p><ul class=compact><li>Curse of the Azure Bonds</li><li>Loom</li><li>Phantasie 1</li><li>Pirates!</li><li>Secret of the Silver Blades</li><li>Windwalker</li></ul><p>The moral of the story is that you can rarely go wrong by using NTSC mode
 for <em>all</em> North American titles (which includes a significant part of the whole
-Amiga gaming catalogue). Without doubt, that&rsquo;s the preferable option; the
+Amiga gaming catalogue). Without a doubt, that&rsquo;s the preferable option; the
 graphics will appear undistorted, exactly as the creators intended, and the
 game will run at the correct speed, including music playback. (Theoretically,
 the only time you can run into problems is when you use a PAL crack of an NTSC
-game that somehow breaks NTSC compatibility.)</p><h3 id=running-games-in-ntsc>Running games in NTSC</h3><p>Sadly enough, as Amiga software preservation efforts seem to be almost
+game that somehow breaks NTSC compatibility.)</p><p class=note>While online game databases such as <a href=https://www.mobygames.com/>MobyGames</a>
+and <a href=https://hol.abime.net/>Hall of Light</a> are certainly very useful
+resources, they&rsquo;re not doing their part to promote aspect-ratio correctness.
+In fact, their net contribution is negative in this regard, as most of the
+screenshots on their websites are in the wrong aspect ratio (99.99% of them
+being 1:1 pixel aspect ratio raw captures from emulators, even for games where
+that&rsquo;s obviously incorrect, e.g. the vast majority of 320×200 DOS
+games).<br><br>To my knowledge, the maintainers of both websites have been called out about
+this issue repeatedly, but they don&rsquo;t seem to care and are generally
+uninterested in trying to improve the situation (to be somewhat fair to the
+<a href=https://hol.abime.net/>Hall of Light</a>, that&rsquo;s a website run by Europeans,
+and, as I explained, most people on PAL Amigas experienced NTSC games with the
+wrong aspect ratio back in the day). The same goes for 90% of gaming related
+blogs and YouTube videos&mdash;they get the aspect ratio more often wrong than
+correct.<br><br>So take everything you see online with a pinch of salt; we know all too well
+how easy it is for misinformation to spread on the Internet. And you know the
+saying about billions of flies not being wrong&mldr;</p><h3 id=running-games-in-ntsc>Running games in NTSC</h3><p>Sadly enough, as Amiga software preservation efforts seem to be almost
 exclusively concentrated on PAL releases for whatever reasons, disk images of
 NTSC originals are extremely hard to come by. But simply forcing NTSC mode
 with the PAL versions widely available online should do the trick in most
@@ -394,19 +472,19 @@ section. Now, if you turn on automatic aspect ratio management in WinUAE
 (in the <strong>Filter</strong> section select <strong>Fullscreen (TV)</strong> or <strong>Fullscreen
 (Max)</strong> scaling and set <strong>Aspect Ratio Correction</strong> to <strong>Automatic</strong>),
 WinUAE will apply the correct aspect ratio correction right from the boot
-screen. But like I explained previously, this only works if you&rsquo;re happy
+screen. But as I explained previously, this only works if you&rsquo;re happy
 with the image being automatically stretched to fill the whole screen. If
 we want to keep using our exact scaling methods, the automatic aspect
-ratio correction won&rsquo;t work, so we&rsquo;ll need to incorporate the NTSC-stretch
+ratio correction won&rsquo;t work, so we&rsquo;ll need to incorporate the NTSC stretch
 ourselves into our scaling factors as shown below:</p></li></ul><table><caption>NTSC image scaling ratios</caption><tr><th width=16%>Scaling<br>ratio</th><th width=12%>Horiz.<br>size</th><th width=15%>Vert.<br>size</th><th width=12%>Width<br>(px)</th><th width=15%>Height<br>(px)</th><th width=29%>Equivalent CRT size<br>(on 24"/1080p LCD)</th></tr><tr><td>3.0&#215;</td><td>1000</td><td>1600</td><td>920</td><td>720</td><td>14" (13.0" viewable)</td></tr><tr><td>3.2&#215;</td><td>1200</td><td>1840</td><td>1024</td><td>768</td><td>15" (13.8" viewable)</td></tr><tr><td>3.5&#215;</td><td>1500</td><td>2200</td><td>1120</td><td>840</td><td>17" (15.5" viewable)</td></tr><tr><td>4.0&#215;</td><td>2000</td><td>2800</td><td>1280</td><td>960</td><td>19" (17.3" viewable)</td></tr></table><p>I recommend creating presets for the NTSC settings as well so you can easily
 switch between them at will:</p><p><img src=img/winuae-filter-resize-presets.png alt="Filter resize presets"></p><p class=note>If you have vsync enabled, your screen refresh rate <em>must be</em> 50 Hz for PAL
-and 60 Hz for NTSC, respectively, otherwise you&rsquo;ll be experiencing all sorts
+and 60 Hz for NTSC, respectively; otherwise, you&rsquo;ll be experiencing all sorts
 of weird speed issues (e.g. jumpy scrolling, audio glitches, music playing
-much slower or faster than it should, etc.) With vsync off this it not a problem,
-so that&rsquo;s a good quick way to examine how a WHDLoad game behaves in PAL vs
-NTSC without having to change the screen refresh rate and restart the
+much slower or faster than it should, etc.) With vsync off this is not a
+problem, so that&rsquo;s a good quick way to examine how a WHDLoad game behaves in
+PAL vs NTSC without having to change the screen refresh rate and restart the
 emulator.</p><h3 id=but-life-aint-simple>But life ain&rsquo;t simple</h3><p>No, we can&rsquo;t put this whole PAL vs NTSC fiasco behind us just yet&mldr; The
-situation with European made games is a bit more complicated. The complete
+situation with European-made games is a bit more complicated. The complete
 algorithm for determining whether a particular title should be played in PAL or
 NTSC is as follows:</p><ul><li><p><strong>For games originally developed by North American studios&mdash;always use NTSC</strong></p><p>It does not matter if the Amiga port or the PAL version was made by a
 European developer; in virtually all cases they just reused the original
@@ -416,10 +494,10 @@ Westwood, Origin, Interplay, FTL, MicroProse / MPS Labs, SSI,
 Lucasfilm Games / LucasArts, Sierra, Cinemaware, New World Computing,
 Sir-Tech, Infocom, Access Software, Electric Dreams, Spectrum Holobyte,
 Epyx, D.S.I., U.S. Gold, Broderbund, Capcom, SEGA</em></p></li><li><p><strong>For games originally developed by European studios (mostly UK)</strong>:</p><ul><li><p>If the game uses <strong>320×256</strong> or some other PAL screen mode, and the
-graphics fills the whole screen&mdash;<strong>always use PAL</strong></p></li><li><p>If the graphics only takes up a <strong>320×200</strong> or smaller area of
+graphics fill the whole screen&mdash;<strong>always use PAL</strong></p></li><li><p>If the graphics only takes up a <strong>320×200</strong> or smaller area of
 the screen, leaving a black bar at the bottom (or at the top and the
-bottom if they bothered to center the screen), that does not
-automatically mean that it needs the NTSC-stretch applied to make it
+bottom if they bothered to centre the screen), that does not
+automatically mean that it needs the NTSC stretch applied to make it
 look correct; it might very well have been drawn with square pixels in
 mind still. <a href=https://hol.abime.net/1029>Perihelion</a> is a good example
 of this: the graphics is 320×200, but it <em>absolutely</em> needs square
@@ -433,45 +511,45 @@ America as well, and stretched graphics is infinitely better than no
 NTSC release at all.</p><p>As for some interesting counterexamples, <a href=https://hol.abime.net/2924>Captain
 Blood</a> and the <a href="https://hol.abime.net/hol_search.php?find=ishar">Ishar RPG
 series</a> were both made
-by French studios, but their graphics look correct with NTSC-stretch
+by French studios, but their graphics look correct with NTSC stretch
 (1:1.2 pixel aspect ratio). For the Ishar games, this was most likely
 because of the DOS versions, but in the case of Captain Blood,
-producing the graphics with NTSC-stretch in mind is a bit more
+producing the graphics with NTSC stretch in mind is a bit more
 perplexing as it was released on many different platforms (e.g. the ZX
 Spectrum and the C64) &mdash; maybe they wanted to optimise the game for
 the North American market.</p></li></ul><p><em>A few important European studios: Bitmap Brothers, Psygnosis, Bullfrog,
 Horror Soft / Adventure Soft, Magnetic Scrolls, Delphine, Coktel Vision,
 Revolution, Ubisoft, Infogrames, DMA Design, Core Design, Level 9, Team 17,
 Sensible Software, Firebird, Digital Illusions, Silmarils, Thalion,
-Thalamus, Ocean</em></p></li></ul><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion-small.jpg alt="Perihelion: The Prophecy (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1029>Perihelion: The Prophecy</a> (PAL, 3× scaling)<br>The game only uses a 320×200 screen area, but assumes square pixels.</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/ishar3aga.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/ishar3aga-small.jpg alt="Ishar 3: The Seven Gates Of Infinity (PAL game with NTSC-stretch applied, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2669>Ishar 3: The Seven Gates Of Infinity</a> (PAL game with NTSC-stretch applied, 3× scaling)<br>European made PAL game that assumes NTSC-stretch (1:1.2 pixel aspect ratio)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/captain-blood.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/captain-blood-small.jpg alt="Captain Blood (PAL game with NTSC-stretch applied, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2924>Captain Blood</a> (PAL game with NTSC-stretch applied, 3× scaling)<br>European made PAL game that assumes NTSC-stretch (1:1.2 pixel aspect ratio)</figcaption></figure><p class=note>Although looking at circles and squares to determine the intended aspect ratio
+Thalamus, Ocean</em></p></li></ul><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion-small.jpg alt="Perihelion: The Prophecy (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1029>Perihelion: The Prophecy</a> (PAL, 3× scaling)<br>The game only uses a 320×200 screen area but assumes square pixels.</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/ishar3aga.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/ishar3aga-small.jpg alt="Ishar 3: The Seven Gates Of Infinity (PAL game with NTSC stretch applied, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2669>Ishar 3: The Seven Gates Of Infinity</a> (PAL game with NTSC stretch applied, 3× scaling)<br>European-made PAL game that assumes NTSC stretch (1:1.2 pixel aspect ratio)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/captain-blood.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/captain-blood-small.jpg alt="Captain Blood (PAL game with NTSC stretch applied, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2924>Captain Blood</a> (PAL game with NTSC stretch applied, 3× scaling)<br>European-made PAL game that assumes NTSC stretch (1:1.2 pixel aspect ratio)</figcaption></figure><p class=note>Although looking at circles and squares to determine the intended aspect ratio
 may help in many cases, it is <em>not</em> a 100% fool-proof method! It certainly works for
 most racing games and flight simulators where the circular gauges should
-usually appear as perfect circles when the correct aspect ratio is being used,
-but in general it&rsquo;s better to look at some common objects and make sure they
-appear correctly, neither too tall nor too squashed (human faces and full
-human figures are the best candidates for this).</p><h2 id=crt-shader>CRT shader</h2><p>Congratulations for making it so far; now the display of your emulated Amiga
+usually appear as perfect circles when the correct aspect ratio is being used.
+But in general, it&rsquo;s better to look at some common objects and make sure they
+appear correctly&mdash;neither too tall nor too squashed (human faces and full
+human figures are the best candidates for this).</p><h2 id=crt-shader>CRT shader</h2><p>Congratulations on making it so far; now the display of your emulated Amiga
 should resemble that of a PC VGA monitor in low-res mode (sharp blocky pixels
 and all). But unlike VGA, which is double-scanned at 31 kHz horizontal sync
-frequency, all stock Amigas output 15 kHz single-scanned video signals<sup id=fnref:8><a href=#fn:8 class=footnote-ref role=doc-noteref>8</a></sup>, and
+frequency, all stock Amigas output 15 kHz single-scanned video signals<sup id=fnref:9><a href=#fn:9 class=footnote-ref role=doc-noteref>9</a></sup>, and
 not even the best Commodore monitors could enter the ring against any average
 14" VGA display from the 90s when it comes to sharpness (unsurprisingly, since
 the IBM PC was originally intended as a business machine, therefore text
-legibility was of primary concern).</p><p>In order to simulate the roundish &ldquo;pixels&rdquo; of the 1084S that slightly blend
-into each other (a rather nice &ldquo;natural anti-aliasing&rdquo; effect that makes
-low-res artwork so much more pleasant to look at, and lends the image this
-wonderful &ldquo;fuzzy analog quality&rdquo;) and the subtle scanlines (at least on PAL;
-on NTSC they&rsquo;re much more prominent), we&rsquo;ll need Guest&rsquo;s rather excellent
-<strong>CRT-A2080-HiRes-SmartRes-Interlace</strong> CRT shader. Clearly, this shader is the
-star of the show, and this makes the biggest difference after matching the
-physical image dimensions of the 1084S monitor. One of its most remarkable
-features is that it provides seamless support for all OCS Amiga screen
-modes in a <em>single</em> shader (320×256 Low Res, 640×256 High Res,
-320×512 Low Res Laced, 640×512 High Res Laced, and
-naturally all their overscanned and NTSC variants). The interlace flicker is
-not emulated, but probably that&rsquo;s for the best. This thing handles everything
-you throw at it, including low-res/hi-res split-screen games (e.g Lemmings,
-Shadow of the Beast, Apidya, Agony, all Magnetic Scrolls adventures, etc.)</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/scapeghost.jpg data-pswp-width=1020 data-pswp-height=828><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/scapeghost-small.jpg alt=Scapeghost style=width:90% loading=lazy></a><figcaption style=width:90%>Start scene of <a href=https://hol.abime.net/1841>Scapeghost</a> by <a href=https://en.wikipedia.org/wiki/Magnetic_Scrolls>Magnetic
-Scrolls</a>. Upper half of the
+legibility was of primary concern).</p><p>To simulate the roundish &ldquo;pixels&rdquo; of the 1084S that slightly blend into each
+other (a rather nice &ldquo;natural anti-aliasing&rdquo; effect that makes low-res artwork
+so much more pleasant to look at, and lends the image this wonderful &ldquo;fuzzy
+analog quality&rdquo;) and the subtle scanlines (at least on PAL; on NTSC they&rsquo;re
+much more prominent), we&rsquo;ll need Guest&rsquo;s rather excellent
+<strong>CRT-A2080-HiRes-SmartRes-Interlace</strong> CRT shader. This shader is the star of
+the show, and this makes the biggest difference after matching the physical
+image dimensions of the 1084S monitor. One of its most remarkable features is
+that it provides seamless support for all OCS Amiga screen modes in a <em>single</em>
+shader (320×256 Low Res, 640×256 High Res, 320×512 Low Res
+Laced, 640×512 High Res Laced, and naturally all their overscanned and
+NTSC variants). The interlace flicker is not emulated, but probably that&rsquo;s for
+the best. This thing handles everything you throw at it, including
+low-res/hi-res split-screen games (e.g Lemmings, Shadow of the Beast, Apidya,
+Agony, all Magnetic Scrolls adventures, etc.)</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/scapeghost.jpg data-pswp-width=1020 data-pswp-height=828><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/scapeghost-small.jpg alt=Scapeghost style=width:90% loading=lazy></a><figcaption style=width:90%>Start scene of <a href=https://hol.abime.net/1841>Scapeghost</a> by <a href=https://en.wikipedia.org/wiki/Magnetic_Scrolls>Magnetic
+Scrolls</a>. The upper half of the
 screen is 320×256 low-res, while the bottom
 half displaying the text is 640×256 hi-res. As you can see,
 <strong>CRT-A2080-HiRes-SmartRes-Interlace</strong> handles situations like this
@@ -491,22 +569,29 @@ Hardware</a>.)</p><p>Okay, so this is how to set this up:</p><ul><li><p>In the <
 API</strong> (and leave it at hardware accelerated, of course). <em>Do not use Direct3D 9</em> as that will result in uneven scanlines for some reason.</p></li><li><p>Put the <code>CRT-A2080-*.fx</code> shader files into <code>plugins\filtershaders\direct3d</code> in your
 WinUAE installation directory and restart WinUAE.</p></li><li><p>In the <strong>Filter</strong>
 section, select one of the <strong>CRT-A2080-</strong>* shaders in slot 0, and set 2x
-horizontal and 4x vertical oversampling. If your have a slower GPU and you&rsquo;re
+horizontal and 4x vertical oversampling. If you have a slower GPU and you&rsquo;re
 getting dropouts, you might want to reduce this a little, but don&rsquo;t go below
 3x vertical oversampling (this is essential to make the scanlines nice even
 and interference-free; 1x horizontal and 3x vertical is the recommended
 minimum). Oversampling takes a big hit on performance, e.g. with 2x horizontal
-and 4x vertical oversampling your GPU would need to perform 2×4=8 times
+and 4x vertical oversampling, your GPU would need to perform 2×4=8 times
 as much work!</p></li></ul><img src=img/winuae-filter-shaders.png alt="WinUAE filter presets" width=auto><p>Detail view of the NTSC 3.0× variant in action on a scene from <a href=https://hol.abime.net/305>Defender of the
-Crown</a>:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/doc.jpg data-pswp-width=1082 data-pswp-height=591><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/doc.jpg alt="Defender of the Crown shader comparison" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>Left: sharp-bilinear scaling (NTSC aspect ratio corrected)<br>Right: <strong>CRT-A2080-NTSC-3.0x</strong> shader</figcaption></figure><p class=note>The <strong>PAL 3.2×</strong> variant is especially prone to exhibiting vertical interference artefacts on solidly filled areas at certain luminance levels (e.g. full white). There&rsquo;s not much to do about this; this is just a result of certain non-integer scaling ratios at 1080p. If it really bothers you, use 3.0× or 3.5× PAL scaling instead. The NTSC presets are far less affected as NTSC scanlines are spaced a bit further apart which prevents such interference patterns from developing.</p><h2 id=crt-colour-profile-and-monitor-controls>CRT colour profile and monitor controls</h2><p>The next thing that will make a huge difference in replicating an authentic
-CRT experience is emulating the colour profile of the C= 1084S monitor. Most
-modern displays are calibrated for <a href=https://en.wikipedia.org/wiki/SRGB>sRGB</a>
-out-of-the-box that uses <a href=https://en.wikipedia.org/wiki/Illuminant_D65>D65</a>
-(6500K) whitepoint. This is noticeably cooler (bluer) looking than the more
-warmish/yellowish look of a typical CRT from the 80s, which was closer to
-5000K (CRT manufacturers more or less just did whatever they felt like back
-then; the <a href=https://en.wikipedia.org/wiki/SRGB>sRGB standard</a> came into
-existence in 1996 precisely to remedy this Wild West type of situation).</p><p>Guest&rsquo;s <a href=https://github.com/guestrr/WinUAE-Shaders>WinUAE shader pack</a>
+Crown</a>:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/doc.jpg data-pswp-width=1082 data-pswp-height=591><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/doc.jpg alt="Defender of the Crown shader comparison" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>Left: sharp-bilinear scaling (NTSC aspect ratio corrected)<br>Right: <strong>CRT-A2080-NTSC-3.0x</strong> shader</figcaption></figure><p class=note>The <strong>PAL 3.2×</strong> variant is especially prone to exhibiting vertical
+interference artefacts on solidly filled areas at certain luminance levels
+(e.g. full white). There&rsquo;s not much to do about this; this is just a result of
+certain non-integer scaling ratios at 1080p. If it really bothers you, use
+3.0× or 3.5× PAL scaling instead. The NTSC presets are far less
+affected as NTSC scanlines are spaced a bit further apart which prevents such
+interference patterns from developing.</p><h2 id=crt-colour-profile-and-monitor-controls>CRT colour profile and monitor controls</h2><p>The next thing that will make a huge difference in replicating an authentic
+CRT experience is emulating the colour profile of the Commodore 1084S monitor.
+Most modern displays are calibrated for
+<a href=https://en.wikipedia.org/wiki/SRGB>sRGB</a> out-of-the-box that uses
+<a href=https://en.wikipedia.org/wiki/Illuminant_D65>D65</a> (6500K) white point. This
+is noticeably cooler (bluer) looking than the more warmish/yellowish look of a
+typical CRT from the 80s, which was closer to 5000K (CRT manufacturers more or
+less just did whatever they felt like back then; the <a href=https://en.wikipedia.org/wiki/SRGB>sRGB
+standard</a> came into existence in 1996
+precisely to remedy this Wild West type of situation).</p><p>Guest&rsquo;s <a href=https://github.com/guestrr/WinUAE-Shaders>WinUAE shader pack</a>
 contains a CRT colour profile filter in ReShade format
 (<a href=https://github.com/guestrr/WinUAE-Shaders/blob/master/ReshadeShaders/WinUaeColor.fx>ReshadeShaders/WinUaeColor.fx</a>),
 and one of the included profiles is exactly what the doctor ordered
@@ -522,22 +607,22 @@ one thing that he doesn&rsquo;t mention is that the shaders depend on the common
 <strong>ReShade.fxh</strong> and <strong>ReShadeUI.fxh</strong> files that are not included, so just get
 them from <a href=https://github.com/crosire/reshade-shaders/tree/slim/Shaders>here</a>
 (all these files are included in <a href=files/WinUAE-Commodore-1084S-ShaderPack-v2.zip>my preset
-pack</a>, by the way).</p><p>The <strong>WinUaeColor</strong> filter also implements brightness, contrast, and saturation
-monitor adjustment controls. But for best results we need to apply the monitor
-adjustments <em>before</em> the the shadow mask emulation, and the colour profile
-emulation <em>after</em> it, as the last filter in the chain. Therefore, I duplicated
-<strong>WinUaeColor</strong> under the name <strong>WinUaeColorProfile</strong>, and our final ReShade
-filter chain will look like this:</p><ul class=compact><li>WinUaeColor <em>(monitor controls only)</em></li><li>WinUaeMask</li><li>WinUaeColorProfile <em>(Philips colour profile only)</em></li></ul><p>Once you&rsquo;ve set up everything correctly, just enable <strong>WinUaeColor.fx</strong> and
+pack</a>, by the way).</p><p>The <strong>WinUaeColor</strong> filter also implements brightness, contrast, and
+saturation monitor adjustment controls. But for best results, we need to apply
+the monitor adjustments <em>before</em> the shadow mask emulation, and the colour
+profile emulation <em>after</em> it, as the last filter in the chain. Therefore, I
+duplicated <strong>WinUaeColor</strong> under the name <strong>WinUaeColorProfile</strong>, and our
+final ReShade filter chain will look like this:</p><ul class=compact><li>WinUaeColor <em>(monitor controls only)</em></li><li>WinUaeMask</li><li>WinUaeColorProfile <em>(Philips colour profile only)</em></li></ul><p>Once you&rsquo;ve set up everything correctly, just enable <strong>WinUaeColor.fx</strong> and
 set it up as shown below. <strong>Colour Temperature</strong> should stay at zero, and I
 like to bump up the <strong>Color Saturation</strong> a little so it resembles the
-vividness of the C= 1084S a bit more. A value around 1.100 should do the
+vividness of the Commodore 1084S a bit more. A value around 1.100 should do the
 trick. You might not need (or want) to boost the saturation on wide-gamut
 displays, though.</p><p>Similarly, I like to increase the <strong>Color Contrast</strong> to about 0.400 as well as
 my default setting. Some games look quite nice with the contrast cranked up
 almost to the max, while some look completely fine at near zero&mdash;just like
 on real hardware.</p><p>The almost homeopathic <strong>Color Brightness</strong> boost of 1.023 helps regain some of
 the brightness lost by the scanline emulation, and interestingly it also helps
-reduce moire at non-integer scaling ratios (or perhaphs it&rsquo;s all in my head&mldr;)</p><img src=img/winuaecolor.png alt="WinUaeColor filter settings" width=auto><p>The next thing is to enable <strong>WinUaeColorProfile.fx</strong> as the second filter in
+reduce moire at non-integer scaling ratios (or perhaps it&rsquo;s all in my head&mldr;)</p><img src=img/winuaecolor.png alt="WinUaeColor filter settings" width=auto><p>The next thing is to enable <strong>WinUaeColorProfile.fx</strong> as the second filter in
 the chain. <strong>Color Profile 4</strong> is the Philips, most people
 should leave <strong>Color Space</strong> at 0 (sRGB), but if you&rsquo;re the lucky owner of a
 wide-gamut display, then you should definitely set it to match your display&rsquo;s
@@ -547,7 +632,7 @@ settings&mdash;as I explained, we&rsquo;re using this second instance only for
 emulating the monitor&rsquo;s colour profile.</p><img src=img/winuaecolorprofile.png alt="WinUaeColorProfile filter settings" width=auto><p>As expected, the right half of the below example image with the Philips colour
 profile applied looks much warmer and cosier. Now we&rsquo;re cooking on gas! &mdash;
 this is how I remember my Philips and Commodore monitors, the raw sRGB version
-looks too harsh and clinical in comparison.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/centurion-colour-profile.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/centurion-colour-profile.jpg alt="Centurion colour profile comparison" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Left: scene from <a href=https://hol.abime.net/2965>Centurion: Defender of Rome</a> by Jim Sachs, sRGB colours<br>Right: same image with the Philips colour profile applied</figcaption></figure><p>The difference is even more striking on greys, like on this Directory Opus
+looks too harsh and clinical in comparison.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/centurion-colour-profile.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/centurion-colour-profile.jpg alt="Centurion colour profile comparison" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Left: a scene from <a href=https://hol.abime.net/2965>Centurion: Defender of Rome</a> by Jim Sachs, sRGB colours<br>Right: the same image with the Philips colour profile applied</figcaption></figure><p>The difference is even more striking on greys, like on this Directory Opus
 screenshot:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/diropus-colour-profile.jpg data-pswp-width=1050 data-pswp-height=816><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/diropus-colour-profile.jpg alt="Directory Opus colour profile comparison" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Left: Directory Opus, sRGB colours<br>Right: same image with the Philips colour profile</figcaption></figure><h2 id=phosphor-and-shadow-mask>Phosphor and shadow mask</h2><p>The next step is subtle but important: the emulation of the phosphor pattern
 and the shadow mask that gives the image a subtle, almost canvas-like texture.
 Different monitors use different types of <a href=https://en.wikipedia.org/wiki/Shadow_mask>shadow
@@ -560,9 +645,9 @@ effect is especially noticeable in NTSC as you can see in many of
 <a href=https://www.youtube.com/c/AmigaLove/videos>AmigaLove</a>&rsquo;s YouTube videos:</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-1.jpg data-pswp-width=1271 data-pswp-height=756><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-1.jpg alt="Close-up view of the effects of the slot mask - Workbench 1.3" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Close-up view of the effects of the slot mask&mdash;Workbench 1.3 (<a href="https://www.youtube.com/watch?v=b0sVz6hWO68">source</a>)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-2.jpg data-pswp-width=1620 data-pswp-height=923><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-2.jpg alt="Close-up view of the effects of the slot mask - Pools of Darkness" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center>Close-up view of the effects of the slot mask&mdash;<a href=https://hol.abime.net/1100>Pools of Darkness</a> (<a href="https://www.youtube.com/watch?v=b0sVz6hWO68">source</a>)</figcaption></figure><p>The shadow mask is just as visible in PAL screen modes, and because the
 scanlines are much closer, the zig-zag pattern almost turns into a fine
 checkerboard-like texture.</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal-2.jpg data-pswp-width=1400 data-pswp-height=878><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/amiga-crt/shadow-of-the-beast-pal-2-small.jpg alt="Shadow of the Beast game over screen" style=width:90% loading=lazy></a><figcaption style=width:90%;text-align:center><a href=https://hol.abime.net/1891>Shadow of the Beast</a> game over screen (PAL)</figcaption></figure><p><a href=https://filthypants.blogspot.com/2020/02/crt-shader-masks.html>This article</a>
-gives a good succinct explanation on how these pixel-masks are implemented.
-Like I said in the beginning, my settings are really tailored for 1080p. At
-4k or higher resolutions you&rsquo;ll almost certainly need to make significant
+gives a good succinct explanation of how these pixel masks are implemented.
+As I said in the beginning, my settings are really tailored for 1080p. At
+4k or higher resolutions, you&rsquo;ll almost certainly need to make significant
 adjustments to them.</p><p>Again, the slot mask emulation is not something that jumps at you as it&rsquo;s
 rather subtle, but it&rsquo;s missing if it&rsquo;s not there. The lack of it is
 especially noticeable on large solidly coloured areas; on a real CRT, these
@@ -578,22 +663,29 @@ emulation shader, so you need a holistic view when tweaking these things.</p><im
 like a big deal; it&rsquo;s one of those strange things that doesn&rsquo;t seem to add
 much when you turn it on, but you&rsquo;ll notice its absence when you <em>remove</em> it
 after you&rsquo;ve become accustomed to it. It might even seem a bit pointless
-first, but trust me, just set it up, live with it for a while, and <em>then</em> turn
-it off&mdash;chances are you&rsquo;ll really miss it!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask.jpg data-pswp-width=1467 data-pswp-height=713><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-small.jpg alt="Phosphor and shadow mask emulation comparison" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>Left: no phosphor and shadow mask emulation<br>Right: phosphor and shadow mask emulation applied<br></figcaption></figure><p class=note>At this point, you will have noticed that the brightness of the resulting image with scanline, phosphor and shadow mask emulation enabled is a bit dimmer compared to the original. The best way to compensate for this is by increasing the contrast setting of your monitor by about 30% (<em>not</em> the brightness; that sets the black point). If already have your contrast cranked up to the max, well, I guess you&rsquo;re out of luck! 😎 I personally use ClickMonitorDDC for this on Windows which lets you adjust your monitor controls via shortcuts. For general everyday use I have a preset with brightness set to 35 and contrast to 75, then another one for WinUAE with the contrast increased to 96.</p><h2 id=bloom-and-glow>Bloom and glow</h2><p>Okay, this is really the icing on the cake, a subtle but important final touch
-to make the emulation even more authentic. CRT displays always exhibit a
-certain degree of halation, which is quite an interesting effect. As the
-electron beams illuminate the phosphors which in turn emit light, the light
-rays entering the front glass close to normal angles pass mostly undeterred,
-but below a certain angle of incidence, the light is reflected back to the
-picture tube&rsquo;s surface where it undergoes further reflections. The end result
-is a characteristic concentric glow (&ldquo;halo&rdquo;) around brightly lit areas, which
-also results in a localised loss of contrast. The effect is most noticeable
-when bright text is displayed on a black background, as shown on the example
-below.</p><p>The &ldquo;bloom&rdquo; effect is maybe not named entirely correctly, but it&rsquo;s basically
+at first, but trust me, just set it up, live with it for a while, and <em>then</em> turn
+it off&mdash;chances are you&rsquo;ll really miss it!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask.jpg data-pswp-width=1467 data-pswp-height=713><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/slot-mask-small.jpg alt="Phosphor and shadow mask emulation comparison" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center>Left: no phosphor and shadow mask emulation<br>Right: phosphor and shadow mask emulation applied<br></figcaption></figure><p class=note>At this point, you will have noticed that the brightness of the resulting
+image with scanline, phosphor and shadow mask emulation enabled is a bit
+dimmer compared to the original. The best way to compensate for this is by
+increasing the contrast setting of your monitor by about 30% (<em>not</em> the
+brightness; that sets the black point). If already have your contrast cranked
+up to the max, well, I guess you&rsquo;re out of luck! 😎 I use ClickMonitorDDC for
+this on Windows which lets you adjust your monitor controls via shortcuts. For
+general everyday use, I have a preset with brightness set to 35 and contrast to
+75, then another one for WinUAE with the contrast increased to 96.</p><h2 id=bloom-and-glow>Bloom and glow</h2><p>Okay, this is the icing on the cake, a subtle but important final touch to
+make the emulation even more authentic. CRT displays always exhibit a certain
+degree of halation, which is quite an interesting effect. As the electron
+beams illuminate the phosphors which in turn emit light, the light rays
+entering the front glass close to normal angles pass mostly undeterred, but
+below a certain angle of incidence, the light is reflected to the picture
+tube&rsquo;s surface where it undergoes further reflections. The result is a
+characteristic concentric glow (&ldquo;halo&rdquo;) around brightly lit areas, which also
+results in a localised loss of contrast. The effect is most noticeable when
+bright text is displayed on a black background, as shown in the example below.</p><p>The &ldquo;bloom&rdquo; effect is maybe not named entirely correctly, but it&rsquo;s basically
 the effect of brighter pixels appearing a little larger, rounder, and bleeding
-into their neighbours a bit more. Sort of a pixel-level, small scale glow
+into their neighbours a bit more. Sort of a pixel-level, small-scale glow
 effect that incidentally is also useful to make up for the brightness loss
-caused by the shadow mask overlay.</p><p>Luckily for us, the mask and glow shader emulates both phenomena quite
+caused by the shadow mask overlay.</p><p>Luckily for us, the mask and glow shader emulate both phenomena quite
 convincingly. The trick is not to overdo it (you shouldn&rsquo;t really notice the
 effect unless you&rsquo;re looking for it), so I&rsquo;m keeping these at rather
 conservative levels. What I said about the phosphor and shadow mask emulation
@@ -611,13 +703,13 @@ uae-configuration gfx_filter_vert_zoomf 2200
 <code>SetGfx ntsc35</code> to switch to the NTSC 3.5× preset. It&rsquo;s included in the
 downloadable shader pack.</p><p class=warning>Switching between shaders and scaling factors while the emulated Amiga is
 running can result in WinUAE hanging if you&rsquo;re using ReShade and windowed of
-full-window mode. However, it works really well in fullscreen, so that&rsquo;s what
-I recommend if you&rsquo;re intending to switch shader presets on-the-fly (e.g. to
-set your preferred scaling factor in a game&rsquo;s launcher script).</p><h2 id=in-closing>In closing</h2><p>Phew, that was one long article, indeed! Hopefully you&rsquo;ve enjoyed my ramblings
-and have actually learned something useful. I wish you a nice emulated Amiga
+full-window mode. However, it works very well in fullscreen, so that&rsquo;s what I
+recommend if you&rsquo;re intending to switch shader presets on the fly (e.g. to set
+your preferred scaling factor in a game&rsquo;s launcher script).</p><h2 id=in-closing>In closing</h2><p>Phew, that was one long article, indeed! Hopefully, you&rsquo;ve enjoyed my
+ramblings and have learned something useful. I wish you a nice emulated Amiga
 experience, and in parting here are some more glorious example images that
 showcase this excellent shader in action.</p><p>Stay tuned for the next episode where we&rsquo;ll be looking at DOS and
-early-Windows era graphics, and how to do it right!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/defender-of-the-crown.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/defender-of-the-crown-small.jpg alt="Defender of the Crown (NTSC, 3× scaling" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/305>Defender of the Crown</a> (NTSC, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/desert.jpg data-pswp-width=1024 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/desert-small.jpg alt="It Came From the Desert (NTSC, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2674>It Came From the Desert</a> (NTSC, 3.2× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/elements-of-green.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/elements-of-green-small.jpg alt="The Elements of Green (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://demozoo.org/graphics/52054/>The Elements of Green</a> by <a href=https://demozoo.org/sceners/814/>Prowler</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/legend-of-faerghail.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/legend-of-faerghail-small.jpg alt="Legend of Faerghail (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/860>Legend of Faerghail</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/lemmings.jpg data-pswp-width=1121 data-pswp-height=702><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/lemmings-small.jpg alt="Lemmings (PAL, 3.5× scaling, mixed low-res & high-res)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/872>Lemmings</a> (PAL, 3.5× scaling, mixed low-res & high-res)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/pinball-dreams.jpg data-pswp-width=1120 data-pswp-height=919><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/pinball-dreams-small.jpg alt="Pinball Dreams (PAL, 3.5× scaling, overscan)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1054>Pinball Dreams</a> (PAL, 3.5× scaling, overscan)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/knightmare.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/knightmare-small.jpg alt="Knightmare (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2595>Knightmare</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion-small.jpg alt="Perihelion: The Prophecy (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1029>Perihelion: The Prophecy</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/king-for-a-day.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/king-for-a-day-small.jpg alt="King for a Day (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://demozoo.org/graphics/202738/>King for a Day</a> by <a href=https://demozoo.org/sceners/235/>Facet</a> & <a href=https://demozoo.org/sceners/12016/>Magic</a> (PAL, 3× scaling)</figcaption></figure><hr><section class=links><h2 id=links-files--further-reading>Links, files & further reading</h2><h3 id=files>Files</h3><ul><li><a href=files/WinUAE-Commodore-1084S-ShaderPack-v2.zip>Commodore 1084S emulation shader pack for WinUAE</a></li><li><a href=files/test-pics.zip>Test pictures in IFF format</a></li></ul><h3 id=misc>Misc</h3><ul><li><a href="https://docs.google.com/spreadsheets/d/1iH8YOhiGvKJ7kZogvKv_aDxkX4688T_VXRFAA2exmJs/edit?usp=sharing">Emulated display resolution calculator</a></li></ul><h3 id=guests-shaders>Guest&rsquo;s shaders</h3><ul><li><a href=https://github.com/guestrr/WinUAE-Shaders>Latest version of the WinUAE shader pack</a></li><li><a href="https://eab.abime.net/showthread.php?t=61776">Original releases and discussion</a></li><li><a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>Guest&rsquo;s new bleeding-edge CRT shaders</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>For me, it&rsquo;s a tie between the classic OCS/ECS Amigas and the
+early Windows-era graphics, and how to do it right!</p><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/defender-of-the-crown.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/defender-of-the-crown-small.jpg alt="Defender of the Crown (NTSC, 3× scaling" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/305>Defender of the Crown</a> (NTSC, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/desert.jpg data-pswp-width=1024 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/desert-small.jpg alt="It Came From the Desert (NTSC, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2674>It Came From the Desert</a> (NTSC, 3.2× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/elements-of-green.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/elements-of-green-small.jpg alt="The Elements of Green (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://demozoo.org/graphics/52054/>The Elements of Green</a> by <a href=https://demozoo.org/sceners/814/>Prowler</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/legend-of-faerghail.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/legend-of-faerghail-small.jpg alt="Legend of Faerghail (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/860>Legend of Faerghail</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/lemmings.jpg data-pswp-width=1121 data-pswp-height=702><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/lemmings-small.jpg alt="Lemmings (PAL, 3.5× scaling, mixed low-res & high-res)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/872>Lemmings</a> (PAL, 3.5× scaling, mixed low-res & high-res)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/pinball-dreams.jpg data-pswp-width=1120 data-pswp-height=919><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/pinball-dreams-small.jpg alt="Pinball Dreams (PAL, 3.5× scaling, overscan)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1054>Pinball Dreams</a> (PAL, 3.5× scaling, overscan)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/knightmare.jpg data-pswp-width=960 data-pswp-height=720><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/knightmare-small.jpg alt="Knightmare (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/2595>Knightmare</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/perihelion-small.jpg alt="Perihelion: The Prophecy (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://hol.abime.net/1029>Perihelion: The Prophecy</a> (PAL, 3× scaling)</figcaption></figure><figure class=image><a class=largeimg href=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/king-for-a-day.jpg data-pswp-width=960 data-pswp-height=768><img src=/2022/04/15/achieving-period-correct-graphics-in-personal-computer-emulators-part-1-the-amiga/img/king-for-a-day-small.jpg alt="King for a Day (PAL, 3× scaling)" style=width:100% loading=lazy></a><figcaption style=width:100%;text-align:center><a href=https://demozoo.org/graphics/202738/>King for a Day</a> by <a href=https://demozoo.org/sceners/235/>Facet</a> & <a href=https://demozoo.org/sceners/12016/>Magic</a> (PAL, 3× scaling)</figcaption></figure><hr><section class=links><h2 id=links-files--further-reading>Links, files & further reading</h2><h3 id=files>Files</h3><ul><li><a href=files/WinUAE-Commodore-1084S-ShaderPack-v2.zip>Commodore 1084S emulation shader pack for WinUAE</a></li><li><a href=files/test-pics.zip>Test pictures in IFF format</a></li></ul><h3 id=misc>Misc</h3><ul><li><a href="https://docs.google.com/spreadsheets/d/1iH8YOhiGvKJ7kZogvKv_aDxkX4688T_VXRFAA2exmJs/edit?usp=sharing">Emulated display resolution calculator</a></li></ul><h3 id=guests-shaders>Guest&rsquo;s shaders</h3><ul><li><a href=https://github.com/guestrr/WinUAE-Shaders>Latest version of the WinUAE shader pack</a></li><li><a href="https://eab.abime.net/showthread.php?t=61776">Original releases and discussion</a></li><li><a href=https://forums.libretro.com/t/new-crt-shader-from-guest-crt-guest-advanced-updates/25444>Guest&rsquo;s new bleeding-edge CRT shaders</a></li></ul><h3 id=amiga-rkm-libraries-manual-----graphics-libraries>Amiga RKM Libraries Manual &mdash; Graphics Libraries</h3><ul><li><a href=http://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0314.html>Effect of Display Overscan on the Viewing Area</a></li><li><a href=http://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0316.html>Interlaced and Non-Interlaced Modes</a></li><li><a href=http://amigadev.elowar.com/read/ADCD_2.1/Libraries_Manual_guide/node0318.html>Display Modes, Colors, and Requirements</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>For me, it&rsquo;s a tie between the classic OCS/ECS Amigas and the
 venerable Commodore 64 that just turned 40!&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>Yeah, some poor buggers couldn&rsquo;t afford a monitor and hooked up their
 machine to a TV, but those were either small 13&ndash;14" TV sets, or if they
 used the big family TV, that had to be viewed from a distance, so the
@@ -644,14 +736,16 @@ reproduction for the time (for SD broadcast standards, that is), they
 often found their way into professional studios and were sitting next to the
 Sonys. You could buy several of them for the price of a single Sony; there&rsquo;s
 not much arguing with it that they had pretty much the best
-quality/affordability ratio throughout the 80s.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>Yes, I&rsquo;m aware that the PAL TV standard has 128:117 = 1:1.09402 pixel aspect ratio, so when you hook up your Amiga to a TV, you won&rsquo;t get 100% square pixels. But the difference is very small, and most people used their Amigas with monitors which had horizontal and vertical stretch controls to set up the picture so it fills the screen. Therefore, I&rsquo;d say this difference is largely irrelevant, and we should should just assume square pixels for all PAL Amiga screen modes for practical reasons.&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote><p>It&rsquo;s easy to derive this from the ratios: 4:3 display aspect
+quality/affordability ratio throughout the 80s.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>Of course, then there&rsquo;s the guy who plays everything stretched
+to 16:9 widescreen with bilinear scaling, and is content with the results
+he&rsquo;s getting. Good on him!&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:4 role=doc-endnote><p>Yes, I&rsquo;m aware that the PAL TV standard has 128:117 = 1:1.09402 pixel aspect ratio, so when you hook up your Amiga to a TV, you won&rsquo;t get 100% square pixels. But the difference is very small, and most people used their Amigas with monitors which had horizontal and vertical stretch controls to set up the picture so it fills the screen. Therefore, I&rsquo;d say this difference is largely irrelevant, and we should should just assume square pixels for all PAL Amiga screen modes for practical reasons.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:5 role=doc-endnote><p>It&rsquo;s easy to derive this from the ratios: 4:3 display aspect
 ratio can be rewritten as 16:12, and the <a href=https://en.wikipedia.org/wiki/Aspect_ratio_(image)#Distinctions>storage aspect
 ratio</a> of
 320:256 = 5:4 as 15:12. Because the vertical ratios are identical, the image
 fills the screen vertically. However, the display is 16 units wide while the
-image width is only 15 units, so there will be black bars on the two sides.&#160;<a href=#fnref:4 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:5 role=doc-endnote><p>Same story as for PAL: the &ldquo;theoretically correct&rdquo;
+image width is only 15 units, so there will be black bars on the two sides.&#160;<a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:6 role=doc-endnote><p>Same story as for PAL: the &ldquo;theoretically correct&rdquo;
 vertical stretch ratio is not quite 1.2, but close enough that it does not
-matter.&#160;<a href=#fnref:5 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:6 role=doc-endnote><p>Divide the 320×200 NTSC pixel-grid size by ten to get
+matter.&#160;<a href=#fnref:6 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:7 role=doc-endnote><p>Divide the 320×200 NTSC pixel-grid size by ten to get
 the 32:20 <a href=https://en.wikipedia.org/wiki/Aspect_ratio_(image)#Distinctions>storage aspect
 ratio</a>.
 Multiply the 4:3 display aspect ratio by 8 to arrive at the same width
@@ -663,10 +757,11 @@ factor that must be applied to 320x200 VGA games so they display correctly
 on square pixel aspect ratio LCD monitors. (Of course, the deeper and true
 explanation lies in the workings of the NTSC broadcast standard and would
 require some knowledge of analog electronics. However, for our purposes
-here this purely aspect ratio based derivation is sufficient.)&#160;<a href=#fnref:6 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:7 role=doc-endnote><p>Pool of Radiance is an interesting case. The Amiga port was made by a
+here this purely aspect ratio based derivation is sufficient.)&#160;<a href=#fnref:7 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:8 role=doc-endnote><p>Pool of Radiance is an interesting case. The Amiga port was made by a
 European studio, Ubi Soft in France, but clearly it was intended for the
-NTSC market as the graphics needs the NTSC stretch to look correct and the
-music plays too slowly in PAL mode.&#160;<a href=#fnref:7 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:8 role=doc-endnote><p>Except for the <a href=https://en.wikipedia.org/wiki/Amiga_3000>Amiga 3000</a> that includes a scan-doubled 31 kHz VGA output connector as well.&#160;<a href=#fnref:8 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
+NTSC market as the graphics need the NTSC stretch to look correct and the
+music plays too slowly in PAL mode.&#160;<a href=#fnref:8 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:9 role=doc-endnote><p>Except for the <a href=https://en.wikipedia.org/wiki/Amiga_3000>Amiga 3000</a>
+which includes a scan-doubled 31 kHz VGA output connector as well.&#160;<a href=#fnref:9 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
     import PhotoSwipeLightbox from '/js/lib/photoswipe-lightbox.esm.min.js';
 
     const lightbox = new PhotoSwipeLightbox({
