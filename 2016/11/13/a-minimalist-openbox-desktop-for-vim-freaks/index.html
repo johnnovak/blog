@@ -1,4 +1,7 @@
-<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>A minimalist Openbox desktop for Vim freaks | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.63b8160b4504b230d467bd1075e9672bc173d8b232a6f866511ba65db1ef15dc.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script><script src=/js/lib/jqmath-etc-0.4.6.min.js></script><script src=/js/blog.js></script><link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net/index.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/>A minimalist Openbox desktop for Vim freaks</a></h1><p class=date><time datetime=2016-11-13>2016 Nov 13</time></p></header><nav class=tags><ul><li><a href=/tags/linux/>linux</a></li><li><a href=/tags/openbox/>openbox</a></li><li><a href=/tags/crunchbang++/>crunchbang++</a></li><li><a href=/tags/vim/>vim</a></li></ul></nav><section class=intro><p>Are you the sort of person who is looking for a Vim plugin for everything?
+<!doctype html><html><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><meta name=viewport content="width=device-width;target-densityDpi=160;initial-scale=1;maximum-scale=1"><meta name=description content="Personal blog of John Novak"><meta name=author content="John Novak"><title>A minimalist Openbox desktop for Vim freaks | John Novak</title><link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400;1,600;1,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Inconsolata:400,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=Astloch&display=swap" rel=stylesheet><link href="https://fonts.googleapis.com/css?family=UnifrakturMaguntia&display=swap" rel=stylesheet><link rel=stylesheet href=https://blog.johnnovak.net/sass/blog.63b8160b4504b230d467bd1075e9672bc173d8b232a6f866511ba65db1ef15dc.css type=text/css><link rel=stylesheet href=/css/jqmath-0.4.3.css type=text/css><link rel=stylesheet href=/css/photoswipe.css type=text/css><script src=/js/lib/jquery-1.12.4.min.js></script>
+<script src=/js/lib/jqmath-etc-0.4.6.min.js></script>
+<script src=/js/blog.js></script>
+<link rel=alternate type=application/rss+xml title="Recent posts" href=https://blog.johnnovak.net/index.xml></head><body><div id=wrapper><header id=header><div id=header-bg></div><a href=/><img id=jn-logo src=/img/jn-logo.png alt="John Novak" data-2x=/img/jn-logo@2x.png></a><p class=tagline>Riding on the tail of the<br>Gaussian curve<br>since 1979</p><nav><ul><li><a href=/about/>About</a></li><li><a href=/posts/>Posts</a></li><li class=last><a href=/tags/>Tags</a></li></ul></nav></header><div role=main><article class=post><header><h1><a href=/2016/11/13/a-minimalist-openbox-desktop-for-vim-freaks/>A minimalist Openbox desktop for Vim freaks</a></h1><p class=date><time datetime=2016-11-13>2016 Nov 13</time></p></header><nav class=tags><ul><li><a href=/tags/linux/>linux</a></li><li><a href=/tags/openbox/>openbox</a></li><li><a href=/tags/crunchbang++/>crunchbang++</a></li><li><a href=/tags/vim/>vim</a></li></ul></nav><section class=intro><p>Are you the sort of person who is looking for a Vim plugin for everything?
 Does having to reach out for the mouse sideways cause you involuntary facial
 muscles twitches? Is breaking out the arrow keys with a screwdriver among the
 first few things you do on a new computer (after swapping Caps Lock with
@@ -136,63 +139,63 @@ that, but this is all we need to know for our purposes.</p><p>One more thing, I 
 on all my computers, but we won&rsquo;t need to do that here because I&rsquo;m using
 <a href=https://www.randyrants.com/category/sharpkeys/>SharpKeys</a> on Windows for that purpose, and
 luckily the settings carry over to the guest VM.</p><h4 id=openbox>Openbox</h4><p>Ok, time to teach Openbox a few new tricks as well. Let&rsquo;s start with setting
-the number of desktops to four in <code>~/.config/openbox/rc.xml</code>:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;desktops&gt;</span>
-  <span class=nt>&lt;number&gt;</span>4<span class=nt>&lt;/number&gt;</span>
-  <span class=nt>&lt;firstdesk&gt;</span>1<span class=nt>&lt;/firstdesk&gt;</span>
-  <span class=nt>&lt;names&gt;</span>
-    <span class=nt>&lt;name&gt;</span>1<span class=nt>&lt;/name&gt;</span>
-    <span class=nt>&lt;name&gt;</span>2<span class=nt>&lt;/name&gt;</span>
-    <span class=nt>&lt;name&gt;</span>3<span class=nt>&lt;/name&gt;</span>
-    <span class=nt>&lt;name&gt;</span>4<span class=nt>&lt;/name&gt;</span>
-  <span class=nt>&lt;/names&gt;</span>
-  <span class=nt>&lt;popupTime&gt;</span>875<span class=nt>&lt;/popupTime&gt;</span>
-<span class=nt>&lt;/desktops&gt;</span></code></pre></div><p>Then we&rsquo;ll disable the window decorations for <code>urvxt</code> and <code>terminator</code> because
-they look much cooler that way:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;terminator&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
-<span class=nt>&lt;/application&gt;</span>
-<span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;urxvt&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
-<span class=nt>&lt;/application&gt;</span></code></pre></div><p>To recap, this is the final list of shortcuts for our Vim-style desktop (in
+the number of desktops to four in <code>~/.config/openbox/rc.xml</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;desktops&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;number&gt;</span>4<span class=nt>&lt;/number&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;firstdesk&gt;</span>1<span class=nt>&lt;/firstdesk&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;names&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;name&gt;</span>1<span class=nt>&lt;/name&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;name&gt;</span>2<span class=nt>&lt;/name&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;name&gt;</span>3<span class=nt>&lt;/name&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;name&gt;</span>4<span class=nt>&lt;/name&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/names&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;popupTime&gt;</span>875<span class=nt>&lt;/popupTime&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/desktops&gt;</span></span></span></code></pre></div><p>Then we&rsquo;ll disable the window decorations for <code>urvxt</code> and <code>terminator</code> because
+they look much cooler that way:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;terminator&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/application&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;application</span> <span class=na>name=</span><span class=s>&#34;urxvt&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;decor&gt;</span>no<span class=nt>&lt;/decor&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/application&gt;</span></span></span></code></pre></div><p>To recap, this is the final list of shortcuts for our Vim-style desktop (in
 addition to the standard stuff like <kbd>L Alt</kbd>+<kbd>Tab</kbd> to switch
 between windows, etc.):</p><table class=no-border><tr><td><kbd>Ctrl</kbd>+<kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>L</kbd></td><td>Move between Vim splits & tmux panels</td></tr><tr><td><kbd>R Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd></td><td>Switch to desktop 1 to 4</td></tr><tr><td><kbd>L Alt</kbd>+<kbd>J</kbd><kbd>K</kbd><kbd>L</kbd><kbd>;</kbd></td><td>Send window to desktop 1 to 4</td></tr><tr><td><kbd>Win</kbd>+<kbd>Shift</kbd>+<kbd>H</kbd><kbd>J</kbd><kbd>K</kbd><kbd>;</kbd></td><td>Half-screen tile window</td></tr></table><p>The only thing left to do is to remap the existing keybindings in <code>rc.xml</code>.
 For example, this is how the desktop switching shortcuts look like. Note that
 we need to bind to <code>H-x</code> (Hyper + x) for the shortcut <kbd>R
 Alt</kbd>+<kbd>X</kbd>. Another interesting thing to note is that the key
 <kbd>;</kbd> (semicolon) has to be specified by its keycode (<code>47</code> decimal, <code>0x2f</code>
-hex). Again, <code>xev</code> is your friend to find out the keycode for a particular key.</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-j&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span>
-<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-k&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;to&gt;</span>2<span class=nt>&lt;/to&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span>
-<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-l&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;to&gt;</span>3<span class=nt>&lt;/to&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span>
-<span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-0x2f&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;to&gt;</span>4<span class=nt>&lt;/to&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span></code></pre></div><p>The send to desktop bindings will be very similar. Here&rsquo;s the first one from
-which you can figure out the rest:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;A-j&#34;</span><span class=nt>&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;SendToDesktop&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span></code></pre></div><p>Finally, we&rsquo;ll just need to remap the existing window tiling shortcuts and
-we&rsquo;re done. Example for tile left:</p><div class=highlight><pre class=chroma><code class=language-xml data-lang=xml><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;W-S-h&#34;</span><span class=nt>&gt;</span>    	# HalfLeftScreen
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;UnmaximizeFull&#34;</span><span class=nt>/&gt;</span>
-  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;MoveResizeTo&#34;</span><span class=nt>&gt;</span>
-    <span class=nt>&lt;x&gt;</span>0<span class=nt>&lt;/x&gt;</span>
-    <span class=nt>&lt;y&gt;</span>0<span class=nt>&lt;/y&gt;</span>
-    <span class=nt>&lt;height&gt;</span>100%<span class=nt>&lt;/height&gt;</span>
-    <span class=nt>&lt;width&gt;</span>50%<span class=nt>&lt;/width&gt;</span>
-  <span class=nt>&lt;/action&gt;</span>
-<span class=nt>&lt;/keybind&gt;</span></code></pre></div><h3 id=system-clipboard-support>System clipboard support</h3><p>Getting the shared system clipboard (X11 selections) to work consistently
+hex). Again, <code>xev</code> is your friend to find out the keycode for a particular key.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-j&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-k&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;to&gt;</span>2<span class=nt>&lt;/to&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-l&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;to&gt;</span>3<span class=nt>&lt;/to&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;H-0x2f&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;GoToDesktop&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;to&gt;</span>4<span class=nt>&lt;/to&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span></span></span></code></pre></div><p>The send to desktop bindings will be very similar. Here&rsquo;s the first one from
+which you can figure out the rest:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;A-j&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;SendToDesktop&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;to&gt;</span>1<span class=nt>&lt;/to&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span></span></span></code></pre></div><p>Finally, we&rsquo;ll just need to remap the existing window tiling shortcuts and
+we&rsquo;re done. Example for tile left:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-xml data-lang=xml><span class=line><span class=cl><span class=nt>&lt;keybind</span> <span class=na>key=</span><span class=s>&#34;W-S-h&#34;</span><span class=nt>&gt;</span>    	# HalfLeftScreen
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;UnmaximizeFull&#34;</span><span class=nt>/&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;action</span> <span class=na>name=</span><span class=s>&#34;MoveResizeTo&#34;</span><span class=nt>&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;x&gt;</span>0<span class=nt>&lt;/x&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;y&gt;</span>0<span class=nt>&lt;/y&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;height&gt;</span>100%<span class=nt>&lt;/height&gt;</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&lt;width&gt;</span>50%<span class=nt>&lt;/width&gt;</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&lt;/action&gt;</span>
+</span></span><span class=line><span class=cl><span class=nt>&lt;/keybind&gt;</span></span></span></code></pre></div><h3 id=system-clipboard-support>System clipboard support</h3><p>Getting the shared system clipboard (X11 selections) to work consistently
 across different GUI and command line apps on Linux can undoubtedly be a hair
 loss-inducing experience. One of the sources of confusion is that we are
 usually dealing with two clipboard buffers in X11 (called <strong>selections</strong>), not
@@ -314,10 +317,10 @@ the following command:</p><pre><code>sudo apt-get install fonts-powerline
 </code></pre><h3 id=setting-the-right-wallpaper>Setting the <em>right</em> wallpaper</h3><p>No desktop Linux setup is ever complete without a wallpaper, but, of course,
 the chosen wallpaper must be the <em>correct</em> one. Look no further than
 <a href=img/lotus.png>this</a>!</p><p>&mldr; aaaand congratulations, you&rsquo;re done. Enjoy your brand new vimified
-desktop! :)</p><section class=links><h2 id=further-reading>Further reading</h2><ul><li><a href=https://xaizek.github.io/2016-08-13/big-list-of-vim-like-software/>The big list of Vi[m]-like software</a></li></ul></section><section class=footnotes role=doc-endnotes><hr><ol><li id=fn:1 role=doc-endnote><p>There are a few good ones though, for example I&rsquo;m using the Windows version of Inkscape, but there&rsquo;s really no match for Lightroom or Photoshop (if you want to recommend me The Gimp at this point, please save your energy). Moreover, the driver support for (semi-)pro audio interfaces is just non-existent on Linux, and let&rsquo;s not even talk about the audio software front&mldr;&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2 role=doc-endnote><p>Sadly, Vimperator has been discontinued since I originally wrote this
+desktop! :)</p><section class=links><h2 id=further-reading>Further reading</h2><ul><li><a href=https://xaizek.github.io/2016-08-13/big-list-of-vim-like-software/>The big list of Vi[m]-like software</a></li></ul></section><div class=footnotes role=doc-endnotes><hr><ol><li id=fn:1><p>There are a few good ones though, for example I&rsquo;m using the Windows version of Inkscape, but there&rsquo;s really no match for Lightroom or Photoshop (if you want to recommend me The Gimp at this point, please save your energy). Moreover, the driver support for (semi-)pro audio interfaces is just non-existent on Linux, and let&rsquo;s not even talk about the audio software front&mldr;&#160;<a href=#fnref:1 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:2><p>Sadly, Vimperator has been discontinued since I originally wrote this
 article in 2016. It seems to have been fallen prey to the security
 tightening around the extension mechanism of Firefox. I&rsquo;m currently trialing
-<a href=https://github.com/ueokande/vim-vixen>Vim Vixen</a> as a replacement.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3 role=doc-endnote><p>There&rsquo;s a third one called <em>secondary selection</em> too, but no one ever uses that for anything, as far as I&rsquo;m aware. One less thing to worry about!&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></section><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>var disqus_config=function(){};(function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById('disqus_thread').innerHTML='Disqus comments not available by default when the website is previewed locally.';return}var b=document,a=b.createElement('script');a.async=!0,a.src='//johnnovak.disqus.com/embed.js',a.setAttribute('data-timestamp',+new Date),(b.head||b.body).appendChild(a)})()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
+<a href=https://github.com/ueokande/vim-vixen>Vim Vixen</a> as a replacement.&#160;<a href=#fnref:2 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li><li id=fn:3><p>There&rsquo;s a third one called <em>secondary selection</em> too, but no one ever uses that for anything, as far as I&rsquo;m aware. One less thing to worry about!&#160;<a href=#fnref:3 class=footnote-backref role=doc-backlink>&#8617;&#xfe0e;</a></p></li></ol></div><section class=comments><h2>Comments</h2><div id=disqus_thread></div><script type=application/javascript>window.disqus_config=function(){},function(){if(["localhost","127.0.0.1"].indexOf(window.location.hostname)!=-1){document.getElementById("disqus_thread").innerHTML="Disqus comments not available by default when the website is previewed locally.";return}var t=document,e=t.createElement("script");e.async=!0,e.src="//johnnovak.disqus.com/embed.js",e.setAttribute("data-timestamp",+new Date),(t.head||t.body).appendChild(e)}()</script><noscript>Please enable JavaScript to view the <a href=https://disqus.com/?ref_noscript>comments powered by Disqus.</a></noscript><a href=https://disqus.com class=dsq-brlink>comments powered by <span class=logo-disqus>Disqus</span></a></section></article></div></div></body><script type=module>
     import PhotoSwipeLightbox from '/js/lib/photoswipe-lightbox.esm.min.js';
 
     const lightbox = new PhotoSwipeLightbox({
